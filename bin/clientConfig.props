@@ -1,0 +1,15 @@
+#--- Key and Value file (ip = port) ---
+#Mon Jul 09 15:21:28 WEST 2012
+configLookUpPort=4009
+eventTimeToLiveInMilliseconds=5000
+timeoutForReplicaCounterReset=10000
+maxNumberOfEventsToFetchPerRequest=10
+useAllReplicasOnCFT=1
+maxTimeToWaitWithCaching=1000
+majorityInPercentage=75
+cacheCleanUpPeriodInNumberOfRequests=10
+configLookUpIP=127.0.0.5
+useSBFT=1
+useLongTermConnections=1
+numberOfConnectionRetries=3
+numberOfEventsToCachePerRequest=10

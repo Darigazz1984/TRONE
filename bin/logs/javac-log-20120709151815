@@ -1,0 +1,88 @@
+../src/pt/ul/fc/di/navigators/trone/xtests/ListsAndQueueTests.java:26: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.List<T>
+        List syncList = Collections.synchronizedList(new ArrayList());
+                                                     ^
+../src/pt/ul/fc/di/navigators/trone/xtests/ListsAndQueueTests.java:26: warning: [unchecked] unchecked method invocation: <T>synchronizedList(java.util.List<T>) in java.util.Collections is applied to (java.util.ArrayList)
+        List syncList = Collections.synchronizedList(new ArrayList());
+                                                    ^
+../src/pt/ul/fc/di/navigators/trone/xtests/ListsAndQueueTests.java:56: warning: [unchecked] unchecked call to add(E) as a member of the raw type java.util.ArrayList
+                al.add(new Event());
+                      ^
+../src/pt/ul/fc/di/navigators/trone/xtests/ListsAndQueueTests.java:70: warning: [unchecked] unchecked call to add(E) as a member of the raw type java.util.LinkedList
+                ll.add(new Event());
+                      ^
+../src/pt/ul/fc/di/navigators/trone/xtests/ListsAndQueueTests.java:106: warning: [unchecked] unchecked call to add(E) as a member of the raw type java.util.List
+                syncList.add(new Event());
+                            ^
+5 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(java.util.Collection<? extends E>) as a member of the raw type java.util.ArrayList
+            a.addAll(listOfEvents);
+                    ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+3 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(java.util.Collection<? extends E>) as a member of the raw type java.util.ArrayList
+            a.addAll(listOfEvents);
+                    ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+3 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(java.util.Collection<? extends E>) as a member of the raw type java.util.ArrayList
+            a.addAll(listOfEvents);
+                    ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+3 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(java.util.Collection<? extends E>) as a member of the raw type java.util.ArrayList
+            a.addAll(listOfEvents);
+                    ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+3 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(java.util.Collection<? extends E>) as a member of the raw type java.util.ArrayList
+            a.addAll(listOfEvents);
+                    ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+found   : java.util.ArrayList
+required: java.util.Collection<? extends pt.ul.fc.di.navigators.trone.data.Event>
+        listOfEvents.addAll(eventsToSend);
+                            ^
+3 warnings
