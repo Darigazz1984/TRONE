@@ -23,6 +23,10 @@ public class IdGenerator {
         return Long.toString(RandomNumbers.getLongRandomNumber());
     }
     
+    public static int getUniqueIdInt(){
+        return (int)(RandomNumbers.getLongRandomNumber());
+    }
+    
     public static String getUniqueIdString() {
         NumberFormat formatter = new DecimalFormat("###.####");  
         String f = formatter.format(RandomNumbers.getDoubleRandomNumber());  

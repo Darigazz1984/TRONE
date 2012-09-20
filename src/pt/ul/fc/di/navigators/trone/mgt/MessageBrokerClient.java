@@ -8,6 +8,7 @@ package pt.ul.fc.di.navigators.trone.mgt;
  *
  * @author smruti and kreutz
  */
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -22,7 +23,7 @@ import pt.ul.fc.di.navigators.trone.utils.IdGenerator;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 
 public class MessageBrokerClient {
-
+ 
     private ClientProxy clientProxy;
     private String localClientId;
     private static long eventIdSequenceNumber;
@@ -35,6 +36,7 @@ public class MessageBrokerClient {
     
     public MessageBrokerClient() throws FileNotFoundException, IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException {
         Log.logDebugFlush(this, "MBC: STARTING ...", Log.getLineNumber());
+        
         
         clientProxy = new ClientProxy();
         

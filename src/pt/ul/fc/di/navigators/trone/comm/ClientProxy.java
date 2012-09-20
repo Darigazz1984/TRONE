@@ -8,6 +8,9 @@ package pt.ul.fc.di.navigators.trone.comm;
  *
  * @author kreutz
  */
+import bftsmart.tom.ServiceProxy;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,11 +21,14 @@ import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigClientManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigNetManager;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
+import pt.ul.fc.di.navigators.trone.utils.IdGenerator;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 import pt.ul.fc.di.navigators.trone.utils.ServerInfo;
 
 public class ClientProxy {
-
+    
+    private ServiceProxy longTermServiceProxy;
+    private int clientID;
     static ConfigNetManager netConfig;
     static ConfigClientManager clientConfig;
     static RequestCache requestCache;
@@ -37,9 +43,9 @@ public class ClientProxy {
 
     public ClientProxy() throws FileNotFoundException, IOException {
         Log.logDebugFlush(this, "CLIENT PROXY STARTING ... ", Log.getLineNumber());
-
+        
         netConfig = new ConfigNetManager("netConfig.props");
-
+        clientID = IdGenerator.getUniqueIdInt();
         clientConfig = new ConfigClientManager("clientConfig.props");
         int minNumberOfCopies = ((netConfig.getNumberOfServers() * clientConfig.getMajorityInPercentage()) / 100); // minimal number of copies for voting
         if (minNumberOfCopies >= netConfig.getNumberOfServers()) {
@@ -62,7 +68,7 @@ public class ClientProxy {
 
         useSBFT = clientConfig.useSBFT();
         useRequestCache = true;
-
+        
         numberOfEventsToCachePerRequest = clientConfig.getNumberOfEventsToCachePerRequest();
         maxNumberOfEventsToFetchPerRequest = clientConfig.getMaxNumberOfEventsToFetchPerRequest();
         if (numberOfEventsToCachePerRequest > maxNumberOfEventsToFetchPerRequest) {
@@ -74,12 +80,32 @@ public class ClientProxy {
     }
 
     private void setupConnection() throws UnknownHostException, IOException {
+        this.longTermServiceProxy = new ServiceProxy (this.clientID);
         netConfig.setupConnections();
     }
 
     private Request sendRequestToReplicaWithLongTerm(Request req) throws UnknownHostException, IOException, ClassNotFoundException, Exception {
+        /*************************Código para utilizar o BFT-SMaRt para enviar*****************************************/
         Request localReq = null;
-
+       
+        
+        /*************************Código para utilizar o BFT-SMaRt para enviar*****************************************/
+        
+        /*
+         byte[] reply;
+         ByteArrayOutputStream request = new ByteArrayOutputStream();
+         ObjectOutputStream objWriter = new ObjectOutputStream(request);
+         objWriter.writeObject(req);
+         reply = this.longTermServiceProxy.invokeOrdered(request.toByteArray());
+        
+        /*****************************Conversão para Request*************************/ 
+        /*
+        ByteArrayInputStream resposta = new ByteArrayInputStream(reply);
+        ObjectInputStream re = new ObjectInputStream(resposta);
+        return (Request)re.readObject();
+        
+        /*****************************FIM***************************************/
+        
         try {
             if (globalServerInfo.getSocket() != null) {
 
@@ -109,6 +135,29 @@ public class ClientProxy {
     }
 
     private Request sendRequestToReplicaWithShortTerm(Request req) throws UnknownHostException, IOException, ClassNotFoundException, Exception {
+
+         /*************************Código para utilizar o BFT-SMaRt para enviar*****************************************/
+         /*
+        ServiceProxy sp = new ServiceProxy(clientID);
+        
+         byte[] reply;
+         ByteArrayOutputStream request = new ByteArrayOutputStream();
+         ObjectOutputStream objWriter = new ObjectOutputStream(request);
+         objWriter.writeObject(req);
+         reply = sp.invokeOrdered(request.toByteArray());
+        
+         sp.close();
+        /*****************************Conversão para Request*************************/ 
+        /*
+        ByteArrayInputStream resposta = new ByteArrayInputStream(reply);
+        ObjectInputStream re = new ObjectInputStream(resposta);
+        
+        return (Request)re.readObject();
+        
+        /*****************************FIM***************************************/
+        
+        
+        
         Request localReq = null;
 
         try {
@@ -157,7 +206,7 @@ public class ClientProxy {
         Log.logDebug(this, "REQ TO SEND UNIQUE ID: " + req.getUniqueId() + " REQ OBJ ID: " + req  + " METHOD: " + req.getMethod(), Log.getLineNumber());
         
         netConfig.resetServerListIterator();
-        
+        //Provavelmente aqui vais ter de substituir com o SMART, nos outros não
         if (isSBFT()) { // SBFT
             if (req.getMethod() == METHOD.PUBLISH || req.getMethod() == METHOD.PUBLISH_WITH_CACHING) {
                 useRequestCache = false;
