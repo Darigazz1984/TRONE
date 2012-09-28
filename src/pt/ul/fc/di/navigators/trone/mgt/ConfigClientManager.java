@@ -60,6 +60,13 @@ public class ConfigClientManager {
         return false;
     }
     
+    public boolean useCFT(){
+        if(configData.getIntValue("useCFT") == 1)
+            return true;
+        else
+            return false;
+    }
+    
     public long getEventTimeToLiveInMilliseconds() {
         return configData.getLongValue("eventTimeToLiveInMilliseconds");
     }
@@ -90,5 +97,16 @@ public class ConfigClientManager {
     
     public int getMaxTimeToWaitWithCaching() {
         return configData.getIntValue("maxTimeToWaitWithCaching");
+    }
+    
+    public String getConfigPath(){
+        return configData.getStringValue("configPath");
+    }
+    
+    public boolean useOrdered(){
+        if(configData.getIntValue("useOrdered") == 1)
+            return true;
+        else
+            return false;
     }
 }

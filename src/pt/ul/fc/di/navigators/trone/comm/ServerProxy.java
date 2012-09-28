@@ -8,6 +8,14 @@ package pt.ul.fc.di.navigators.trone.comm;
  *
  * @author kreutz
  */
+import bftsmart.statemanagment.ApplicationState;
+import bftsmart.tom.MessageContext;
+import bftsmart.tom.ReplicaContext;
+import bftsmart.tom.ServiceReplica;
+import bftsmart.tom.server.Recoverable;
+import bftsmart.tom.server.SingleExecutable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -44,7 +52,6 @@ public class ServerProxy {
     public ServerProxy(int replicaId) throws FileNotFoundException, IOException {
 
         Log.logDebugFlush(this, "SERVER PROXY STARTING ...", Log.getLineNumber());
-
         sharedStorage = new Storage(replicaId);
         sharedServerConfig = new ConfigServerManager("netConfig.props", "serverConfig.props");
         createChannelsFromConfig();
@@ -70,12 +77,12 @@ public class ServerProxy {
 
         ServerInfo si = sharedServerConfig.getLocalServerInfo(serverIndex);
 
-        if (si != null) {
-
+        if (si != null && sharedServerConfig.useCFT()) {
+            
             sharedServerSocketForShortTerm = new ServerSocket(si.getPortForShortTerm());
             // start SHORT term connection threads
             if (sharedServerConfig.enableShortTermConnections()) {
-                Log.logOut(this, "starting " + sharedServerConfig.getNumberOfThreadsForShortTermConnections() + " threads for SHORT term connections on PORT: " + si.getPortForShortTerm(), Log.getLineNumber());
+                Log.logOut(this, "Starting " + sharedServerConfig.getNumberOfThreadsForShortTermConnections() + " threads for SHORT term connections on PORT: " + si.getPortForShortTerm(), Log.getLineNumber());
                 for (int i = 0; i < sharedServerConfig.getNumberOfThreadsForShortTermConnections(); i++) {
                     ServerProxyThreadShortTermConn newThread = new ServerProxyThreadShortTermConn(sharedStorage, sharedServerSocketForShortTerm, sharedServerConfig, sharedReplicaId);
                     newThread.start();
@@ -85,21 +92,29 @@ public class ServerProxy {
             sharedServerSocketForLongTerm = new ServerSocket(si.getPortForLongTerm());
             // start LONG term connection threads
             if (sharedServerConfig.enableLongTermConnections()) {
-                Log.logOut(this, "starting " + sharedServerConfig.getNumberOfThreadsForLongTermConnections() + " threads for LONG term connections on PORT: " + si.getPortForLongTerm(), Log.getLineNumber());
+                Log.logOut(this, "Starting " + sharedServerConfig.getNumberOfThreadsForLongTermConnections() + " threads for LONG term connections on PORT: " + si.getPortForLongTerm(), Log.getLineNumber());
                 for (int i = 0; i < sharedServerConfig.getNumberOfThreadsForLongTermConnections(); i++) {
                     ServerProxyThreadLongTermConn newThread = new ServerProxyThreadLongTermConn(sharedStorage, sharedServerSocketForLongTerm, sharedServerConfig, sharedReplicaId);
                     newThread.start();
                 }
             }
-
-            if (sharedServerConfig.enableGarbageCollector()) {
-                Log.logOut(this, "starting 1 threads for GARBAGE COLLECTION", Log.getLineNumber());
-                ServerStorageGarbageCollectorThread newT = new ServerStorageGarbageCollectorThread(sharedStorage, sharedServerConfig);
-                newT.start();
-            }
-        } else {
+            
+         } else {
             Log.logWarning(this, "no server info for index " + serverIndex, Log.getLineNumber());
         }
+
+        if (sharedServerConfig.enableGarbageCollector()) {
+            Log.logOut(this, "Starting 1 threads for GARBAGE COLLECTION", Log.getLineNumber());
+            ServerStorageGarbageCollectorThread newT = new ServerStorageGarbageCollectorThread(sharedStorage, sharedServerConfig);
+            newT.start();
+        }
+        
+        if(sharedServerConfig.useBFT()){
+            Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
+            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex);
+            
+        }
+       
     }
 }
 
@@ -471,6 +486,240 @@ class ServerProxyThreadLongTermConn extends Thread {
         }
     }
 }
+
+
+
+
+class BftServer extends Thread implements SingleExecutable, Recoverable{
+    private Storage storage;
+    private int replicaId;
+    private ServiceReplica serviceReplica;
+    private Log logger;
+    private MessageBrokerServer thMessageBroker;
+    private ConfigServerManager configServer;
+    private ReplicaContext rctx;
+    
+    public BftServer( Storage sto, ConfigServerManager scm, int replicaId){
+        this.storage = sto;
+        this.replicaId = replicaId;
+        this.configServer = scm;
+        this.thMessageBroker = new MessageBrokerServer(scm);
+        this.logger = new Log(100);
+        Log.logInfo(this, "LAUNCHING SERVICEREPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configServer.getConfigPath() , Log.getLineNumber());
+        
+        this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
+        
+        
+    }
+    
+    
+    @Override
+    public void run(){
+        Log.logInfo(this, "LAUNCHING SERVICEREPLICA THREAD "+configServer.getConfigPath(), Log.getLineNumber());
+        logger.initSpecificCounter("NREQS", 0);
+        logger.initSpecificCounter("NREQSEVENTS", 0);
+        logger.initSpecificCounter("NRETEVENTS", 0);
+        logger.initSpecificCounter("NNULLINVOKES", 0);
+        
+    }
+    
+    
+    private Request convertByteToRequest(byte[] bytes){
+       
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+       
+        ObjectInputStream is;
+        try {
+            is = new ObjectInputStream(in);
+            return (Request)is.readObject();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    
+    @SuppressWarnings("UnusedAssignment")
+    private byte[] convertRequestToByte(Request req){
+         ByteArrayOutputStream out = new ByteArrayOutputStream();    
+         ObjectOutputStream os = null;
+        try {
+            os = new ObjectOutputStream(out);
+            os.writeObject(req);
+            logger.incrementSpecificCounter("NRETEVENTS", req.getAllEvents().size());
+            return out.toByteArray();
+        } catch (IOException ex) {
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+         return null;
+    }
+    
+    @SuppressWarnings("UnusedAssignment")
+    private Request resolveRequest(Request req) throws IOException, ClassNotFoundException{
+            Request response = new Request();
+            response.setChannelTag(req.getChannelTag());
+        
+            ArrayList<Event> events = null;
+            
+            response.setReplicaId(replicaId);
+
+            switch (req.getMethod()) {
+                  case REGISTER:
+                      if (thMessageBroker.register(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case SUBSCRIBE:
+                      if (thMessageBroker.subscribe(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case PUBLISH:
+                      if (thMessageBroker.publish(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case PUBLISH_WITH_CACHING:
+                      if (thMessageBroker.publishWithCaching(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case POLL:
+                      events = thMessageBroker.poll(req, storage);
+                      if (events != null) {
+                        response.addAllEvents(events);
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case POLL_EVENTS_FROM_CHANNEL:
+                      events = thMessageBroker.pollEventsFromChannel(req, storage);
+                      if (events != null) {
+                        response.setOperationStatus(true);
+                        response.addAllEvents(events);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case UNREGISTER:
+                      if (thMessageBroker.unRegister(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case UNSUBSCRIBE:
+                      if (thMessageBroker.unSubscribe(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case UNSUBSCRIBE_FROM_ALL_CHANNELS:
+                      if (thMessageBroker.unSubscribeFromAllChannels(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  case UNREGISTER_FROM_ALL_CHANNELS:
+                      if (thMessageBroker.unRegisterFromAllChannels(req, storage)) {
+                        response.setOperationStatus(true);
+                      }else {
+                        response.setOperationStatus(false);
+                      }
+                      break;
+                  default:
+                      response.setOperationStatus(false);
+                      Log.logWarning(this, "METHOD " + req.getMethod() + " NOT SUPPORTED", Log.getLineNumber());
+                      break;
+            }
+
+            response.setId(req.getId());
+            response.setClientId(req.getClientId());
+            response.setMethod(req.getMethod());
+
+            return response;
+    }
+    
+    
+    @Override
+    public byte[] executeOrdered(byte[] command, MessageContext msgCtx) {
+        
+        System.out.println("ORDERED");
+        Request response = new Request();
+        Request req = convertByteToRequest(command);
+        
+        
+        if(req == null){
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
+            logger.incrementSpecificCounter("NNULLREQSRECV", 1);
+            response.setClientId(String.valueOf(replicaId));
+            response.setOperationStatus(false);
+            response.setMethod(METHOD.NOT_DEFINED);
+            return convertRequestToByte(response);
+        }else{
+            logger.incrementSpecificCounter("NREQS", 1);
+            logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
+            Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
+            try {
+                return convertRequestToByte((resolveRequest(req)));
+            } catch (IOException ex) {
+                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        response.setReplicaId(replicaId);
+        response.setChannelTag(req.getChannelTag());
+        response.setOperationStatus(false);
+        response.setId(req.getId());
+        response.setClientId(req.getClientId());
+        response.setMethod(req.getMethod());
+        return convertRequestToByte(response);
+    }
+
+    @Override
+    public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
+        System.out.println("UNORDERED");
+        
+        return executeOrdered(command, msgCtx);
+    }
+
+    @Override
+    public void setReplicaContext(ReplicaContext replicaContext) {
+        System.out.println("REPLICA_CONTEXT");
+        this.rctx = replicaContext;
+    }
+
+    @Override
+    public ApplicationState getState(int eid, boolean sendState) {
+        System.out.println("GET_STATE");
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int setState(ApplicationState state) {
+        System.out.println("SET_STATE");
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+}
+
+
 
 class ServerStorageGarbageCollectorThread extends Thread {
 

@@ -2,7 +2,7 @@
 
 NREPLICAS=$1
 NREPLICAS=$((NREPLICAS-1))
-JAVACMD="java -Xms256m -Xmx4g"
+JAVACMD="java -Xms256m -Xmx4g -cp ../libs/*:"
 
 for i in `seq 0 $NREPLICAS`
 do

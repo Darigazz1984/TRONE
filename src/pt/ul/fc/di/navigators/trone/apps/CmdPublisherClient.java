@@ -73,10 +73,11 @@ public class CmdPublisherClient {
                 Log.logInfoFlush(CmdPublisherClient.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
 
                 startTime = CurrentTime.getTimeInMilliseconds();
-
-
+                
+                Log.logOutFlush(xx.getClass(), "ANTES DA TAG", Log.getLineNumber());
                 clientReq = cchm.register(channelTag);
-
+                Log.logOutFlush(xx.getClass(), "DEPOIS", Log.getLineNumber());
+                
                 if (clientReq != null) {
                     Log.logInfo(CmdPublisherClient.class.getSimpleName(), "CLIENT ID: " + clientReq.getClientId() + " execution of method: " + clientReq.getMethod() + " SUCCESS: " + clientReq.isOpSuccess(), Log.getLineNumber());
                 } else {
@@ -100,6 +101,7 @@ public class CmdPublisherClient {
                             Event e = new Event();
                             e.setContent(Integer.toString(i % 10) + eventContent + Integer.toString(i % 5));
                             rReq = cchm.publishWithCaching(e, channelTag);
+                            //rReq = cchm.publish(e, channelTag);
                             if (rReq != null) {
                                 if (rReq.isOpSuccess()) {
                                     //
@@ -137,6 +139,7 @@ public class CmdPublisherClient {
                 }
 
                 cchm.unRegister(channelTag);
+                cchm.closeConnection();
 
             } catch (Exception ex) {
                 Logger.getLogger(CmdPublisherClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -144,6 +147,5 @@ public class CmdPublisherClient {
         } else {
             Log.logError(CmdPublisherClient.class.getSimpleName(), "Usage: java PublisherClientForCommandLineUse nameOfTheChannel numberOfRounds numberOfEventsPerRound timeToSleepPerRound", Log.getLineNumber());
         }
-
     }
 }

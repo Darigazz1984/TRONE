@@ -34,6 +34,12 @@ public class ServerInfo {
         myPortForLongTerm = 0;
     }
     
+    public void closeConnection() throws IOException{
+        this.mySocketOut.close();
+        this.mySocketIn.close();
+        this.mySocket.close();
+    }
+    
     public String getIP() {
         return myIP;
     }

@@ -105,4 +105,22 @@ public class ConfigServerManager {
     public int getMaxNumberOfEventsPerQueue() {
         return serverConfig.getIntValue("maxNumberOfEventsPerQueue");
     }
+    
+    public String getConfigPath(){
+        return serverConfig.getStringValue("configPath");
+    }
+    
+    public boolean useBFT(){
+        if(serverConfig.getIntValue("useBFT") == 1)
+            return true;
+        else
+            return false;
+    }
+    
+    public boolean useCFT(){
+        if(serverConfig.getIntValue("useCFT") == 1)
+            return true;
+        else
+            return false;
+    }
 }

@@ -85,4 +85,11 @@ public class ConfigNetManager {
     public void print() {
         configHandler.print();
     }
+    
+    public void closeConnection() throws IOException{
+        for(ServerInfo server : serverList){
+            server.closeConnection();
+        }
+        
+    }
 }

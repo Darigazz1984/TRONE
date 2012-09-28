@@ -1,12 +1,9 @@
 #--- Key and Value file (ip = port) ---
 #Mon Jul 09 15:21:28 WEST 2012
 mysql=-1
-numberOfThreadsForLongTermConnections=50
 logs=-1
 security=-1
-enableLongTermConnections=1
 messageTimeToLive=60000
-enableShortTermConnections=1
 dns=-1
 apache=-1
 cpu=-1
@@ -17,14 +14,22 @@ messageCleanerRoundPeriod=30000
 publisherCleanerRoundPeriod=100000
 openstack=-1
 maxNumberOfEventsPerQueue=100000
-enableGarbageCollector=1
+enableGarbageCollector=0
 subscriberCleanerRoundPeriod=100000
 dhcp=-1
-numberOfThreadsForShortTermConnections=10
 storage=-1
 iaas=-1
 subscribersPerChannel=2000
 publisherTimeToLive=200000
 subscriberTimeToLive=300000
-useLongTermConnections=1
 network=-1
+#BFT CONFIGURATION
+useBFT=1
+configPath=config/
+#CFT CONFIGURATION
+useCFT=1
+numberOfThreadsForLongTermConnections=50
+enableLongTermConnections=1
+enableShortTermConnections=1
+numberOfThreadsForShortTermConnections=10
+useLongTermConnections=1

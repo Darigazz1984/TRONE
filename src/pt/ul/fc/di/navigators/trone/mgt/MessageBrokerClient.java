@@ -45,6 +45,7 @@ public class MessageBrokerClient {
         
         localClientId = IdGenerator.getUniqueIdMD5();
         
+        
         globalRequest = new Request();
         globalRequest.setClientId(getLocalClientId());
         
@@ -178,5 +179,9 @@ public class MessageBrokerClient {
     
     public String getClientId() {
         return getLocalClientId();
+    }
+    
+    public void closeConnection() throws IOException{
+        clientProxy.closeConnection();
     }
 }

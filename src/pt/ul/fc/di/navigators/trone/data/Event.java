@@ -21,7 +21,7 @@ public class Event implements Serializable {
     private long myIdInTheChannel; // FIXME: to be used
     private long myLocalTimeStamp;
 
-    private static final long serialVersionUID = 7996973399624796147L;
+    //private static final long serialVersionUID = 7996973399624796147L;
     
     public Event() {
         super();

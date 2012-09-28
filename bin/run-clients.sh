@@ -27,7 +27,7 @@ case $PUBSUB in
   LIST="$SUBSCRIBER $PUBLISHER"
 esac
 
-JAVACMD="java -Xms256m -Xmx4g"
+JAVACMD="java -Xms256m -Xmx4g -cp ../libs/*:"
 
 for TRONECLIENT in $LIST
 do
@@ -38,7 +38,8 @@ do
         do
             if [ "$MODETORUN" = "xterm" ]
           then
-              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP; sleep 60" &
+	      LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
+              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP; sleep 60" & >> LOG
             else
               LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
               $JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP &> $LOG &
