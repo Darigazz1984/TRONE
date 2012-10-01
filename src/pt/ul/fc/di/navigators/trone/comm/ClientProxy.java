@@ -47,6 +47,7 @@ public class ClientProxy {
     private int cacheCleanUpPeriodInNumberOfRequests;
     private int sbftRequestsCounter;
     private Log logger;
+    private int numberOfFaults;
     
 
     public ClientProxy() throws FileNotFoundException, IOException {
@@ -57,16 +58,26 @@ public class ClientProxy {
         //clientID = IdGenerator.getUniqueIdInt();
         
         clientConfig = new ConfigClientManager("clientConfig.props");
-        int minNumberOfCopies = ((netConfig.getNumberOfServers() * clientConfig.getMajorityInPercentage()) / 100); // minimal number of copies for voting
+    /*    int minNumberOfCopies = ((netConfig.getNumberOfServers() * clientConfig.getMajorityInPercentage()) / 100); // minimal number of copies for voting
         if (minNumberOfCopies >= netConfig.getNumberOfServers()) {
             minNumberOfCopies = netConfig.getNumberOfServers();
             Log.logWarning(this, "number of copies equal number of server (NO FAULT is being tolerated)", Log.getLineNumber());
         }
 
         requestCache = new RequestCache(minNumberOfCopies, clientConfig.getEventTimeToLiveInMilliseconds(), clientConfig.getTimeoutForReplicaCounterReset());
+     */
         useSBFT = clientConfig.useSBFT();
         useCFT = clientConfig.useCFT();
         order = clientConfig.useOrdered();
+        numberOfFaults = clientConfig.numberOfFaults();
+        
+        if(netConfig.getNumberOfServers() == numberOfFaults){
+            Log.logWarning(this, "number of copies equal number of server (NO FAULT is being tolerated)", Log.getLineNumber());
+        }else
+            if(netConfig.getNumberOfServers() < numberOfFaults)
+                Log.logWarning(this, "number of faults higher than number of available server (NO FAULT is being tolerated)", Log.getLineNumber());
+        
+        
         if(order){
             Log.logDebug(this, "USING TOTAL ORDER", Log.getLineNumber());
         }else
@@ -133,7 +144,7 @@ public class ClientProxy {
     }
     
     
-        private Request convertByteToRequest(byte[] bytes){
+    private Request convertByteToRequest(byte[] bytes){
        
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
        
@@ -201,7 +212,6 @@ public class ClientProxy {
     private Request sendRequestToReplicaWithShortTerm(Request req) throws UnknownHostException, IOException, ClassNotFoundException, Exception {
 
         
-        
         Request localReq = null;
 
         try {
@@ -259,7 +269,38 @@ public class ClientProxy {
                localReq = this.BftSendUnorderedRequest(req);
            }
         } else { // CFT
-             Request localLoopRequest = null;
+            int counter = 0;
+            useRequestCache = false;
+            
+            while (netConfig.hasMoreServers()) {
+                globalServerInfo = netConfig.getNextServerInfo();
+
+                logger.logInfoIfCounterReached(this, "NUMBER OF EVENTS TO FETCH: " + req.getNumberOfEventsToFetch(), Log.getLineNumber());
+
+                Request localLoopRequest = null;
+                if (useLongTerm) {
+                    localLoopRequest = sendRequestToReplicaWithLongTerm(req);
+                } else {
+                    localLoopRequest = sendRequestToReplicaWithShortTerm(req);
+                }
+                counter++;
+                if (localLoopRequest != null) {
+                    logger.logInfoIfCounterReached(this, "RECEIVED REQUEST: " + localLoopRequest.getUniqueId() + " SUCCESS: " + localLoopRequest.isOpSuccess() + " N EVENTS GOT: " + localLoopRequest.getAllEvents().size(), Log.getLineNumber());
+
+                    localReq = localLoopRequest;
+                    
+                    if(counter>numberOfFaults && !clientConfig.useAllReplicasOnCFT())
+                        break;
+
+                    if (/*!clientConfig.useAllReplicasOnCFT() ||*/ req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
+                        break;
+                    }
+                    
+                } else {
+                    Log.logDebug(this, "NULL RESPONSE RECEIVED", Log.getLineNumber());
+                }
+            }
+             /*Request localLoopRequest = null;
              while (netConfig.hasMoreServers()) {
                 globalServerInfo = netConfig.getNextServerInfo();
 
@@ -272,7 +313,7 @@ public class ClientProxy {
                     localLoopRequest = sendRequestToReplicaWithShortTerm(req);
                 }
              }
-             localReq = localLoopRequest;
+             localReq = localLoopRequest;*/
             
            /* if (req.getMethod() == METHOD.PUBLISH || req.getMethod() == METHOD.PUBLISH_WITH_CACHING) {
                 useRequestCache = false;

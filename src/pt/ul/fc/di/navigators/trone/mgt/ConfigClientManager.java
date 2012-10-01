@@ -109,4 +109,10 @@ public class ConfigClientManager {
         else
             return false;
     }
+    /*
+     * Return the number of faults permited
+     */
+    public int numberOfFaults(){
+        return configData.getIntValue("numerOfFaults");
+    }
 }

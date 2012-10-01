@@ -103,13 +103,13 @@ public class ServerProxy {
             Log.logWarning(this, "no server info for index " + serverIndex, Log.getLineNumber());
         }
 
-        if (sharedServerConfig.enableGarbageCollector()) {
+        if (si != null && sharedServerConfig.enableGarbageCollector()) {
             Log.logOut(this, "Starting 1 threads for GARBAGE COLLECTION", Log.getLineNumber());
             ServerStorageGarbageCollectorThread newT = new ServerStorageGarbageCollectorThread(sharedStorage, sharedServerConfig);
             newT.start();
         }
         
-        if(sharedServerConfig.useBFT()){
+        if(si != null && sharedServerConfig.useBFT()){
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
             BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex);
             
@@ -564,7 +564,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         
             ArrayList<Event> events = null;
             
-            response.setReplicaId(replicaId);
+           // response.setReplicaId(replicaId);
 
             switch (req.getMethod()) {
                   case REGISTER:
@@ -669,6 +669,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
+            Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
             return convertRequestToByte(response);
         }else{
             logger.incrementSpecificCounter("NREQS", 1);
@@ -683,7 +684,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             }
         }
         
-        response.setReplicaId(replicaId);
+        //response.setReplicaId(replicaId);
         response.setChannelTag(req.getChannelTag());
         response.setOperationStatus(false);
         response.setId(req.getId());
