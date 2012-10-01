@@ -10,11 +10,12 @@ cacheCleanUpPeriodInNumberOfRequests=10
 configLookUpIP=127.0.0.5
 useLongTermConnections=1
 numberOfConnectionRetries=3
-numberOfEventsToCachePerRequest=10
+numberOfEventsToCachePerRequest=1
 # 1 - uses total order, 0 for unordered  NOT AVAILABLE FOR CFT
 useOrdered=1
 #CFT CONFIG - UNORDERED
 useCFT=0
+numerOfFaults=1
 useAllReplicasOnCFT=1
 #BFT CONFIG
 useSBFT=1
