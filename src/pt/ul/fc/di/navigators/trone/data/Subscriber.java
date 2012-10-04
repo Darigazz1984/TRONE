@@ -16,14 +16,12 @@ import java.util.List;
 public class Subscriber {
 
     private String myId;
-    //private List<Event> myEvents;
     private ArrayList<Event> myEvents;
     private long myLocalTimestamp;
     private int maxNumberOfEvents;
 
     public Subscriber(String id, int maxEvents) {
         myId = id;
-        //myEvents = Collections.synchronizedList(new ArrayList<Event>());
         myEvents = new ArrayList<Event>();
         myLocalTimestamp = System.currentTimeMillis();
         maxNumberOfEvents = maxEvents;
@@ -34,7 +32,6 @@ public class Subscriber {
     }
     
     public Event getNextEvent() {
-        //synchronized (myEvents) {
             Iterator it = myEvents.iterator();
 
             if (it.hasNext()) {
@@ -42,7 +39,6 @@ public class Subscriber {
                 myEvents.remove(e);
                 return e;
             }
-        //}
         return null;
     }
 
@@ -56,7 +52,7 @@ public class Subscriber {
 
     public long removeAllOldEvents(long messageTimeToLive, long currentTime) {
         ArrayList eventsToRemove = new ArrayList<Event>();
-        //synchronized (myEvents) {
+        
             for (int i = 0; i < myEvents.size(); i++) {
                 Event e = (Event) myEvents.get(i);
                 if ((e.getLocalTimestamp() + messageTimeToLive) < currentTime) {
@@ -68,8 +64,7 @@ public class Subscriber {
             while (it.hasNext()) {
                 myEvents.remove((Event)it.next());
             }
-        //}
-        
+            
         return eventsToRemove.size();
     }
     

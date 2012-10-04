@@ -71,10 +71,10 @@ public class Channel {
     }
 
     synchronized public boolean addEventToSubscribers(Event e) {
-        if (publisherHashMap.containsKey(e.getClientId())) {
-            long localTime = System.currentTimeMillis();
+        if (publisherHashMap.containsKey(e.getClientId())) { // verificação se quem envia o evento pode publicar no canal
+            //long localTime = System.currentTimeMillis(); //Deixa de ser necessário
             e.setUniqueIdWithinTheChannel(nextEventIdWithinTheChannel);
-            e.setLocalTimestamp(localTime);
+            //e.setLocalTimestamp(localTime);
             nextEventIdWithinTheChannel++;
 
             if (!subscriberHashMap.isEmpty()) {
@@ -90,7 +90,7 @@ public class Channel {
                 }
             }
 
-            publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
+            //publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
 
             return true;
         } else {
@@ -184,14 +184,14 @@ public class Channel {
 
                 long localTime;
                 localTime = System.currentTimeMillis();
-                publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
+                //publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
 
                 
                 Iterator itX = eventsToStore.iterator();
                 while (itX.hasNext()) {
                     e = (Event) itX.next();
                     e.setUniqueIdWithinTheChannel(nextEventIdWithinTheChannel);
-                    e.setLocalTimestamp(localTime);
+                    //e.setLocalTimestamp(localTime);
                     nextEventIdWithinTheChannel++;
                 }
 

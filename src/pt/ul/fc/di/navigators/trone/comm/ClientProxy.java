@@ -58,14 +58,6 @@ public class ClientProxy {
         //clientID = IdGenerator.getUniqueIdInt();
         
         clientConfig = new ConfigClientManager("clientConfig.props");
-    /*    int minNumberOfCopies = ((netConfig.getNumberOfServers() * clientConfig.getMajorityInPercentage()) / 100); // minimal number of copies for voting
-        if (minNumberOfCopies >= netConfig.getNumberOfServers()) {
-            minNumberOfCopies = netConfig.getNumberOfServers();
-            Log.logWarning(this, "number of copies equal number of server (NO FAULT is being tolerated)", Log.getLineNumber());
-        }
-
-        requestCache = new RequestCache(minNumberOfCopies, clientConfig.getEventTimeToLiveInMilliseconds(), clientConfig.getTimeoutForReplicaCounterReset());
-     */
         useSBFT = clientConfig.useSBFT();
         useCFT = clientConfig.useCFT();
         order = clientConfig.useOrdered();
@@ -289,8 +281,9 @@ public class ClientProxy {
 
                     localReq = localLoopRequest;
                     
-                    if(counter>numberOfFaults && !clientConfig.useAllReplicasOnCFT())
+                    if(counter>numberOfFaults && !clientConfig.useAllReplicasOnCFT()){
                         break;
+                    }
 
                     if (/*!clientConfig.useAllReplicasOnCFT() ||*/ req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
                         break;
@@ -300,84 +293,7 @@ public class ClientProxy {
                     Log.logDebug(this, "NULL RESPONSE RECEIVED", Log.getLineNumber());
                 }
             }
-             /*Request localLoopRequest = null;
-             while (netConfig.hasMoreServers()) {
-                globalServerInfo = netConfig.getNextServerInfo();
-
-                logger.logInfoIfCounterReached(this, "NUMBER OF EVENTS TO FETCH: " + req.getNumberOfEventsToFetch(), Log.getLineNumber());
-
-                
-                if (useLongTerm) {
-                    localLoopRequest = sendRequestToReplicaWithLongTerm(req);
-                } else {
-                    localLoopRequest = sendRequestToReplicaWithShortTerm(req);
-                }
-             }
-             localReq = localLoopRequest;*/
-            
-           /* if (req.getMethod() == METHOD.PUBLISH || req.getMethod() == METHOD.PUBLISH_WITH_CACHING) {
-                useRequestCache = false;
-            }
-            while (netConfig.hasMoreServers()) {
-                globalServerInfo = netConfig.getNextServerInfo();
-
-                logger.logInfoIfCounterReached(this, "NUMBER OF EVENTS TO FETCH: " + req.getNumberOfEventsToFetch(), Log.getLineNumber());
-
-                if (useLongTerm) {
-                    localReq = sendRequestToReplicaWithLongTerm(req);
-                } else {
-                    localReq = sendRequestToReplicaWithShortTerm(req);
-                }
-                
-                if (localReq != null && useRequestCache) {
-                    logger.logInfoIfCounterReached(this, "ADDING REQUEST tO CACHE: " + localReq.getUniqueId() + " SUCCESS: " + localReq.isOpSuccess() + " N_EVENTS GOT: " + localReq.getAllEvents().size(), Log.getLineNumber());
-
-                    Log.logDebug(this, "REQ RECEIVED TO CACHE: " + localReq.getUniqueId() + " METHOD: " + req.getMethod() + " N_EVENTS: " + localReq.getNumberOfEvents(), Log.getLineNumber());
-
-                    requestCache.addRequest(localReq);
-                    
-                } else {
-                    Log.logDebug(this, "REQUEST ID " + localReq + " USE REQUEST CACHE IS " + useRequestCache, Log.getLineNumber());
-                }
-            }
-            
-            if (useRequestCache) {
-                localReq = requestCache.getRequest(req.getUniqueId(), req.getNumberOfEventsToFetch());
-                
-                sbftRequestsCounter++;
-
-                if (sbftRequestsCounter % cacheCleanUpPeriodInNumberOfRequests == 0) {
-                    requestCache.dischargeOldRequests();
-                    requestCache.currentStats();
-                }
-            }*/
-           /* 
-            useRequestCache = false;
-            
-            while (netConfig.hasMoreServers()) {
-                globalServerInfo = netConfig.getNextServerInfo();
-
-                logger.logInfoIfCounterReached(this, "NUMBER OF EVENTS TO FETCH: " + req.getNumberOfEventsToFetch(), Log.getLineNumber());
-
-                Request localLoopRequest = null;
-                if (useLongTerm) {
-                    localLoopRequest = sendRequestToReplicaWithLongTerm(req);
-                } else {
-                    localLoopRequest = sendRequestToReplicaWithShortTerm(req);
-                }
-                if (localLoopRequest != null) {
-                    logger.logInfoIfCounterReached(this, "RECEIVED REQUEST: " + localLoopRequest.getUniqueId() + " SUCCESS: " + localLoopRequest.isOpSuccess() + " N EVENTS GOT: " + localLoopRequest.getAllEvents().size(), Log.getLineNumber());
-
-                    localReq = localLoopRequest;
-
-                    if (!clientConfig.useAllReplicasOnCFT() || req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
-                        break;
-                    }
-                    
-                } else {
-                    Log.logDebug(this, "NULL RESPONSE RECEIVED", Log.getLineNumber());
-                }
-            }*/
+             
         }
 
         if (localReq == null) {

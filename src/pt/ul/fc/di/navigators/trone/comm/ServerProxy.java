@@ -563,8 +563,6 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setChannelTag(req.getChannelTag());
         
             ArrayList<Event> events = null;
-            
-           // response.setReplicaId(replicaId);
 
             switch (req.getMethod()) {
                   case REGISTER:
@@ -658,7 +656,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     @Override
     public byte[] executeOrdered(byte[] command, MessageContext msgCtx) {
         
-        System.out.println("ORDERED");
+      //  System.out.println("ORDERED");
         Request response = new Request();
         Request req = convertByteToRequest(command);
         
@@ -695,7 +693,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
 
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        System.out.println("UNORDERED");
+        //System.out.println("UNORDERED");
         
         return executeOrdered(command, msgCtx);
     }

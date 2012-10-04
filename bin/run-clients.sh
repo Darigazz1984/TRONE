@@ -13,7 +13,7 @@ MODETORUN=$1
 shift
 
 NROUNDS=10
-NEVENTS=1000
+NEVENTS=100
 NMILLITOSLEEP=100
 
 case $PUBSUB in
@@ -39,7 +39,7 @@ do
             if [ "$MODETORUN" = "xterm" ]
           then
 	      LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
-              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP; sleep 60" & >> LOG
+              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP; sleep 60" &
             else
               LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
               $JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP &> $LOG &

@@ -71,6 +71,7 @@ public class CmdSubscriberClient {
                         ex.setContent(Integer.toString(i % 10) + Integer.toString(i % 5));
                     xx.addEvent(ex);
                 }
+                
 
                 startTime = CurrentTime.getTimeInMilliseconds();
 
@@ -79,23 +80,23 @@ public class CmdSubscriberClient {
                 clientReq = cchm.subscribe(channelTag);
 
                 Log.logInfo(CmdSubscriberClient.class.getSimpleName(), "CLIENT ID: " + clientReq.getClientId() + " method: " + clientReq.getMethod() + " tag: " + clientReq.getChannelTag(), Log.getLineNumber());
-
+                Thread.sleep(4000);
                 if (clientReq.isOpSuccess()) {
 
-                    Thread.sleep(4000);
+
 
                     Log.logInfo(CmdSubscriberClient.class.getSimpleName(), "CLIENT START TIME: " + System.currentTimeMillis(), Log.getLineNumber());
 
                     Request cReq = new Request();
                     long spendTime = 0;
 
-                    //for (int round = 0; round < numberOfRounds+1; round++) {
+                  
                     for (int round = 0; round < numberOfRounds; round++) {
 
                         long roundTime = System.currentTimeMillis();
 
                         int nEvents = 0;
-                        //for (int i = 0; i < (numberOfEventsPerRound); i++) {
+                      
                         for (int i = 0; i < (numberOfEventsPerRound / cchm.getNumberOfEventsPerCachedRequest() + 1); i++) {
                             cReq = cchm.pollEventsFromChannel(channelTag, cchm.getNumberOfEventsPerPoll());
                             if (cReq != null) {
@@ -130,6 +131,8 @@ public class CmdSubscriberClient {
                     cchm.unSubscribe(channelTag);
 
                     endTime = CurrentTime.getTimeInMilliseconds();
+                    cchm.closeConnection();
+                    Log.logInfo(CmdPublisherClient.class.getSimpleName(), "CLOSING CONNECTION", Log.getLineNumber());
 
                     Log.logInfo(CmdSubscriberClient.class.getSimpleName(), "CLIENT END TIME: " + System.currentTimeMillis(), Log.getLineNumber());
 
@@ -140,12 +143,14 @@ public class CmdSubscriberClient {
                 } else {
                     Log.logWarning(CmdSubscriberClient.class.getSimpleName(), "could not subscribe SUBSCRIBER ID: " + clientReq.getClientId() + " within channel: " + clientReq.getChannelTag(), Log.getLineNumber());
                 }
+                
+               
             } catch (Exception ex) {
                 Logger.getLogger(CmdSubscriberClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             Log.logError(CmdSubscriberClient.class.getSimpleName(), "Usage: java PublisherClientForCommandLineUse nameOfTheChannel numberOfRounds numberOfEventsPerRound timeToSleepPerRound", Log.getLineNumber());
         }
-
+        
     }
 }

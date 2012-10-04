@@ -14,7 +14,6 @@ messageCleanerRoundPeriod=30000
 publisherCleanerRoundPeriod=100000
 openstack=-1
 maxNumberOfEventsPerQueue=100000
-enableGarbageCollector=0
 subscriberCleanerRoundPeriod=100000
 dhcp=-1
 storage=-1
@@ -24,7 +23,7 @@ publisherTimeToLive=200000
 subscriberTimeToLive=300000
 network=-1
 #BFT CONFIGURATION
-useBFT=1
+useBFT=0
 configPath=config/
 #CFT CONFIGURATION
 useCFT=1
@@ -33,3 +32,6 @@ enableLongTermConnections=1
 enableShortTermConnections=1
 numberOfThreadsForShortTermConnections=10
 useLongTermConnections=1
+# REQUIRES SYNCHRONIZED WATCHES - 1 = active
+enableGarbageCollector=0
+

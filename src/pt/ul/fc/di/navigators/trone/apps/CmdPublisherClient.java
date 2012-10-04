@@ -140,7 +140,8 @@ public class CmdPublisherClient {
 
                 cchm.unRegister(channelTag);
                 cchm.closeConnection();
-
+                Log.logInfo(CmdPublisherClient.class.getSimpleName(), "CLOSING CONNECTION", Log.getLineNumber());
+                
             } catch (Exception ex) {
                 Logger.getLogger(CmdPublisherClient.class.getName()).log(Level.SEVERE, null, ex);
             }
