@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicLong;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 
 /**
@@ -16,8 +18,14 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  */
 public class Storage extends HashMap {
 
-    //private static Map<String, Channel> syncChannelHashMap;
+    
     private static HashMap<String, Channel> syncChannelHashMap;
+    
+    private static HashMap<String, Channel> bftTotalOrderChannels;
+    private static HashMap<String, Channel> bftNoOrderChannels;
+    private static HashMap<String, Channel> cftNoOrderChannels;
+    private static HashMap<String, Channel> cftTotalOrderChannels;
+    
     private static int myReplicaId;
     private Log logger;
     private static AtomicLong eventsPub;
@@ -27,8 +35,9 @@ public class Storage extends HashMap {
     
     
     public Storage(int replicaId) {
-        //syncChannelHashMap = Collections.synchronizedMap(new HashMap<String, Channel>());
+        
         syncChannelHashMap = new HashMap<String, Channel>();
+        
         myReplicaId = replicaId;
         logger = new Log(100);
         eventsPub = new AtomicLong(0);
@@ -40,7 +49,11 @@ public class Storage extends HashMap {
     public void insertNewChannel(String tag) {
         syncChannelHashMap.put(tag.toLowerCase(), new Channel(tag.toLowerCase(), myReplicaId));
     }
-
+    
+    public void insertChannel(Channel ch){
+        syncChannelHashMap.put(ch.getTag().toLowerCase(), ch);
+    }
+    
     public boolean insertNewPublisher(Publisher pub, String tag) {
         Channel c = syncChannelHashMap.get(tag.toLowerCase());
         if (c != null) {
@@ -278,5 +291,12 @@ public class Storage extends HashMap {
         }
         return null;
     }
-        
+    
+    public QoP getQoP(String tag){
+        return syncChannelHashMap.get(tag).getQoP();
+    }
+    
+    public QoSchannel getQoS(String tag){
+        return syncChannelHashMap.get(tag).getQoS();
+    }
 }

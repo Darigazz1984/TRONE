@@ -50,11 +50,12 @@ public class ClientProxy {
     private int numberOfFaults;
     
 
-    public ClientProxy() throws FileNotFoundException, IOException {
+    public ClientProxy(int id) throws FileNotFoundException, IOException {
         Random rand = new Random(System.currentTimeMillis());
         Log.logDebugFlush(this, "CLIENT PROXY STARTING ... ", Log.getLineNumber());
         netConfig = new ConfigNetManager("netConfig.props");
-        clientID = (rand.nextInt(100)%9);
+        clientID = id;
+        //clientID = (rand.nextInt(100)%9);
         //clientID = IdGenerator.getUniqueIdInt();
         
         clientConfig = new ConfigClientManager("clientConfig.props");

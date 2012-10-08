@@ -34,11 +34,11 @@ public class MessageBrokerClient {
     private ArrayList<Event> eventCachingArray;
     //private long firstCachedEventTime;
     
-    public MessageBrokerClient() throws FileNotFoundException, IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException {
+    public MessageBrokerClient(int id) throws FileNotFoundException, IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException {
         Log.logDebugFlush(this, "MBC: STARTING ...", Log.getLineNumber());
         
         
-        clientProxy = new ClientProxy();
+        clientProxy = new ClientProxy(id);
         
         eventIdSequenceNumber = 0;
         requestIdSequenceNumber = 0;

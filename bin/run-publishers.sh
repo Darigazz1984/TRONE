@@ -1,12 +1,16 @@
-[ $1 ] && [ $2 ] && [ $3 ] && [ $4 ] || { echo "Usage: $0 PubOrSub(1 = Pub; 2 = Sub; 3 = Both) clientsPerChannel mode(xterm|background) channelTag1 channelTag2 channelTag3 ... "; exit; }
+[ $1 ] && [ $2 ] && [ $3 ] && [ $4 ] || { echo "Usage: $0 PubOrSub(1 = Pub; 2 = Sub; 3 = Both) clientsPerChannel startingID mode(xterm|background) channelTag1 channelTag2 channelTag3 ... "; exit; }
 
 PUBLISHER=pt/ul/fc/di/navigators/trone/apps/CmdPublisherClient
 SUBSCRIBER=pt/ul/fc/di/navigators/trone/apps/CmdSubscriberClient
+
 
 PUBSUB=$1
 shift 
 
 CLIENTSPERCHANNEL=$1
+shift
+
+ID=$1
 shift
 
 MODETORUN=$1
@@ -21,10 +25,10 @@ case $PUBSUB in
   LIST=$PUBLISHER
   ;;
 2)
-  LIST=$SUBSCRIBER
+  LIST=$PUBLISHER
   ;;
 3)
-  LIST="$SUBSCRIBER $PUBLISHER"
+  LIST=$PUBLISHER
 esac
 
 JAVACMD="java -Xms256m -Xmx4g -cp ../libs/*:"
@@ -39,10 +43,14 @@ do
             if [ "$MODETORUN" = "xterm" ]
           then
 	      LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
-              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP; sleep 60" &
+              xterm -T "RUNNING $NAME $i for channel $CHANNELTAG" -e "$JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP $ID ; sleep 60" &
+	      ID=$((ID+i))
+
             else
               LOG=$NAME-$CHANNELTAG-$i-logs-`date +%Y%m%d%H%M%S`
-              $JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP &> $LOG &
+              $JAVACMD $TRONECLIENT $CHANNELTAG $NROUNDS $NEVENTS $NMILLITOSLEEP $ID &> $LOG &
+              ID=$((ID+i))
+
               echo "INFO: running $NAME with logs on $LOG"
             fi
         done

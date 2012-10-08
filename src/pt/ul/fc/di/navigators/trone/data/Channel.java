@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import pt.ul.fc.di.navigators.trone.utils.CurrentTime;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 
 /**
@@ -21,9 +23,33 @@ public class Channel {
     private HashMap<String, Subscriber> subscriberHashMap;
     private long nextEventIdWithinTheChannel;
     private Log logger;
+    private QoP faultLevel;
+    private QoSchannel channelOrdering;
     
-    public Channel(String tag, int replicaId) {
+    public Channel(String tag, int replicaId){
         myTag = tag;
+        subscriberHashMap = new HashMap<String, Subscriber>();
+        publisherHashMap = new HashMap<String, Publisher>();
+        nextEventIdWithinTheChannel = 0;
+        logger = new Log(100);
+    }
+    
+    public Channel(String tag, int replicaId, QoP flt, QoSchannel order) {
+        Log.logOut(this, "CREATING CHANNEL WITH TAG: "+tag, replicaId);
+        switch(flt){
+            case CFT:
+                Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: CFT", Log.getLineNumber());
+                break;
+            case BFT:
+                Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: BFT", Log.getLineNumber());
+                break;
+            default:
+                Log.logWarning(this, "PROBS", Log.getLineNumber());
+                break;
+        }
+        myTag = tag;
+        faultLevel = flt;
+        channelOrdering = order;
         subscriberHashMap = new HashMap<String, Subscriber>();
         publisherHashMap = new HashMap<String, Publisher>();
         nextEventIdWithinTheChannel = 0;
@@ -32,6 +58,14 @@ public class Channel {
 
     public String getTag() {
         return myTag;
+    }
+    
+    public QoP getQoP(){
+        return faultLevel;
+    }
+    
+    public QoSchannel getQoS(){
+        return channelOrdering;
     }
 
     synchronized public boolean addPublisher(Publisher pub) {

@@ -32,9 +32,13 @@ import java.util.logging.Logger;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.data.Storage;
+import pt.ul.fc.di.navigators.trone.mgt.ConfigChannelManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigServerManager;
 import pt.ul.fc.di.navigators.trone.mgt.MessageBrokerServer;
+import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
+import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 import pt.ul.fc.di.navigators.trone.utils.ServerInfo;
 
@@ -68,7 +72,10 @@ public class ServerProxy {
         Iterator itr = channelTags.iterator();
         while (itr.hasNext()) {
             String tag = (String) itr.next();
-            sharedStorage.insertNewChannel(tag);
+            String path = "channels/"+tag.toLowerCase()+".props";
+            ConfigChannelManager ccm = new ConfigChannelManager(path);
+            sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+            //sharedStorage.insertNewChannel(tag);
             Log.logOut(this, "channel with TAG: " + tag + " CREATED: " + sharedStorage.hasChannel(tag), Log.getLineNumber());
         }
     }
@@ -166,10 +173,10 @@ class ServerProxyThreadShortTermConn extends Thread {
                     thInReq = (Request) cIn.readObject();
                 }
 
-                if (thInReq != null) {
+                if (thInReq != null &&  thStorage.getQoP(thInReq.getChannelTag()).equals(QoP.CFT)) {
 
                     Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
-
+                    
                     switch (thInReq.getMethod()) {
                         case REGISTER:
                             if (thMessageBroker.register(thInReq, thStorage)) {
@@ -347,7 +354,7 @@ class ServerProxyThreadLongTermConn extends Thread {
                         logger.incrementSpecificCounter("NREQS", 1);
                         logger.incrementSpecificCounter("NREQSEVENTS", thInReq.getNumberOfEventsToFetch());
 
-                        if (thInReq != null) {
+                        if (thInReq != null &&  thStorage.getQoP(thInReq.getChannelTag()).equals(QoP.CFT)) {
 
                             Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
 
@@ -520,6 +527,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         logger.initSpecificCounter("NREQSEVENTS", 0);
         logger.initSpecificCounter("NRETEVENTS", 0);
         logger.initSpecificCounter("NNULLINVOKES", 0);
+        logger.initSpecificCounter("WORNGCONFIGS", 0);
         
     }
     
@@ -656,9 +664,14 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     @Override
     public byte[] executeOrdered(byte[] command, MessageContext msgCtx) {
         
-      //  System.out.println("ORDERED");
         Request response = new Request();
-        Request req = convertByteToRequest(command);
+        Request req = null;
+        
+        if(command != null )
+            req = convertByteToRequest(command);
+        else
+            Logger.getLogger(BftServer.class.getName()).log(Level.WARNING, null, "REQUEST VEIO A NULL");
+        
         
         
         if(req == null){
@@ -670,16 +683,25 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
             return convertRequestToByte(response);
         }else{
-            logger.incrementSpecificCounter("NREQS", 1);
-            logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
-            Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
-            try {
-                return convertRequestToByte((resolveRequest(req)));
-            } catch (IOException ex) {
-                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+            if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.TOTAL_ORDER)){
+                logger.incrementSpecificCounter("NREQS", 1);
+                logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
+                Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
+                try {
+                    return convertRequestToByte((resolveRequest(req)));
+                } catch (IOException ex) {
+                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
+                logger.incrementSpecificCounter("WORNGCONFIGS", 1);
+                response.setClientId(String.valueOf(replicaId));
+                response.setOperationStatus(false);
+                response.setMethod(METHOD.WRONG_CONFIGURATIONS);
             }
+               
         }
         
         //response.setReplicaId(replicaId);
@@ -693,9 +715,54 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
 
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        //System.out.println("UNORDERED");
         
-        return executeOrdered(command, msgCtx);
+        Request response = new Request();
+        Request req = null;
+        
+        if(command != null )
+            req = convertByteToRequest(command);
+        else
+            Logger.getLogger(BftServer.class.getName()).log(Level.WARNING, null, "REQUEST VEIO A NULL");
+        
+        
+        
+        if(req == null){
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
+            logger.incrementSpecificCounter("NNULLREQSRECV", 1);
+            response.setClientId(String.valueOf(replicaId));
+            response.setOperationStatus(false);
+            response.setMethod(METHOD.NOT_DEFINED);
+            Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
+            return convertRequestToByte(response);
+        }else{
+            if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.NO_ORDER)){
+                logger.incrementSpecificCounter("NREQS", 1);
+                logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
+                Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
+                try {
+                    return convertRequestToByte((resolveRequest(req)));
+                } catch (IOException ex) {
+                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }else{
+                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
+                logger.incrementSpecificCounter("WORNGCONFIGS", 1);
+                response.setClientId(String.valueOf(replicaId));
+                response.setOperationStatus(false);
+                response.setMethod(METHOD.WRONG_CONFIGURATIONS);
+            }
+               
+        }
+        
+        //response.setReplicaId(replicaId);
+        response.setChannelTag(req.getChannelTag());
+        response.setOperationStatus(false);
+        response.setId(req.getId());
+        response.setClientId(req.getClientId());
+        response.setMethod(req.getMethod());
+        return convertRequestToByte(response);
     }
 
     @Override

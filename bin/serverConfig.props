@@ -1,29 +1,32 @@
 #--- Key and Value file (ip = port) ---
 #Mon Jul 09 15:21:28 WEST 2012
+#NAME THE CHANNELS BELOW channelname=-1
+#CHANNEL DESCRIPTION SHOULD BE PUT IN FOLDER CHANNELS WITH LOWER CASE NAME EX: network.props
+network=-1
+dhcp=-1
+storage=-1
+iaas=-1
+openstack=-1
 mysql=-1
 logs=-1
 security=-1
-messageTimeToLive=60000
 dns=-1
 apache=-1
 cpu=-1
 opennebula=-1
-publishersPerChannel=2000
 smtp=-1
+#REPLICA CONFIGURATION
+publishersPerChannel=2000
+messageTimeToLive=60000
 messageCleanerRoundPeriod=30000
 publisherCleanerRoundPeriod=100000
-openstack=-1
 maxNumberOfEventsPerQueue=100000
 subscriberCleanerRoundPeriod=100000
-dhcp=-1
-storage=-1
-iaas=-1
 subscribersPerChannel=2000
 publisherTimeToLive=200000
 subscriberTimeToLive=300000
-network=-1
 #BFT CONFIGURATION
-useBFT=0
+useBFT=1
 configPath=config/
 #CFT CONFIGURATION
 useCFT=1

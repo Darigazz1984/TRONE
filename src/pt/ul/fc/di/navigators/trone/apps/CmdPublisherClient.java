@@ -29,7 +29,7 @@ public class CmdPublisherClient {
             String channelTag;
             Request clientReq;
             MessageBrokerClient cchm;
-            int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound;
+            int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound, id;
             long startTime, endTime;
             int eventContentSize;
 
@@ -37,11 +37,12 @@ public class CmdPublisherClient {
             numberOfRounds = Integer.parseInt(args[1]);
             numberOfEventsPerRound = Integer.parseInt(args[2]);
             timeToSleepPerRound = Integer.parseInt(args[3]);
+            id = Integer.parseInt(args[4]);
             
-            if (args.length < 5) {
+            if (args.length < 6) {
                 eventContentSize = Define.DEFAULTEVENTSIZE;
             } else {
-                eventContentSize = Integer.parseInt(args[4]);
+                eventContentSize = Integer.parseInt(args[5]);
             }
 
             try {
@@ -58,7 +59,7 @@ public class CmdPublisherClient {
                 else
                     eventContent = new String();
 
-                cchm = new MessageBrokerClient();
+                cchm = new MessageBrokerClient(id);
 
                 Request xx = new Request();
                 for (int i = 0; i < cchm.getNumberOfEventsPerCachedRequest(); i++) {
@@ -74,9 +75,7 @@ public class CmdPublisherClient {
 
                 startTime = CurrentTime.getTimeInMilliseconds();
                 
-                Log.logOutFlush(xx.getClass(), "ANTES DA TAG", Log.getLineNumber());
                 clientReq = cchm.register(channelTag);
-                Log.logOutFlush(xx.getClass(), "DEPOIS", Log.getLineNumber());
                 
                 if (clientReq != null) {
                     Log.logInfo(CmdPublisherClient.class.getSimpleName(), "CLIENT ID: " + clientReq.getClientId() + " execution of method: " + clientReq.getMethod() + " SUCCESS: " + clientReq.isOpSuccess(), Log.getLineNumber());
@@ -91,7 +90,7 @@ public class CmdPublisherClient {
 
                     long spendTime = 0;
                     int numberOfEventsSent = 0;
-                    //Event e = new Event();
+                    
                     Request rReq;
                     for (int round = 0; round < numberOfRounds; round++) {
 
@@ -101,7 +100,7 @@ public class CmdPublisherClient {
                             Event e = new Event();
                             e.setContent(Integer.toString(i % 10) + eventContent + Integer.toString(i % 5));
                             rReq = cchm.publishWithCaching(e, channelTag);
-                            //rReq = cchm.publish(e, channelTag);
+                            
                             if (rReq != null) {
                                 if (rReq.isOpSuccess()) {
                                     //

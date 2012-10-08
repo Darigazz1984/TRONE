@@ -29,7 +29,7 @@ public class CmdSubscriberClient {
             String channelTag;
             Request clientReq;
             MessageBrokerClient cchm;
-            int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound;
+            int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound, id;
             int numberOfEventsReceived = 0;
             long startTime, endTime;
             int eventContentSize;
@@ -38,11 +38,12 @@ public class CmdSubscriberClient {
             numberOfRounds = Integer.parseInt(args[1]);
             numberOfEventsPerRound = Integer.parseInt(args[2]);
             timeToSleepPerRound = Integer.parseInt(args[3]);
+            id = Integer.parseInt(args[4]);
 
-            if (args.length < 5) {
+            if (args.length < 6) {
                 eventContentSize = Define.DEFAULTEVENTSIZE;
             } else {
-                eventContentSize = Integer.parseInt(args[4]);
+                eventContentSize = Integer.parseInt(args[5]);
             }
 
             try {
@@ -60,7 +61,7 @@ public class CmdSubscriberClient {
 
                 Log.logInfoFlush(CmdSubscriberClient.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
 
-                cchm = new MessageBrokerClient();
+                cchm = new MessageBrokerClient(id);
 
                 Request xx = new Request();
                 for (int i = 0; i < cchm.getNumberOfEventsPerCachedRequest(); i++) {
