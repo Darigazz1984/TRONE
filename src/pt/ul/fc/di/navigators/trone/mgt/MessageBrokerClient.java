@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import pt.ul.fc.di.navigators.trone.comm.ClientProxy;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
-import pt.ul.fc.di.navigators.trone.utils.CurrentTime;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
 import pt.ul.fc.di.navigators.trone.utils.IdGenerator;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -54,7 +53,6 @@ public class MessageBrokerClient {
         
         eventCachingArray = new ArrayList<Event>();
         
-        //firstCachedEventTime = 0;
         
         Log.logDebugFlush(this, "MBC: UP AND RUNNING ...", Log.getLineNumber());
     }
@@ -78,7 +76,6 @@ public class MessageBrokerClient {
 
     public Request subscribe(String tag) throws IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException, Exception {
         globalRequest.prepare(requestNextId());
-        //r.setClientId(getLocalClientId());
         globalRequest.setMethod(METHOD.SUBSCRIBE);
         globalRequest.setChannelTag(tag);
         return clientProxy.invoke(globalRequest);
@@ -87,7 +84,7 @@ public class MessageBrokerClient {
     public Request publish(Event e, String tag) throws ClassNotFoundException, IOException, UnknownHostException, NoSuchAlgorithmException, Exception {
         globalRequest.prepare(requestNextId());
         globalRequest.setMethod(METHOD.PUBLISH);
-        //globalRequest.setChannelTag(tag);
+        globalRequest.setChannelTag(tag);
         e.setClientId(getLocalClientId());
         e.setContent(e.getContent());
         e.setId(eventIdSequenceNumber);
@@ -108,12 +105,12 @@ public class MessageBrokerClient {
         if (eventCachingArray.size() >= clientProxy.getNumberOfEventsToCachePerRequest()) {
             Log.logDebug(this, "CACHING COUNTER: " + eventCachingArray.size() + " MAX PER REQUEST: " + clientProxy.getNumberOfEventsToCachePerRequest(), Log.getLineNumber());
             globalRequest.prepare(requestNextId());
-            //globalRequest.setChannelTag(tag);
+            globalRequest.setChannelTag(tag);
             globalRequest.setMethod(METHOD.PUBLISH_WITH_CACHING);
             globalRequest.setArrayOfEvents(eventCachingArray);
             Log.logDebug(this, "REQ ID BEFORE INVOKE: " + globalRequest, Log.getLineNumber());
             Request res = clientProxy.invoke(globalRequest);
-            //eventCachingArray = new ArrayList<Event>();
+            
             eventCachingArray.clear();
             return res;
         }
@@ -122,7 +119,7 @@ public class MessageBrokerClient {
 
     public Request pollEventsFromChannel(String tag, int numberOfEvents) throws IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException, Exception {
         globalRequest.prepare(requestNextId());
-        //globalRequest.setChannelTag(tag);
+        globalRequest.setChannelTag(tag);
         globalRequest.setMethod(METHOD.POLL_EVENTS_FROM_CHANNEL);
         if (numberOfEvents > clientProxy.getMaxNumberOfEventsToFetchPerRequest()) 
             numberOfEvents = clientProxy.getMaxNumberOfEventsToFetchPerRequest();

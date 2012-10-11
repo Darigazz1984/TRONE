@@ -16,6 +16,7 @@ import bftsmart.tom.server.Recoverable;
 import bftsmart.tom.server.SingleExecutable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,7 +27,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pt.ul.fc.di.navigators.trone.data.Event;
@@ -35,7 +35,6 @@ import pt.ul.fc.di.navigators.trone.data.Storage;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigChannelManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigServerManager;
 import pt.ul.fc.di.navigators.trone.mgt.MessageBrokerServer;
-import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
@@ -68,15 +67,15 @@ public class ServerProxy {
     }
 
     private void createChannelsFromConfig() {
-        ArrayList channelTags = sharedServerConfig.getChannelTags();
-        Iterator itr = channelTags.iterator();
-        while (itr.hasNext()) {
-            String tag = (String) itr.next();
-            String path = "channels/"+tag.toLowerCase()+".props";
-            ConfigChannelManager ccm = new ConfigChannelManager(path);
+        
+        String path = sharedServerConfig.getChannelPath();
+        File folder = new File(path);
+        File f[] = folder.listFiles();
+        for(File fileEntry: f){
+            String tag = ((fileEntry.getName()).split("[.]"))[0];
+            ConfigChannelManager ccm = new ConfigChannelManager(path+fileEntry.getName());
             sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-            //sharedStorage.insertNewChannel(tag);
-            Log.logOut(this, "channel with TAG: " + tag + " CREATED: " + sharedStorage.hasChannel(tag), Log.getLineNumber());
+            Log.logInfo(this, "channel with TAG: " + tag + " CREATED", Log.getLineNumber());
         }
     }
 
@@ -173,7 +172,7 @@ class ServerProxyThreadShortTermConn extends Thread {
                     thInReq = (Request) cIn.readObject();
                 }
 
-                if (thInReq != null &&  thStorage.getQoP(thInReq.getChannelTag()).equals(QoP.CFT)) {
+                if (thInReq != null &&  (thStorage.getQoP(thInReq.getChannelTag())).equals(QoP.CFT)) {
 
                     Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
                     
@@ -314,7 +313,7 @@ class ServerProxyThreadLongTermConn extends Thread {
 
     @Override
     public void run() {
-        //System.out.println("Thread " + this.getId() + " waiting connections at IP: " + thServerSocket.getInetAddress() + " and PORT: "+ thServerSocket.getLocalPort());
+        
 
         Socket thSocket;
         ObjectOutputStream cOut;
@@ -677,7 +676,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         if(req == null){
             Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
             logger.incrementSpecificCounter("NNULLREQSRECV", 1);
-            response.setClientId(String.valueOf(replicaId));
+            //response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
             Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
@@ -697,8 +696,8 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             }else{
                 Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
-                response.setClientId(String.valueOf(replicaId));
-                response.setOperationStatus(false);
+                //response.setClientId(String.valueOf(replicaId));
+                //response.setOperationStatus(false);
                 response.setMethod(METHOD.WRONG_CONFIGURATIONS);
             }
                
@@ -729,7 +728,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         if(req == null){
             Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
             logger.incrementSpecificCounter("NNULLREQSRECV", 1);
-            response.setClientId(String.valueOf(replicaId));
+            //response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
             Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
@@ -749,7 +748,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             }else{
                 Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
-                response.setClientId(String.valueOf(replicaId));
+                //response.setClientId(String.valueOf(replicaId));
                 response.setOperationStatus(false);
                 response.setMethod(METHOD.WRONG_CONFIGURATIONS);
             }

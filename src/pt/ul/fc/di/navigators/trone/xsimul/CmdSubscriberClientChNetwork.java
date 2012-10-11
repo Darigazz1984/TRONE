@@ -34,7 +34,8 @@ public class CmdSubscriberClientChNetwork {
         try {
             Log.logInfoFlush(CmdSubscriberClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
 
-            cchm = new MessageBrokerClient();
+            //FIX ME: THIS MUST BE CHANGED TO GET THE RIGHT CLIENT ID
+            cchm = new MessageBrokerClient(1);
 
             Log.logInfoFlush(CmdSubscriberClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
 

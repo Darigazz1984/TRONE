@@ -2,19 +2,7 @@
 #Mon Jul 09 15:21:28 WEST 2012
 #NAME THE CHANNELS BELOW channelname=-1
 #CHANNEL DESCRIPTION SHOULD BE PUT IN FOLDER CHANNELS WITH LOWER CASE NAME EX: network.props
-network=-1
-dhcp=-1
-storage=-1
-iaas=-1
-openstack=-1
-mysql=-1
-logs=-1
-security=-1
-dns=-1
-apache=-1
-cpu=-1
-opennebula=-1
-smtp=-1
+channelConfigPath=channels/
 #REPLICA CONFIGURATION
 publishersPerChannel=2000
 messageTimeToLive=60000
@@ -29,7 +17,7 @@ subscriberTimeToLive=300000
 useBFT=1
 configPath=config/
 #CFT CONFIGURATION
-useCFT=1
+useCFT=0
 numberOfThreadsForLongTermConnections=50
 enableLongTermConnections=1
 enableShortTermConnections=1

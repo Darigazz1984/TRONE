@@ -35,7 +35,6 @@ public class Channel {
     }
     
     public Channel(String tag, int replicaId, QoP flt, QoSchannel order) {
-        Log.logOut(this, "CREATING CHANNEL WITH TAG: "+tag, replicaId);
         switch(flt){
             case CFT:
                 Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: CFT", Log.getLineNumber());
@@ -123,8 +122,6 @@ public class Channel {
                     }
                 }
             }
-
-            //publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
 
             return true;
         } else {
@@ -216,8 +213,8 @@ public class Channel {
             Event e = (Event)eventsToStore.get(0);
             if (e != null && publisherHashMap.containsKey(e.getClientId())) {
 
-                long localTime;
-                localTime = System.currentTimeMillis();
+                //long localTime;
+                //localTime = System.currentTimeMillis();
                 //publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
 
                 
@@ -271,7 +268,7 @@ public class Channel {
             ArrayList<Event> events = new ArrayList<Event>();
             
             //subscriberHashMap.get(id).updateLocalTimestamp();
-            s.updateLocalTimestamp();
+            //s.updateLocalTimestamp();
                 
             if (s.queueIsNotEmply()) {
                 while ((e = s.getNextEvent()) != null && counter < numberOfEvents) {

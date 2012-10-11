@@ -26,7 +26,7 @@ public class CmdPublisherClientChSecurity {
 
         Request clientReq;
         MessageBrokerClient cchm;
-        String channelTag = "security";;
+        String channelTag = "security";
         int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound;
 
         numberOfRounds = 10;
@@ -37,7 +37,8 @@ public class CmdPublisherClientChSecurity {
 
             Log.logInfoFlush(CmdPublisherClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
 
-            cchm = new MessageBrokerClient();
+            //FIX ME: THIS MUST BE CHANGED TO GET THE RIGHT CLIENT ID
+            cchm = new MessageBrokerClient(0);
 
             Log.logInfoFlush(CmdPublisherClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
 

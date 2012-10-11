@@ -4,20 +4,20 @@ configLookUpPort=4009
 eventTimeToLiveInMilliseconds=5000
 timeoutForReplicaCounterReset=10000
 maxNumberOfEventsToFetchPerRequest=10
+numberOfEventsToCachePerRequest=10
 maxTimeToWaitWithCaching=1000
 majorityInPercentage=75
 cacheCleanUpPeriodInNumberOfRequests=10
 configLookUpIP=127.0.0.5
 useLongTermConnections=1
 numberOfConnectionRetries=3
-numberOfEventsToCachePerRequest=1
 # 1 - uses total order, 0 for unordered  NOT AVAILABLE FOR CFT
 useOrdered=1
 #CFT CONFIG - UNORDERED
-useCFT=1
+useCFT=0
 numerOfFaults=1
 useAllReplicasOnCFT=0
 #BFT CONFIG
-useSBFT=0
+useSBFT=1
 configPath=config/
 

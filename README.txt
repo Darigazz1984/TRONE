@@ -21,13 +21,14 @@ STEPS TO USE AND TEST THE FIT BROKER:
 
 (b) compile all required stuff: ./compile-all.sh
 
-(c) write the config files in place: ./write-and-read-config.sh
+(c) write the config files in place: ./write-and-read-config.sh - CURRENTLY WORKING BUT NOT WRITING THE RIGHT CONFIGS
+    for configuring channels just add/remove channels in the bin/channels folder, make shure you use NAMECHANNEL.props
     (required only on the first time or every time the configuration changes inside ConfigsWriter.java class)
  
 (d) execute the replica: ./run-replicas.sh 4 xterm
     (you can use "xterm" windows of run in background - it is recommended to use xterm to see the execution logs)
 
-(e) execute the clients: ./run-clients.sh 1 1 xterm apache logs dhcp
+(e) execute the ./run.sh it will start 2 publishers for channels mysql and apache and 2 subscribers, one for each channel. These channels are BFT
     (this command in particular will instantiate three channels and two clients per channel, being one publisher and one subscriber)
     (you can chose and run many different configurations)
 

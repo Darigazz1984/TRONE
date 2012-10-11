@@ -104,12 +104,12 @@
   required: ArrayList<Event>
   found:    ArrayList
 19 warnings
-../src/pt/ul/fc/di/navigators/trone/data/Channel.java:174: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Channel.java:171: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
                 pubToRemove.add(pub.getId());
                                ^
   where E is a type-variable:
     E extends Object declared in class ArrayList
-../src/pt/ul/fc/di/navigators/trone/data/Channel.java:191: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Channel.java:188: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
                 subToRemove.add(sub.getId());
                                ^
   where E is a type-variable:

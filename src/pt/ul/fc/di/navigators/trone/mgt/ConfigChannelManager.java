@@ -55,9 +55,6 @@ public class ConfigChannelManager {
     
     
     public Channel generateChannel(String t, int id){
-        Log.logOut(this, "GENERATING CHANNEL WITH TAG: "+t, id);
         return (new Channel(t.toLowerCase(), id, type, order));
-        
-        
     }
 }

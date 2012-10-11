@@ -26,7 +26,7 @@ public class CmdPublisherClientChIaaS {
 
         Request clientReq;
         MessageBrokerClient cchm;
-        String channelTag = "iaas";;
+        String channelTag = "iaas";
         int numberOfEventsPerRound, numberOfRounds, timeToSleepPerRound;
 
         numberOfRounds = 100;
@@ -36,8 +36,8 @@ public class CmdPublisherClientChIaaS {
         try {
 
             Log.logInfoFlush(CmdPublisherClientChIaaS.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
-
-            cchm = new MessageBrokerClient();
+            //FIX ME: THIS MUST BE CHANGED TO GET THE RIGHT CLIENT ID
+            cchm = new MessageBrokerClient(0);
 
             Log.logInfoFlush(CmdPublisherClientChIaaS.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
 

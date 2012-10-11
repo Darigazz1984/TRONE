@@ -1,7 +1,6 @@
 [ $1 ] && [ $2 ] && [ $3 ] && [ $4 ] || { echo "Usage: $0 PubOrSub(1 = Pub; 2 = Sub; 3 = Both) clientsPerChannel startingID mode(xterm|background) channelTag1 channelTag2 channelTag3 ... "; exit; }
 
 PUBLISHER=pt/ul/fc/di/navigators/trone/apps/CmdPublisherClient
-SUBSCRIBER=pt/ul/fc/di/navigators/trone/apps/CmdSubscriberClient
 
 
 PUBSUB=$1

@@ -17,14 +17,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigClientManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigNetManager;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
-import pt.ul.fc.di.navigators.trone.utils.IdGenerator;
 import pt.ul.fc.di.navigators.trone.utils.Log;
 import pt.ul.fc.di.navigators.trone.utils.ServerInfo;
 
@@ -33,7 +31,6 @@ public class ClientProxy {
     
    
     private ServiceProxy longTermServiceProxy;
-    private boolean order;
     private int clientID;
     static ConfigNetManager netConfig;
     static ConfigClientManager clientConfig;
@@ -43,26 +40,26 @@ public class ClientProxy {
     private int maxNumberOfEventsToFetchPerRequest;
     private boolean useSBFT;
     private boolean useCFT;
-    private boolean useRequestCache;
+    private boolean order;
     private int cacheCleanUpPeriodInNumberOfRequests;
     private int sbftRequestsCounter;
     private Log logger;
     private int numberOfFaults;
+    private boolean useLongTerm;
     
 
     public ClientProxy(int id) throws FileNotFoundException, IOException {
-        Random rand = new Random(System.currentTimeMillis());
         Log.logDebugFlush(this, "CLIENT PROXY STARTING ... ", Log.getLineNumber());
+        
         netConfig = new ConfigNetManager("netConfig.props");
         clientID = id;
-        //clientID = (rand.nextInt(100)%9);
-        //clientID = IdGenerator.getUniqueIdInt();
-        
         clientConfig = new ConfigClientManager("clientConfig.props");
         useSBFT = clientConfig.useSBFT();
         useCFT = clientConfig.useCFT();
         order = clientConfig.useOrdered();
         numberOfFaults = clientConfig.numberOfFaults();
+        
+        
         
         if(netConfig.getNumberOfServers() == numberOfFaults){
             Log.logWarning(this, "number of copies equal number of server (NO FAULT is being tolerated)", Log.getLineNumber());
@@ -75,9 +72,11 @@ public class ClientProxy {
             Log.logDebug(this, "USING TOTAL ORDER", Log.getLineNumber());
         }else
             Log.logDebug(this, "NOT USING TOTAL ORDER", Log.getLineNumber());
+        
+        useLongTerm = clientConfig.useLongTermConnections();
         if (useCFT) {
             Log.logDebug(this, "USING CFT", Log.getLineNumber());
-            if(clientConfig.useLongTermConnections()){
+            if(useLongTerm){
                 setupConnection();
             }
         }else
@@ -96,8 +95,6 @@ public class ClientProxy {
         cacheCleanUpPeriodInNumberOfRequests = clientConfig.getCacheCleanUpPeriodInNumberOfRequests();
         sbftRequestsCounter = 0;
 
-        
-        useRequestCache = true;
         
         numberOfEventsToCachePerRequest = clientConfig.getNumberOfEventsToCachePerRequest();
         maxNumberOfEventsToFetchPerRequest = clientConfig.getMaxNumberOfEventsToFetchPerRequest();
@@ -134,40 +131,6 @@ public class ClientProxy {
     private Request BftSendUnorderedRequest(Request req){
         byte [] r = this.longTermServiceProxy.invokeUnordered(convertRequestToByte(req));
         return convertByteToRequest(r);
-    }
-    
-    
-    private Request convertByteToRequest(byte[] bytes){
-       
-        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-       
-        ObjectInputStream is;
-        try {
-            is = new ObjectInputStream(in);
-            return (Request)is.readObject();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-    
-    
-    @SuppressWarnings("UnusedAssignment")
-    private byte[] convertRequestToByte(Request req){
-         ByteArrayOutputStream out = new ByteArrayOutputStream();    
-         ObjectOutputStream os = null;
-        try {
-            os = new ObjectOutputStream(out);
-            os.writeObject(req);
-            logger.incrementSpecificCounter("NRETEVENTS", req.getAllEvents().size());
-            return out.toByteArray();
-        } catch (IOException ex) {
-            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         
-         return null;
     }
 
     private Request sendRequestToReplicaWithLongTerm(Request req) throws UnknownHostException, IOException, ClassNotFoundException, Exception {
@@ -245,14 +208,14 @@ public class ClientProxy {
 
     public Request invoke(Request req) throws IOException, ClassNotFoundException, UnknownHostException, Exception {
         Request localReq = null;
-        boolean useLongTerm = clientConfig.useLongTermConnections();
+       // boolean useLongTerm = clientConfig.useLongTermConnections();
 
         logger.logInfoIfCounterReachedAndIncrement(this, "INVOKE Client ID: " + req.getClientId() + " method: " + req.getMethod() + " REQ ID: " + req.getUniqueId(), Log.getLineNumber());
         logger.logInfoIfCounterReached(this, "SENDING " + req.getAllEvents().size() + " EVENTS ", Log.getLineNumber());
 
         Log.logDebug(this, "REQ TO SEND UNIQUE ID: " + req.getUniqueId() + " REQ OBJ ID: " + req  + " METHOD: " + req.getMethod(), Log.getLineNumber());
         
-        netConfig.resetServerListIterator();
+        netConfig.resetServerListIterator(); // importante para repor o Iterador da lista de servidores
         
         
         if (useSBFT) { // SBFT
@@ -263,7 +226,6 @@ public class ClientProxy {
            }
         } else { // CFT
             int counter = 0;
-            useRequestCache = false;
             
             while (netConfig.hasMoreServers()) {
                 globalServerInfo = netConfig.getNextServerInfo();
@@ -282,12 +244,14 @@ public class ClientProxy {
 
                     localReq = localLoopRequest;
                     
-                    if(counter>numberOfFaults && !clientConfig.useAllReplicasOnCFT()){
-                        break;
-                    }
-
-                    if (/*!clientConfig.useAllReplicasOnCFT() ||*/ req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
-                        break;
+                    if(sendToAllReplicas(req.getMethod())){
+                        if(counter>numberOfFaults && !clientConfig.useAllReplicasOnCFT()){
+                            break;
+                        }
+                        
+                        if (req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
+                            break;
+                        }
                     }
                     
                 } else {
@@ -305,7 +269,14 @@ public class ClientProxy {
 
         return localReq;
     }
-
+    
+    //ESTA CONDIÇÃO GARANTE QUE FAZEMOS REGISTER/SUBSCRIBE/UNREGISTER/UNSUBSCRIBE EM TODAS AS REPLICAS
+    private boolean sendToAllReplicas(METHOD m){
+       
+        return (!(m == METHOD.REGISTER) && !(m == METHOD.UNREGISTER) && !(m == METHOD.SUBSCRIBE) && !(m == METHOD.UNSUBSCRIBE) && !(m == METHOD.UNREGISTER_FROM_ALL_CHANNELS) && !(m == METHOD.UNSUBSCRIBE_FROM_ALL_CHANNELS));
+    }
+    
+    
     public boolean isSBFT() {
         return useSBFT;
     }
@@ -322,4 +293,41 @@ public class ClientProxy {
         requestCache.currentStats();
     }
 
+    
+    private Request convertByteToRequest(byte[] bytes){
+       
+        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+       
+        ObjectInputStream is;
+        try {
+            is = new ObjectInputStream(in);
+            return (Request)is.readObject();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    
+    @SuppressWarnings("UnusedAssignment")
+    private byte[] convertRequestToByte(Request req){
+         ByteArrayOutputStream out = new ByteArrayOutputStream();    
+         ObjectOutputStream os = null;
+        try {
+            os = new ObjectOutputStream(out);
+            os.writeObject(req);
+            logger.incrementSpecificCounter("NRETEVENTS", req.getAllEvents().size());
+            return out.toByteArray();
+        } catch (IOException ex) {
+            Logger.getLogger(ClientProxy.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+         return null;
+    }
+    
+    
+    
+    
 }

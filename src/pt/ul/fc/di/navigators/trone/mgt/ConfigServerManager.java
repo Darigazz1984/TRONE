@@ -123,4 +123,8 @@ public class ConfigServerManager {
         else
             return false;
     }
+    
+    public String getChannelPath(){
+        return serverConfig.getStringValue("channelConfigPath");
+    }
 }

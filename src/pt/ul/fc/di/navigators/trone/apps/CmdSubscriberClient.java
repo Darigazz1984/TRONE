@@ -74,10 +74,11 @@ public class CmdSubscriberClient {
                 }
                 
 
-                startTime = CurrentTime.getTimeInMilliseconds();
+                
 
                 Log.logInfoFlush(CmdSubscriberClient.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
-
+                
+                startTime = CurrentTime.getTimeInMilliseconds();
                 clientReq = cchm.subscribe(channelTag);
 
                 Log.logInfo(CmdSubscriberClient.class.getSimpleName(), "CLIENT ID: " + clientReq.getClientId() + " method: " + clientReq.getMethod() + " tag: " + clientReq.getChannelTag(), Log.getLineNumber());
