@@ -17,7 +17,7 @@ subscriberTimeToLive=300000
 useBFT=1
 configPath=config/
 #CFT CONFIGURATION
-useCFT=0
+useCFT=1
 numberOfThreadsForLongTermConnections=50
 enableLongTermConnections=1
 enableShortTermConnections=1

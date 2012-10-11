@@ -114,12 +114,12 @@
                                ^
   where E is a type-variable:
     E extends Object declared in class ArrayList
-../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:59: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:60: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
                     eventsToRemove.add(e);
                                       ^
   where E is a type-variable:
     E extends Object declared in class ArrayList
-../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:95: warning: [unchecked] unchecked conversion
+../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:96: warning: [unchecked] unchecked conversion
         myEvents.addAll(eventsToStore);
                         ^
   required: Collection<? extends Event>
