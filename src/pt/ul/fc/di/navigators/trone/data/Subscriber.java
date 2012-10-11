@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+
 /**
  *
  * @author kreutz
@@ -93,9 +94,10 @@ public class Subscriber {
 
     public void insertNewListOfEvents(ArrayList eventsToStore) {
         myEvents.addAll(eventsToStore);
+        //Log.logInfo(this, "I AM: "+this.myId+" AND I CURRENTLY HAVE: "+myEvents.size()+" EVENTS", maxNumberOfEvents);
     }
 
-    public boolean queueIsNotEmply() {
+    public boolean queueIsNotEmpty() {
         if (myEvents.size() > 0) {
             return true;
         }

@@ -254,7 +254,7 @@ public class Channel {
     synchronized public Event getNextEvent(String id) {
         Subscriber s = subscriberHashMap.get(id);
         if (s != null) {
-            s.setLocalTimestamp(System.currentTimeMillis());
+            //s.setLocalTimestamp(System.currentTimeMillis());
             return s.getNextEvent();
         }
         return null;
@@ -270,11 +270,18 @@ public class Channel {
             //subscriberHashMap.get(id).updateLocalTimestamp();
             //s.updateLocalTimestamp();
                 
-            if (s.queueIsNotEmply()) {
+            if (s.queueIsNotEmpty()) {
+                    do{
+                        e = s.getNextEvent();
+                        events.add(e);
+                        counter++;
+                    }while(s.queueIsNotEmpty() && counter < numberOfEvents);
+                    
+                    /*
                 while ((e = s.getNextEvent()) != null && counter < numberOfEvents) {
                     events.add(e);
                     counter++;
-                }
+                }*/
             }
             Log.logDebug(this, "SUB ID: " + id + " STORAGE NUMBER OF EVENTS RETRIEVED: " + events.size(), Log.getLineNumber());
             

@@ -99,7 +99,7 @@ public class CmdSubscriberClient {
 
                         int nEvents = 0;
                       
-                        for (int i = 0; i < (numberOfEventsPerRound / cchm.getNumberOfEventsPerCachedRequest() + 1); i++) {
+                        for (int i = 0; i < (numberOfEventsPerRound / cchm.getNumberOfEventsPerCachedRequest() /*+ 1*/); i++) {
                             cReq = cchm.pollEventsFromChannel(channelTag, cchm.getNumberOfEventsPerPoll());
                             if (cReq != null) {
                                 if (cReq.isOpSuccess()) {

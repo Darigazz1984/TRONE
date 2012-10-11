@@ -49,13 +49,13 @@ public class MessageBrokerServer {
 
     public boolean publish(Request r, Storage rStorage) throws ClassNotFoundException, IOException {
         logger.incrementSpecificCounter("NPUBLISHEDEVENTS", 1);
-         Log.logOut(this, "EVENTOS PUBLICADOS:                       "+logger.getSpecificCounterValue("NPUBLISHEDEVENTS"), Log.getLineNumber());
+        //Log.logOut(this, "EVENTOS PUBLICADOS:                       "+logger.getSpecificCounterValue("NPUBLISHEDEVENTS"), Log.getLineNumber());
         return rStorage.insertNewEvent(r.getEvent(), r.getChannelTag());
     }
 
     public boolean publishWithCaching(Request r, Storage rStorage) throws ClassNotFoundException, IOException {
         logger.incrementSpecificCounter("NPUBLISHEDEVENTS", r.getAllEvents().size());
-        Log.logOut(this, "EVENTOS PUBLICADOS:                       "+logger.getSpecificCounterValue("NPUBLISHEDEVENTS"), Log.getLineNumber());
+        //Log.logOut(this, "EVENTOS PUBLICADOS:                       "+logger.getSpecificCounterValue("NPUBLISHEDEVENTS"), Log.getLineNumber());
         Log.logDebug(this, "REQ ID: " + r.getUniqueId() + " N EVENTS TO ADD: " + r.getAllEvents().size(), Log.getLineNumber());
         Log.logDebug(this, "STORAGE AMOUNT OF EVENTS: " + rStorage.getNumberOfEvents(), Log.getLineNumber());
         
@@ -67,7 +67,7 @@ public class MessageBrokerServer {
         if (rStorage.hasChannel(tag)) {
             int nEvents = r.getNumberOfEventsToFetch();
             logger.incrementSpecificCounter("NPOLLEDEVENTS", nEvents);
-            Log.logOut(this, "EVENTOS RETIRADOS:                       "+logger.getSpecificCounterValue("NPOLLEDEVENTS"), Log.getLineNumber());
+            //Log.logOut(this, "EVENTOS RETIRADOS:                       "+logger.getSpecificCounterValue("NPOLLEDEVENTS"), Log.getLineNumber());
             Log.logDebug(this, "REQ ID: " + r.getUniqueId() + " N EVENTS TO FETCH: " + r.getNumberOfEventsToFetch(), Log.getLineNumber());
             return rStorage.getEventsFromChannel(r.getClientId(), r.getChannelTag(), nEvents);
         } else {

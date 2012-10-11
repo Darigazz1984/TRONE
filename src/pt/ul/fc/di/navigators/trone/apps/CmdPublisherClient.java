@@ -90,7 +90,6 @@ public class CmdPublisherClient {
 
                     long spendTime = 0;
                     int numberOfEventsSent = 0;
-                    
                     Request rReq;
                     for (int round = 0; round < numberOfRounds; round++) {
 
