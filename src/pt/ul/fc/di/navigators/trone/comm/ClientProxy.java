@@ -249,7 +249,7 @@ public class ClientProxy {
                             break;
                         }
                         
-                        if (req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL) {
+                        if (req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL && !clientConfig.useAllReplicasOnCFT()) {
                             break;
                         }
                     }
