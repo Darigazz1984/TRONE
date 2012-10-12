@@ -21,11 +21,6 @@ public class Storage extends HashMap {
     
     private static HashMap<String, Channel> syncChannelHashMap;
     
-    private static HashMap<String, Channel> bftTotalOrderChannels;
-    private static HashMap<String, Channel> bftNoOrderChannels;
-    private static HashMap<String, Channel> cftNoOrderChannels;
-    private static HashMap<String, Channel> cftTotalOrderChannels;
-    
     private static int myReplicaId;
     private Log logger;
     private static AtomicLong eventsPub;

@@ -222,6 +222,7 @@ public class ClientProxy {
            if(order){
                localReq = this.BftSendOrderedRequest(req);
             }else{
+               
                localReq = this.BftSendUnorderedRequest(req);
            }
         } else { // CFT
@@ -313,8 +314,8 @@ public class ClientProxy {
     
     @SuppressWarnings("UnusedAssignment")
     private byte[] convertRequestToByte(Request req){
-         ByteArrayOutputStream out = new ByteArrayOutputStream();    
-         ObjectOutputStream os = null;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();    
+        ObjectOutputStream os = null;
         try {
             os = new ObjectOutputStream(out);
             os.writeObject(req);

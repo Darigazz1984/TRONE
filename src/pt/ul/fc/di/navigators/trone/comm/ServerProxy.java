@@ -731,7 +731,6 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             //response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
-            Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
             return convertRequestToByte(response);
         }else{
             if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.NO_ORDER)){
@@ -741,9 +740,9 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
                 try {
                     return convertRequestToByte((resolveRequest(req)));
                 } catch (IOException ex) {
-                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.logOut(this, "INSIDE PRIMEIRO CATCH", replicaId);
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);   
                 }
             }else{
                 Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
