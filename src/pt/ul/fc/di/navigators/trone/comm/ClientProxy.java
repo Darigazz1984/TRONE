@@ -250,7 +250,7 @@ public class ClientProxy {
                             break;
                         }
                         
-                        if (req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL && !clientConfig.useAllReplicasOnCFT()) {
+                        if (req.getMethod() == METHOD.POLL || req.getMethod() == METHOD.POLL_EVENTS_FROM_CHANNEL && !clientConfig.useAllReplicasOnCFT() && counter>numberOfFaults) {
                             break;
                         }
                     }
