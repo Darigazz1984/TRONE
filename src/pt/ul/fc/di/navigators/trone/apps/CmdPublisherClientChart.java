@@ -51,7 +51,7 @@ public class CmdPublisherClientChart {
         lc.pack();
         RefineryUtilities.centerFrameOnScreen(lc);
         lc.setVisible(true);
-        lc.addValue(0, 0, 1);
+        lc.addValue(0, 0, 0);
         lc.refresh();
         
         //

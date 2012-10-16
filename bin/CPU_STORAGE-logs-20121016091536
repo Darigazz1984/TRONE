@@ -1,0 +1,273 @@
+Connecting to replica 0 at /127.0.0.1:11000
+Channel connected
+Connecting to replica 1 at /127.0.0.1:11010
+Channel connected
+Connecting to replica 2 at /127.0.0.1:11020
+Channel connected
+Connecting to replica 3 at /127.0.0.1:11030
+Impossible to connect to 3
+Connecting to replica 0 at /127.0.0.1:11000
+Channel connected
+Connecting to replica 1 at /127.0.0.1:11010
+Channel connected
+Connecting to replica 2 at /127.0.0.1:11020
+Channel connected
+Connecting to replica 3 at /127.0.0.1:11030
+Impossible to connect to 3
+[INFO] Cliente com gráfico a iniciar. [CmdPublisherClientChart:81]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd6197 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d3200 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd6398 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d3399 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d3589 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd6608 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d3797 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd6800 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd6988 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d31008 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd61190 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d31207 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd61388 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d31409 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd61586 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d31611 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd61785 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d31812 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd61979 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d32015 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd62180 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d32216 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd62378 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d32417 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd62579 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d32616 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd62781 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d32814 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd62980 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d33013 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd63178 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d33215 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd63365 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d33415 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd63573 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d33613 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd63772 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d33814 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd63970 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d34015 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd64165 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d34220 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd64362 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d34424 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd64558 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d34627 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: b3d4dfd077261fb9e4ef48baab45dbd6 method: PUBLISH_WITH_CACHING REQ ID: b3d4dfd077261fb9e4ef48baab45dbd64758 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+[INFO] INVOKE Client ID: 7ecae6218bd11b71291a94a3ad68d3 method: PUBLISH_WITH_CACHING REQ ID: 7ecae6218bd11b71291a94a3ad68d34827 [ClientProxy:213]
+[INFO] SENDING 10 EVENTS  [ClientProxy:214]
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
+java.net.ConnectException: Connection refused
+	at sun.nio.ch.SocketChannelImpl.checkConnect(Native Method)
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:692)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.connect(NioClientSocketPipelineSink.java:387)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.processSelectedKeys(NioClientSocketPipelineSink.java:351)
+	at org.jboss.netty.channel.socket.nio.NioClientSocketPipelineSink$Boss.run(NioClientSocketPipelineSink.java:273)
+	at org.jboss.netty.util.internal.IoWorkerRunnable.run(IoWorkerRunnable.java:53)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1110)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:603)
+	at java.lang.Thread.run(Thread.java:722)
