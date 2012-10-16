@@ -1,0 +1,386 @@
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(Collection<? extends E>) as a member of the raw type ArrayList
+            a.addAll(listOfEvents);
+                    ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:67: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+        requestCache.put(ri.getRequest().getUniqueId(), ri);
+                        ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:81: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    riToRemove.add(ri);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:43: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                replicaEventCounter.put(repKey, Long.valueOf(0));
+                                       ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:50: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                        replicaEventCounter.put(i, Long.valueOf(0)); //reset all replicas counters
+                                               ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:53: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    replicaEventCounter.put(repKey, Long.valueOf(l.longValue()+events.size()));
+                                           ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:72: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                hashEventCache.put(e.getUniqueId(), ei);
+                                  ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:91: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    eiToRemove.add(ei);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:122: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                eventsToRemove.add(e);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:132: warning: [unchecked] unchecked conversion
+        return eventsToRemove;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:161: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    eventsId.put(Long.valueOf(e.getUniqueIdWithinTheChannel()), e);
+                                ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:167: warning: [unchecked] unchecked call to <T>toArray(T[]) as a member of the raw type Set
+            eset.toArray(ekeys);
+                        ^
+  where T is a type-variable:
+    T extends Object declared in method <T>toArray(T[])
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked conversion
+            Collections.sort(etmpkeyList);
+                             ^
+  required: List<T>
+  found:    List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked method invocation: method sort in class Collections is applied to given types
+            Collections.sort(etmpkeyList);
+                            ^
+  required: List<T>
+  found: List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:174: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                events.add(e);
+                          ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:187: warning: [unchecked] unchecked conversion
+        return events;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+19 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(Collection<? extends E>) as a member of the raw type ArrayList
+            a.addAll(listOfEvents);
+                    ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:67: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+        requestCache.put(ri.getRequest().getUniqueId(), ri);
+                        ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:81: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    riToRemove.add(ri);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:43: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                replicaEventCounter.put(repKey, Long.valueOf(0));
+                                       ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:50: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                        replicaEventCounter.put(i, Long.valueOf(0)); //reset all replicas counters
+                                               ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:53: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    replicaEventCounter.put(repKey, Long.valueOf(l.longValue()+events.size()));
+                                           ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:72: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                hashEventCache.put(e.getUniqueId(), ei);
+                                  ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:91: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    eiToRemove.add(ei);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:122: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                eventsToRemove.add(e);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:132: warning: [unchecked] unchecked conversion
+        return eventsToRemove;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:161: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    eventsId.put(Long.valueOf(e.getUniqueIdWithinTheChannel()), e);
+                                ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:167: warning: [unchecked] unchecked call to <T>toArray(T[]) as a member of the raw type Set
+            eset.toArray(ekeys);
+                        ^
+  where T is a type-variable:
+    T extends Object declared in method <T>toArray(T[])
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked conversion
+            Collections.sort(etmpkeyList);
+                             ^
+  required: List<T>
+  found:    List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked method invocation: method sort in class Collections is applied to given types
+            Collections.sort(etmpkeyList);
+                            ^
+  required: List<T>
+  found: List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:174: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                events.add(e);
+                          ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:187: warning: [unchecked] unchecked conversion
+        return events;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+19 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Channel.java:171: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                pubToRemove.add(pub.getId());
+                               ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Channel.java:188: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                subToRemove.add(sub.getId());
+                               ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:60: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    eventsToRemove.add(e);
+                                      ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Subscriber.java:96: warning: [unchecked] unchecked conversion
+        myEvents.addAll(eventsToStore);
+                        ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(Collection<? extends E>) as a member of the raw type ArrayList
+            a.addAll(listOfEvents);
+                    ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+8 warnings
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:101: warning: [unchecked] unchecked call to addAll(Collection<? extends E>) as a member of the raw type ArrayList
+            a.addAll(listOfEvents);
+                    ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:122: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/data/Request.java:127: warning: [unchecked] unchecked conversion
+        listOfEvents.addAll(eventsToSend);
+                            ^
+  required: Collection<? extends Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:67: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+        requestCache.put(ri.getRequest().getUniqueId(), ri);
+                        ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/RequestCache.java:81: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    riToRemove.add(ri);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:43: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                replicaEventCounter.put(repKey, Long.valueOf(0));
+                                       ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:50: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                        replicaEventCounter.put(i, Long.valueOf(0)); //reset all replicas counters
+                                               ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:53: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    replicaEventCounter.put(repKey, Long.valueOf(l.longValue()+events.size()));
+                                           ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:72: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                hashEventCache.put(e.getUniqueId(), ei);
+                                  ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:91: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                    eiToRemove.add(ei);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:122: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                eventsToRemove.add(e);
+                                  ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:132: warning: [unchecked] unchecked conversion
+        return eventsToRemove;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:161: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type HashMap
+                    eventsId.put(Long.valueOf(e.getUniqueIdWithinTheChannel()), e);
+                                ^
+  where K,V are type-variables:
+    K extends Object declared in class HashMap
+    V extends Object declared in class HashMap
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:167: warning: [unchecked] unchecked call to <T>toArray(T[]) as a member of the raw type Set
+            eset.toArray(ekeys);
+                        ^
+  where T is a type-variable:
+    T extends Object declared in method <T>toArray(T[])
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked conversion
+            Collections.sort(etmpkeyList);
+                             ^
+  required: List<T>
+  found:    List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:169: warning: [unchecked] unchecked method invocation: method sort in class Collections is applied to given types
+            Collections.sort(etmpkeyList);
+                            ^
+  required: List<T>
+  found: List
+  where T is a type-variable:
+    T extends Comparable<? super T> declared in method <T>sort(List<T>)
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:174: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                events.add(e);
+                          ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/comm/EventCache.java:187: warning: [unchecked] unchecked conversion
+        return events;
+               ^
+  required: ArrayList<Event>
+  found:    ArrayList
+19 warnings
+../src/pt/ul/fc/di/navigators/trone/apps/ConfigsReader.java:24: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+        listOfFiles.add("netConfig.props");
+                       ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/apps/ConfigsReader.java:25: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+        listOfFiles.add("serverConfig.props");
+                       ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/apps/ConfigsReader.java:26: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+        listOfFiles.add("clientConfig.props");
+                       ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+4 warnings
+../src/pt/ul/fc/di/navigators/trone/utils/ConfigHandler.java:119: warning: [unchecked] unchecked call to add(E) as a member of the raw type ArrayList
+                a.add(key);
+                     ^
+  where E is a type-variable:
+    E extends Object declared in class ArrayList
+1 warning

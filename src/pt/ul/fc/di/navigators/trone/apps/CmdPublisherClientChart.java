@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jfree.ui.RefineryUtilities;
@@ -34,15 +33,16 @@ public class CmdPublisherClientChart {
         int testRate; //Tempo de cada amostra
         String channelTag; //Nome do canal
         int totalEventsSent; //Numero total de eventos
+        int windowView; //Tamanho da janela que e mostada no grafico
        
         values = new HashMap<String, Integer>();
         values.put("cpu", 0);
         values.put("storage", 0);
         int id;
         
-        if(args.length < 3){
+        if(args.length < 4){
             Log.logError(CmdPublisherClientChart.class.getSimpleName(), "Erro nos argumentos.", Log.getLineNumber());
-            System.out.println("Argumentos errados: Tempo_total_Teste sample_rate id");
+            System.out.println("Argumentos errados: Tempo_total_Teste sample_rate id range_grafico");
             System.exit(0);
         }
         
@@ -53,11 +53,17 @@ public class CmdPublisherClientChart {
         lc.setVisible(true);
         lc.addValue(0, 0, 0);
         lc.refresh();
+        //Grafico para salvar no jpg
+        LineChart lchidden = new LineChart("Eventos Enviados por Segundo CPU+STORAGE", "Eventos Enviados", "Tempo Decorrido em Segundos");
+        lchidden.pack();
+        lchidden.addValueNoRange(0, 0);
+        
         
         //
         totalTestTime = Integer.parseInt(args[0]);
         testRate = Integer.parseInt(args[1]); 
         id = Integer.parseInt(args[2]);
+        windowView = Integer.parseInt(args[3]);
         MessageBrokerClient cchm = null;
         MessageBrokerClient cchm2 = null;
         try {
@@ -87,10 +93,9 @@ public class CmdPublisherClientChart {
                     xx.addEvent(ex);
                 }
         CountDownLatch sem = new CountDownLatch(1);
-        Semaphore sem1 = new Semaphore(1);
-        Semaphore sem2 = new Semaphore(1);
-        Sender s1 = new Sender(cchm, values, "cpu", sem, totalTestTime*1000, "cpu", sem1);
-        Sender s2 = new Sender(cchm2, values, "storage", sem, totalTestTime*1000, "storage", sem2);
+        
+        Sender s1 = new Sender(cchm, values, "cpu", sem, totalTestTime*1000, "cpu");
+        Sender s2 = new Sender(cchm2, values, "storage", sem, totalTestTime*1000, "storage");
         
         
         s1.start();
@@ -98,10 +103,13 @@ public class CmdPublisherClientChart {
         sem.countDown();
         
         Timer t = new Timer();
-        t.scheduleAtFixedRate(new Drawer(lc,sem1,sem2, testRate ),0, (testRate*1000));
+        t.scheduleAtFixedRate(new Drawer(lc, lchidden, testRate, windowView),0, (testRate*1000));
         
         Thread.sleep(totalTestTime*1000+1000);
         t.cancel();
+        lchidden.refresh();
+        lchidden.saveChart("Chart.jpg", totalTestTime);
+        
         
     }
     
@@ -114,22 +122,21 @@ public class CmdPublisherClientChart {
         CountDownLatch sem;
         long totalTime;
         String myTag;
-        Semaphore sem1;
         String name;
         HashMap<String, Integer> value;
         String cname;
-        Sender(MessageBrokerClient cchm, HashMap<String, Integer> v, String cn, CountDownLatch s, long t, String tag, Semaphore se){
+        Sender(MessageBrokerClient cchm, HashMap<String, Integer> v, String cn, CountDownLatch s, long t, String tag){
             mbc = cchm;
             value = v;
             cname = cn;
             sem = s;
             totalTime = t;
             myTag = tag;
-            sem1 = se;
         }
         
         
         public void run(){
+            int t;
             try {
                 sem.await();
             } catch (InterruptedException ex) {
@@ -153,17 +160,11 @@ public class CmdPublisherClientChart {
                 } catch (Exception ex) {
                     Logger.getLogger(CmdPublisherClientChart.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if(resp != null)
-                try {
-                    sem1.acquire();
-                       Integer t = value.get(cname);
+                if(resp != null){
+                       t = (value.get(cname).intValue());
                        t = t+10;
                        value.put(cname, t);
-                    sem1.release();
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CmdPublisherClientChart.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    
             }
             
             try {
@@ -179,36 +180,36 @@ public class CmdPublisherClientChart {
     
    static class Drawer extends TimerTask{
         LineChart lc;
-        Semaphore sem1, sem2;
+        LineChart lchidden;
         int total;
         int timesCalled;
         int intervalTime;
-        public Drawer(LineChart l, Semaphore s1, Semaphore s2, int intervalTime){
+        int displayedEvents;
+        int windowSize;
+        public Drawer(LineChart l, LineChart l2, int intervalTime, int ws){
             lc = l;
-            sem1 = s1;
-            sem2 = s2;
             total = 0;
             timesCalled = 1;
             this.intervalTime = intervalTime;
+            displayedEvents = 0;
+            windowSize = ws;
+            lchidden = l2;
         }
         
         @Override
         public void run() {
-            try {
-                sem1.acquire();
-                sem2.acquire();
-                total = values.get("cpu").intValue()+values.get("storage").intValue();
-                values.put("cpu", 0);
-                values.put("storage", 0);
-                sem1.release();
-                sem2.release();
-                lc.addValue(total, timesCalled*intervalTime, 15);
+            int eventsToShow = 0;
+                total = (values.get("cpu").intValue()+values.get("storage").intValue());
+                
+                eventsToShow = total - displayedEvents;
+                
+                displayedEvents = displayedEvents + eventsToShow;
+                
+                lc.addValue(eventsToShow, timesCalled*intervalTime, windowSize);
+                lchidden.addValueNoRange(eventsToShow, timesCalled*intervalTime);
                 lc.refresh();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CmdPublisherClientChart.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
             timesCalled++;
-            total = 0;
         }   
     }    
 }

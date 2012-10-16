@@ -6,9 +6,14 @@ package pt.ul.fc.di.navigators.trone.utils;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
@@ -45,13 +50,16 @@ public class LineChart extends ApplicationFrame {
          
          cp.setPreferredSize(new Dimension(500, 270));
          setContentPane(cp);
-         
     }
     
     public void addValue(int value, int time, int lim){
-        if(time>lim)
+        if(time>=lim)
             this.dataset.removeValue( "Classes", ""+(time-lim));
         
+        this.dataset.addValue(value, "Classes", ""+time);
+    }
+    
+    public void addValueNoRange(int value, int time){
         this.dataset.addValue(value, "Classes", ""+time);
     }
     
@@ -101,6 +109,16 @@ public class LineChart extends ApplicationFrame {
          //renderer.setFillPaint(Color.white);
          return chart;
      }
+    
+    public void saveChart(String file, int testTime){
+        try {
+            ChartUtilities.saveChartAsJPEG(new File(file), cp.getChart(), 800, 800);
+            ChartUtilities.saveChartAsJPEG(new File("Full_"+file), cp.getChart(), (testTime*40), 800);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(LineChart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     
 }
