@@ -82,15 +82,7 @@ public class LineChart extends ApplicationFrame {
          false // urls
          );
          
-         /*chart.addSubtitle(new TextTitle("Number of Classes By Release"));
-         TextTitle source = new TextTitle(
-         "Source: Java In A Nutshell (4th Edition) "
-         + "by David Flanagan (OReilly)"
-         );
-         //source.setFont(new Font("SansSerif", Font.NORMAL, 10));
-         source.setPosition(RectangleEdge.BOTTOM);
-         source.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-         chart.addSubtitle(source);*/
+         
          
          chart.setBackgroundPaint(Color.white);
          CategoryPlot plot = (CategoryPlot) chart.getPlot();
@@ -102,11 +94,10 @@ public class LineChart extends ApplicationFrame {
          // customise the renderer...
          LineAndShapeRenderer renderer
          = (LineAndShapeRenderer) plot.getRenderer();
-         //renderer.setShapesVisible(true);
-         //renderer.setShapesV
+       
          renderer.setDrawOutlines(true);
          renderer.setUseFillPaint(true);
-         //renderer.setFillPaint(Color.white);
+       
          return chart;
      }
     

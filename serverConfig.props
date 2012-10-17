@@ -1,0 +1,28 @@
+#--- Key and Value file (ip = port) ---
+#Mon Jul 09 15:21:28 WEST 2012
+#NAME THE CHANNELS BELOW channelname=-1
+#CHANNEL DESCRIPTION SHOULD BE PUT IN FOLDER CHANNELS WITH LOWER CASE NAME EX: network.props
+channelConfigPath=channels/
+#REPLICA CONFIGURATION
+publishersPerChannel=2000
+messageTimeToLive=60000
+messageCleanerRoundPeriod=30000
+publisherCleanerRoundPeriod=100000
+maxNumberOfEventsPerQueue=100000
+subscriberCleanerRoundPeriod=100000
+subscribersPerChannel=2000
+publisherTimeToLive=200000
+subscriberTimeToLive=300000
+#BFT CONFIGURATION
+useBFT=1
+configPath=config/
+#CFT CONFIGURATION
+useCFT=1
+numberOfThreadsForLongTermConnections=50
+enableLongTermConnections=1
+enableShortTermConnections=1
+numberOfThreadsForShortTermConnections=10
+useLongTermConnections=1
+# REQUIRES SYNCHRONIZED WATCHES - 1 = active
+enableGarbageCollector=0
+

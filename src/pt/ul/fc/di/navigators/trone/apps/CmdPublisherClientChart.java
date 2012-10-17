@@ -69,8 +69,12 @@ public class CmdPublisherClientChart {
         try {
             cchm = new MessageBrokerClient(id);
             cchm2 = new MessageBrokerClient(id+1);
-            cchm.register("cpu");
-            cchm2.register("storage");
+            Request r = cchm.register("cpu");
+            if(r.isOpSuccess())
+                Log.logInfo(CmdPublisherClientChart.class.getCanonicalName(), "REGISTADO COM SUCESSO", Log.getLineNumber());
+            r = cchm2.register("storage");
+            if(r.isOpSuccess())
+                Log.logInfo(CmdPublisherClientChart.class.getCanonicalName(), "REGISTADO COM SUCESSO", Log.getLineNumber());
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CmdPublisherClientChart.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

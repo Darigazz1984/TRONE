@@ -669,17 +669,15 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         if(command != null )
             req = convertByteToRequest(command);
         else
-            Logger.getLogger(BftServer.class.getName()).log(Level.WARNING, null, "REQUEST VEIO A NULL");
+            Log.logInfo(BftServer.class.getCanonicalName(), "REQUEST VEIO A NULL", Log.getLineNumber());
         
         
         
         if(req == null){
-            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
+            Log.logInfo(BftServer.class.getCanonicalName(), "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST", Log.getLineNumber());
             logger.incrementSpecificCounter("NNULLREQSRECV", 1);
-            //response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
-            Log.logOut(this, "--------------------NULL----------------------", Log.getLineNumber());
             return convertRequestToByte(response);
         }else{
             if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.TOTAL_ORDER)){
@@ -689,12 +687,12 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
                 try {
                     return convertRequestToByte((resolveRequest(req)));
                 } catch (IOException ex) {
-                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.logInfo(BftServer.class.getCanonicalName(), ex.toString(), Log.getLineNumber());
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+                    Log.logInfo(BftServer.class.getCanonicalName(), ex.toString(), Log.getLineNumber());
                 }
             }else{
-                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
+                Log.logInfo(BftServer.class.getCanonicalName(), "ERRO NAS CONFIGURAÇÕES DO CLIENTE", Log.getLineNumber());
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
                 //response.setClientId(String.valueOf(replicaId));
                 //response.setOperationStatus(false);
@@ -702,8 +700,6 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             }
                
         }
-        
-        //response.setReplicaId(replicaId);
         response.setChannelTag(req.getChannelTag());
         response.setOperationStatus(false);
         response.setId(req.getId());
