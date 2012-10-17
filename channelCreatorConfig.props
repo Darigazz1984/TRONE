@@ -1,0 +1,3 @@
+#--- Key and Value file (ip = port) ---
+port=5000
+maxClients=5
