@@ -32,19 +32,26 @@ public class CmdPublisherClientMeter {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException {
-        HashMap<String, MessageBrokerClient> map = new HashMap<String, MessageBrokerClient>();
-        HashMap<String, AtomicInteger> counter = new HashMap<String, AtomicInteger>();
-        if(args.length<4){
+    public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException, InterruptedException {
+       
+        if(args.length<8){
             Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), "Argumentos Invalidos", Log.getLineNumber());
             System.out.println("Argumentos Errados: Test_time Sampling_rate num_clients");
             System.exit(0);
         }
         
+        
+        HashMap<String, MessageBrokerClient> map = new HashMap<String, MessageBrokerClient>();
+        HashMap<String, AtomicInteger> counter = new HashMap<String, AtomicInteger>();
+        
         int testTime = Integer.parseInt(args[0]); // tempo de duracao do teste
         int samplingRate = Integer.parseInt(args[1]); //sampling rate
         int startingID = Integer.parseInt(args[2]); // id inicial dos clientes
         int numberOfClients = Integer.parseInt(args[3]); // numero total de clientes
+        
+        //vamos dar a possibilidade de correr testes "infinitos"
+        if (testTime == 0)
+            testTime = 28800;
         
         for(int i = 0; i<numberOfClients; i++){
             Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), args[4+i], testTime);
@@ -60,11 +67,12 @@ public class CmdPublisherClientMeter {
             }else
                 Log.logError(CmdPublisherClientMeter.class.getCanonicalName(), "ERRO AO TENTAR REGISTAR TAG: "+x, Log.getLineNumber());
         }
+        
         StringBuilder sb = new StringBuilder();
         sb.append("Sent request per secound ");
         for(String s: map.keySet()){
             sb.append(s);
-            sb.append("+");
+            sb.append(" ");
         }
         
         
@@ -88,7 +96,10 @@ public class CmdPublisherClientMeter {
         }
         t.cancel();
         lc.refresh();
-        lc.saveChart("Chart.jpg", testTime);
+        lc.saveChart("Chart_Publisher.jpg", testTime);
+        
+        Thread.sleep(750);
+        System.exit(0);
     }
     
     
@@ -129,6 +140,20 @@ public class CmdPublisherClientMeter {
             return false;
         }
         
+        void unRegister(){
+            try {
+                mbc.unRegister(tag);
+            } catch (IOException ex) {
+                Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
         public void run(){
             Request response = null;
             try {
@@ -161,6 +186,7 @@ public class CmdPublisherClientMeter {
             }
             
             try {
+                unRegister();
                 mbc.closeConnection();
             } catch (IOException ex) {
                 Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
@@ -191,7 +217,6 @@ public class CmdPublisherClientMeter {
         public void run(){
             
             int eventsToShow = sum() - displayedEvents;
-            Log.logInfo(this.getClass().getCanonicalName(), "eventsToDisplay: "+eventsToShow, Log.getLineNumber());
             displayedEvents += eventsToShow;
             dm.addValue(eventsToShow);
             dm.refresh();

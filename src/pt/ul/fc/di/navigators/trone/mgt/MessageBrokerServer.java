@@ -64,10 +64,9 @@ public class MessageBrokerServer {
     
     public ArrayList<Event> pollEventsFromChannel(Request r, Storage rStorage) {
         String tag = r.getChannelTag();
-        if (rStorage.hasChannel(tag)) {
+        if (rStorage.hasChannel(tag.toLowerCase())) {
             int nEvents = r.getNumberOfEventsToFetch();
             logger.incrementSpecificCounter("NPOLLEDEVENTS", nEvents);
-            //Log.logOut(this, "EVENTOS RETIRADOS:                       "+logger.getSpecificCounterValue("NPOLLEDEVENTS"), Log.getLineNumber());
             Log.logDebug(this, "REQ ID: " + r.getUniqueId() + " N EVENTS TO FETCH: " + r.getNumberOfEventsToFetch(), Log.getLineNumber());
             return rStorage.getEventsFromChannel(r.getClientId(), r.getChannelTag(), nEvents);
         } else {

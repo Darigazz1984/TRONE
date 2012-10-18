@@ -139,6 +139,7 @@ public class MessageBrokerClient {
         globalRequest.prepare(requestNextId());
         globalRequest.setMethod(METHOD.UNREGISTER);
         globalRequest.setChannelTag(tag);
+        Log.logInfo(this.getClass().getCanonicalName(), "UNSUBSCRIBING FROM TAG: "+tag, Log.getLineNumber());
         return clientProxy.invoke(globalRequest);
     }
 
@@ -159,6 +160,7 @@ public class MessageBrokerClient {
         globalRequest.prepare(requestNextId());
         //globalRequest.setChannelTag(tag);
         globalRequest.setMethod(METHOD.UNREGISTER);
+        Log.logInfo(this.getClass().getCanonicalName(), "UNREGISTERING FROM TAG: "+tag, Log.getLineNumber());
         return clientProxy.invoke(globalRequest);
     }
 
@@ -179,6 +181,7 @@ public class MessageBrokerClient {
     }
     
     public void closeConnection() throws IOException{
+        Log.logInfo(this.getClass().getCanonicalName(), "CLOSING CONNECTION", Log.getLineNumber());
         clientProxy.closeConnection();
     }
 }

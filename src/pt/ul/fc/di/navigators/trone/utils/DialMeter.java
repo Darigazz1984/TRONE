@@ -12,8 +12,6 @@ import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.dial.*;
@@ -135,7 +133,7 @@ public class DialMeter extends JFrame{
 	}
         
         public void addValue(int v){
-            Log.logInfo(this.getClass().getCanonicalName(), "ADDING VALUE: "+v, Log.getLineNumber());
+            //Log.logInfo(this.getClass().getCanonicalName(), "ADDING VALUE: "+v, Log.getLineNumber());
             p.addValue(v/1000);
         }
         
