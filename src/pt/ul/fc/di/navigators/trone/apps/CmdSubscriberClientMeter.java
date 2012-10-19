@@ -104,8 +104,8 @@ public class CmdSubscriberClientMeter {
         lc.saveChart("Chart_Subscriber.jpg", testTime);
         
         Log.logInfo(CmdSubscriberClientMeter.class.getCanonicalName(), "CONSUMI: "+d.getDisplayedEvents(), Log.getLineNumber());
-        Thread.sleep(750);
-        System.exit(0);
+        //Thread.sleep(750);
+        //System.exit(0);
         
     }
     

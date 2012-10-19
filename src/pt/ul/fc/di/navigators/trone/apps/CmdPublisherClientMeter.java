@@ -98,8 +98,8 @@ public class CmdPublisherClientMeter {
         lc.refresh();
         lc.saveChart("Chart_Publisher.jpg", testTime);
         Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), "PUBLIQUEI: "+d.getDisplayedEvents(), Log.getLineNumber());
-        Thread.sleep(750);
-        System.exit(0);
+        //Thread.sleep(750);
+        //System.exit(0);
     }
     
     

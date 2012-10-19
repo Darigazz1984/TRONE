@@ -38,7 +38,7 @@ public class CmdPublisherClientChSecurity {
             Log.logInfoFlush(CmdPublisherClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
 
             //FIX ME: THIS MUST BE CHANGED TO GET THE RIGHT CLIENT ID
-            cchm = new MessageBrokerClient(0);
+            cchm = new MessageBrokerClient(0, "");
 
             Log.logInfoFlush(CmdPublisherClientChNetwork.class.getSimpleName(), "MESSAGE BROKER: UP AND RUNNING ...", Log.getLineNumber());
 
