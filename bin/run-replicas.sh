@@ -9,7 +9,7 @@ for i in `seq 0 $NREPLICAS`
 do
   if [ "$3" = "xterm" ]
   then
-    xterm -T "RUNNING REPLICA $i" -e "$JAVACMD pt/ul/fc/di/navigators/trone/apps/CmdServerWithPoolOfThreads $i; sleep 20" &
+    xterm -T "RUNNING REPLICA $i" -e "$JAVACMD pt/ul/fc/di/navigators/trone/apps/CmdServerWithPoolOfThreads $((STARTINGID+i)) ; sleep 20" &
   else
     LOG=CmdServerWithPoolOfThreads-$i-logs-`date +%Y%m%d%H%M%S`
     $JAVACMD pt/ul/fc/di/navigators/trone/apps/CmdServerWithPoolOfThreads $((STARTINGID+i)) &> $LOG &
