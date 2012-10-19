@@ -5,9 +5,7 @@
 package pt.ul.fc.di.navigators.trone.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 
 /**
@@ -94,7 +92,6 @@ public class Subscriber {
 
     public void insertNewListOfEvents(ArrayList eventsToStore) {
         myEvents.addAll(eventsToStore);
-        //Log.logInfo(this, "I AM: "+this.myId+" AND I CURRENTLY HAVE: "+myEvents.size()+" EVENTS", maxNumberOfEvents);
     }
 
     public boolean queueIsNotEmpty() {

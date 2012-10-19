@@ -271,7 +271,7 @@ public class Channel {
             //s.updateLocalTimestamp();
                 
             if (s.queueIsNotEmpty()) {
-                Log.logInfo(this.getClass().getCanonicalName(), "------------ENTERING", Log.getLineNumber());
+               // Log.logInfo(this.getClass().getCanonicalName(), "------------ENTERING", Log.getLineNumber());
                     do{
                         e = s.getNextEvent();
                         events.add(e);
@@ -284,7 +284,7 @@ public class Channel {
                     counter++;
                 }*/
             }else{
-                Log.logInfo(this.getClass().getCanonicalName(), "NOT------------ENTERING", Log.getLineNumber());
+               // Log.logInfo(this.getClass().getCanonicalName(), "NOT------------ENTERING", Log.getLineNumber());
             }
             Log.logDebug(this, "SUB ID: " + id + " STORAGE NUMBER OF EVENTS RETRIEVED: " + events.size(), Log.getLineNumber());
             
