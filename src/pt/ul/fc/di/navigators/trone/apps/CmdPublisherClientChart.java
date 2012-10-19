@@ -67,8 +67,8 @@ public class CmdPublisherClientChart {
         MessageBrokerClient cchm = null;
         MessageBrokerClient cchm2 = null;
         try {
-            cchm = new MessageBrokerClient(id);
-            cchm2 = new MessageBrokerClient(id+1);
+            cchm = new MessageBrokerClient(id, "pubclientConfig.props");
+            cchm2 = new MessageBrokerClient(id+1, "pubclientConfig.props");
             Request r = cchm.register("cpu");
             if(r.isOpSuccess())
                 Log.logInfo(CmdPublisherClientChart.class.getCanonicalName(), "REGISTADO COM SUCESSO", Log.getLineNumber());

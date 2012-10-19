@@ -55,7 +55,7 @@ public class CmdPublisherClientMeter {
         
         for(int i = 0; i<numberOfClients; i++){
             Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), args[4+i], testTime);
-          map.put(args[4+i], new MessageBrokerClient(startingID+i));
+          map.put(args[4+i], new MessageBrokerClient(startingID+i, "pubclientConfig.props"));
           counter.put(args[4+i],new AtomicInteger());
         }
         
@@ -69,7 +69,7 @@ public class CmdPublisherClientMeter {
         }
         
         StringBuilder sb = new StringBuilder();
-        sb.append("Sent request per secound ");
+        sb.append("Sent request per second ");
         for(String s: map.keySet()){
             sb.append(s);
             sb.append(" ");
@@ -80,7 +80,7 @@ public class CmdPublisherClientMeter {
         dm.pack();
         dm.setVisible(true);
         
-        LineChart lc = new LineChart(sb.toString(), "Sent Events", "Secounds");
+        LineChart lc = new LineChart(sb.toString(), "Sent Events", "Seconds");
         lc.pack();
         lc.addValueNoRange(0, 0);
         Drawer d = new Drawer(dm, lc, samplingRate, counter);
@@ -97,7 +97,7 @@ public class CmdPublisherClientMeter {
         t.cancel();
         lc.refresh();
         lc.saveChart("Chart_Publisher.jpg", testTime);
-        
+        Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), "PUBLIQUEI: "+d.getDisplayedEvents(), Log.getLineNumber());
         Thread.sleep(750);
         System.exit(0);
     }
@@ -200,7 +200,7 @@ public class CmdPublisherClientMeter {
     static class Drawer extends TimerTask{
         DialMeter dm;
         LineChart lc;
-        int total;
+        //int total;
         int timesCalled;
         int intervalTime;
         int displayedEvents;
@@ -219,6 +219,7 @@ public class CmdPublisherClientMeter {
             int eventsToShow = sum() - displayedEvents;
             displayedEvents += eventsToShow;
             dm.addValue(eventsToShow);
+            dm.setNumberOfEvents(displayedEvents);
             dm.refresh();
             
             lc.addValueNoRange(eventsToShow, timesCalled*intervalTime);
@@ -231,6 +232,10 @@ public class CmdPublisherClientMeter {
                 result += counter.get(s).get();
             }
             return result;
+        }
+        
+        int getDisplayedEvents(){
+            return this.displayedEvents;
         }
     }
     

@@ -217,7 +217,7 @@ public class Channel {
                 //localTime = System.currentTimeMillis();
                 //publisherHashMap.get(e.getClientId()).setLocalTimestamp(localTime);
 
-                
+                //ID DO CANAL
                 Iterator itX = eventsToStore.iterator();
                 while (itX.hasNext()) {
                     e = (Event) itX.next();
@@ -271,6 +271,7 @@ public class Channel {
             //s.updateLocalTimestamp();
                 
             if (s.queueIsNotEmpty()) {
+                Log.logInfo(this.getClass().getCanonicalName(), "------------ENTERING", Log.getLineNumber());
                     do{
                         e = s.getNextEvent();
                         events.add(e);
@@ -282,6 +283,8 @@ public class Channel {
                     events.add(e);
                     counter++;
                 }*/
+            }else{
+                Log.logInfo(this.getClass().getCanonicalName(), "NOT------------ENTERING", Log.getLineNumber());
             }
             Log.logDebug(this, "SUB ID: " + id + " STORAGE NUMBER OF EVENTS RETRIEVED: " + events.size(), Log.getLineNumber());
             

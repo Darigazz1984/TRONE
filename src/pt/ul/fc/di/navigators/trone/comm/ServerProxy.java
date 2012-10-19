@@ -722,14 +722,14 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
         
         
         if(req == null){
-            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST");
+            Log.logError(this.getClass().getCanonicalName(), "ERRO NA CONVERSÃO DOS BYTES PARA REQUEST", Log.getLineNumber());
             logger.incrementSpecificCounter("NNULLREQSRECV", 1);
             //response.setClientId(String.valueOf(replicaId));
             response.setOperationStatus(false);
             response.setMethod(METHOD.NOT_DEFINED);
             return convertRequestToByte(response);
         }else{
-            if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.NO_ORDER)){
+           // if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.NO_ORDER)){
                 logger.incrementSpecificCounter("NREQS", 1);
                 logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
                 Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
@@ -740,13 +740,13 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);   
                 }
-            }else{
+            /*}else{
                 Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
                 //response.setClientId(String.valueOf(replicaId));
                 response.setOperationStatus(false);
                 response.setMethod(METHOD.WRONG_CONFIGURATIONS);
-            }
+            }*/
                
         }
         

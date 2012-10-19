@@ -59,7 +59,7 @@ public class CmdPublisherClient {
                 else
                     eventContent = new String();
 
-                cchm = new MessageBrokerClient(id);
+                cchm = new MessageBrokerClient(id, "pubclientConfig.props");
 
                 Request xx = new Request();
                 for (int i = 0; i < cchm.getNumberOfEventsPerCachedRequest(); i++) {

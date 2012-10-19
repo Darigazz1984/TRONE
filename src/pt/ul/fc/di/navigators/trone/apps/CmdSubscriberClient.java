@@ -61,7 +61,7 @@ public class CmdSubscriberClient {
 
                 Log.logInfoFlush(CmdSubscriberClient.class.getSimpleName(), "MESSAGE BROKER: STARTING ...", Log.getLineNumber());
 
-                cchm = new MessageBrokerClient(id);
+                cchm = new MessageBrokerClient(id, "subclientConfig.props");
 
                 Request xx = new Request();
                 for (int i = 0; i < cchm.getNumberOfEventsPerCachedRequest(); i++) {

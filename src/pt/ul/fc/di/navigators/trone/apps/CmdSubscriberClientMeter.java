@@ -56,7 +56,7 @@ public class CmdSubscriberClientMeter {
         //Preencher as estruturas
         for(int i = 0; i<numberOfClients; i++){
             Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), args[4+i], testTime);
-            map.put(args[4+i], new MessageBrokerClient(startingID+i));
+            map.put(args[4+i], new MessageBrokerClient(startingID+i, "subclientConfig.props"));
             counter.put(args[4+i],new AtomicInteger());
         }
         
@@ -73,7 +73,7 @@ public class CmdSubscriberClientMeter {
         
         
         StringBuilder sb = new StringBuilder();
-        sb.append("Received request per secound ");
+        sb.append("Received request per second ");
         for(String s: map.keySet()){
             sb.append(s);
             sb.append(" ");
@@ -84,12 +84,13 @@ public class CmdSubscriberClientMeter {
         dm.pack();
         dm.setVisible(true);
         
-        LineChart lc = new LineChart(sb.toString(), "Received Events", "Secounds");
+        LineChart lc = new LineChart(sb.toString(), "Received Events", "Seconds");
         lc.pack();
         lc.addValueNoRange(0, 0);
         Drawer d = new Drawer(dm, lc, samplingRate, counter);
         
-        
+        //vamos esperar um pouco para dar tempo de publicar alguns eventos
+        Thread.sleep(500);
         sem.countDown();
         Timer t = new Timer();
         t.schedule(d, 0, (samplingRate*1000));
@@ -101,6 +102,8 @@ public class CmdSubscriberClientMeter {
         t.cancel();
         lc.refresh();
         lc.saveChart("Chart_Subscriber.jpg", testTime);
+        
+        Log.logInfo(CmdSubscriberClientMeter.class.getCanonicalName(), "CONSUMI: "+d.getDisplayedEvents(), Log.getLineNumber());
         Thread.sleep(750);
         System.exit(0);
         
@@ -174,7 +177,7 @@ public class CmdSubscriberClientMeter {
 
               while(System.currentTimeMillis()<termTime){
                   try {
-                      response = mbc.pollEventsFromChannelWithCaching(tag);
+                      response = mbc.pollEventsFromChannel(tag, mbc.getNumberOfEventsPerPoll());
                   } catch (ClassNotFoundException ex) {
                       Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
                   } catch (IOException ex) {
@@ -208,7 +211,6 @@ public class CmdSubscriberClientMeter {
         static class Drawer extends TimerTask{
          DialMeter dm;
          LineChart lc;
-         int total;
          int timesCalled;
          int intervalTime;
          int displayedEvents;
@@ -227,6 +229,7 @@ public class CmdSubscriberClientMeter {
              int eventsToShow = sum() - displayedEvents;
              displayedEvents += eventsToShow;
              dm.addValue(eventsToShow);
+             dm.setNumberOfEvents(displayedEvents);
              dm.refresh();
 
              lc.addValueNoRange(eventsToShow, timesCalled*intervalTime);
@@ -240,5 +243,9 @@ public class CmdSubscriberClientMeter {
              }
              return result;
          }
+         
+         int getDisplayedEvents(){
+            return this.displayedEvents;
+        }
      }
 }

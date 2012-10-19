@@ -48,12 +48,13 @@ public class ClientProxy {
     private boolean useLongTerm;
     
 
-    public ClientProxy(int id) throws FileNotFoundException, IOException {
+    public ClientProxy(int id, String cc) throws FileNotFoundException, IOException {
         Log.logDebugFlush(this, "CLIENT PROXY STARTING ... ", Log.getLineNumber());
         
         netConfig = new ConfigNetManager("netConfig.props");
         clientID = id;
-        clientConfig = new ConfigClientManager("clientConfig.props");
+        //clientConfig = new ConfigClientManager("clientConfig.props");
+        clientConfig = new ConfigClientManager(cc);
         useSBFT = clientConfig.useSBFT();
         useCFT = clientConfig.useCFT();
         order = clientConfig.useOrdered();

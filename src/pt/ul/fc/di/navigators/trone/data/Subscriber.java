@@ -98,6 +98,7 @@ public class Subscriber {
     }
 
     public boolean queueIsNotEmpty() {
+       
         if (myEvents.size() > 0) {
             return true;
         }

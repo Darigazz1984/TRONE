@@ -18,6 +18,7 @@ import org.jfree.chart.plot.dial.*;
 import org.jfree.data.general.DefaultValueDataset;
 import org.jfree.data.general.ValueDataset;
 import org.jfree.ui.GradientPaintTransformType;
+import org.jfree.ui.RectangleAnchor;
 import org.jfree.ui.StandardGradientPaintTransformer;
 
 public class DialMeter extends JFrame{
@@ -28,22 +29,35 @@ public class DialMeter extends JFrame{
 
 		
 		DefaultValueDataset dataset;
-                
-                
+                DefaultValueDataset dts;
 
-		public static JFreeChart createStandardDialChart(String s, String s1, ValueDataset valuedataset, double d, double d1, double d2, int i){
+		public static JFreeChart createStandardDialChart(String s, String s1,  ValueDataset dt, ValueDataset valuedataset, double d, double d1, double d2, int i){
                         
                         NumberFormat f = new DecimalFormat("0K");
                         f.setMinimumFractionDigits(0);
+                        
+                        NumberFormat f1 = NumberFormat.getIntegerInstance();
+                        f1.setMaximumIntegerDigits(8);
                     
+                        
 			DialPlot dialplot = new DialPlot();
-			dialplot.setDataset(valuedataset);
+			dialplot.setDataset(0,valuedataset);
+                        dialplot.setDataset(1, dt);
 			dialplot.setDialFrame(new StandardDialFrame());
 			dialplot.setBackground(new DialBackground());
+                        
 			DialTextAnnotation dialtextannotation = new DialTextAnnotation(s1);
-			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 14));
+			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 18));
 			dialtextannotation.setRadius(0.69999999999999996D);
 			dialplot.addLayer(dialtextannotation);
+                        
+                        DialValueIndicator dvi = new DialValueIndicator(1);
+                        dvi.setNumberFormat(f1);
+                        dvi.setMaxTemplateValue(1000);
+                        dvi.setFrameAnchor(RectangleAnchor.CENTER);
+                        dvi.setTemplateValue(1000000);
+                        dvi.setAngle(90);
+                        dialplot.addLayer(dvi);
                         
 			DialValueIndicator dialvalueindicator = new DialValueIndicator(0);
                         dialvalueindicator.setNumberFormat(f);
@@ -63,7 +77,7 @@ public class DialMeter extends JFrame{
                         /****************************************/
                         
 			standarddialscale.setTickLabelOffset(0.14999999999999999D);
-			standarddialscale.setTickLabelFont(new Font("Dialog", 0, 18));
+			standarddialscale.setTickLabelFont(new Font("Dialog", 1, 24));
 			dialplot.addScale(0, standarddialscale);
 			dialplot.addPointer(new org.jfree.chart.plot.dial.DialPointer.Pin());
 			DialCap dialcap = new DialCap();
@@ -74,7 +88,8 @@ public class DialMeter extends JFrame{
 		public DialPanel(String title, String units, int min, int max, int leap){          
 			super(new BorderLayout());
 			dataset = new DefaultValueDataset(0D); //define a posição inicial do ponteiro
-			JFreeChart jfreechart = createStandardDialChart(title, units, dataset, min, max, leap, 10); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
+                        dts = new DefaultValueDataset(0);
+			JFreeChart jfreechart = createStandardDialChart(title, units, dts, dataset, min, max, leap, 10); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
                         
 			DialPlot dialplot = (DialPlot)jfreechart.getPlot();
                         
@@ -115,6 +130,10 @@ public class DialMeter extends JFrame{
                     dataset.setValue(new Integer(v));
                 }
                 
+                void setNumberOfEvents(int v){
+                    dts.setValue(v);
+                }
+                
                 void refresh(){
                     this.repaint();
                 }
@@ -135,6 +154,10 @@ public class DialMeter extends JFrame{
         public void addValue(int v){
             //Log.logInfo(this.getClass().getCanonicalName(), "ADDING VALUE: "+v, Log.getLineNumber());
             p.addValue(v/1000);
+        }
+        
+        public void setNumberOfEvents(int v){
+            p.setNumberOfEvents(v);
         }
         
         public void refresh(){
