@@ -73,14 +73,14 @@ public class CmdSubscriberClientMeter {
         
         
         StringBuilder sb = new StringBuilder();
-        sb.append("Received request per second ");
+        sb.append("TRONE - Received request per second");
         for(String s: map.keySet()){
             sb.append(s);
             sb.append(" ");
         }
         
         
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", 0, 200, 20);
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 200, 20);
         dm.pack();
         dm.setVisible(true);
         

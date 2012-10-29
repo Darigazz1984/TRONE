@@ -69,14 +69,14 @@ public class CmdPublisherClientMeter {
         }
         
         StringBuilder sb = new StringBuilder();
-        sb.append("Sent request per second ");
+        sb.append("TRONE - Sent request per second");
         for(String s: map.keySet()){
             sb.append(s);
             sb.append(" ");
         }
         
         
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", 0, 200, 20);
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 200, 20);
         dm.pack();
         dm.setVisible(true);
         
@@ -97,6 +97,7 @@ public class CmdPublisherClientMeter {
         t.cancel();
         lc.refresh();
         lc.saveChart("Chart_Publisher.jpg", testTime);
+        //lc.saveFullChart("Chart_Publsiher.jpg", testTime);
         Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), "PUBLIQUEI: "+d.getDisplayedEvents(), Log.getLineNumber());
         //Thread.sleep(750);
         //System.exit(0);
@@ -164,9 +165,10 @@ public class CmdPublisherClientMeter {
             
             long termTime = System.currentTimeMillis()+(testDuration*1000);
             Event e = new Event();
-            e.setContent(Long.toString(termTime % 10) + Long.toString(termTime % 5));
-            
-            while(System.currentTimeMillis()<termTime){
+            Long currentTime = System.currentTimeMillis();
+            while(currentTime<termTime){
+                e = new Event();
+                e.setContent(Long.toString(currentTime % 10) + Long.toString(currentTime % 5));
                 try {
                     response = mbc.publishWithCaching(e, tag);
                 } catch (ClassNotFoundException ex) {
@@ -183,6 +185,7 @@ public class CmdPublisherClientMeter {
                     counter.addAndGet(mbc.getNumberOfEventsPerCachedRequest());
                     response = null;
                 }
+                currentTime = System.currentTimeMillis();
             }
             
             try {

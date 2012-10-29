@@ -31,7 +31,7 @@ public class DialMeter extends JFrame{
 		DefaultValueDataset dataset;
                 DefaultValueDataset dts;
 
-		public static JFreeChart createStandardDialChart(String s, String s1,  ValueDataset dt, ValueDataset valuedataset, double d, double d1, double d2, int i){
+		public static JFreeChart createStandardDialChart(String s, String s1, String label,  ValueDataset dt, ValueDataset valuedataset, double d, double d1, double d2, int i){
                         
                         NumberFormat f = new DecimalFormat("0K");
                         f.setMinimumFractionDigits(0);
@@ -47,9 +47,16 @@ public class DialMeter extends JFrame{
 			dialplot.setBackground(new DialBackground());
                         
 			DialTextAnnotation dialtextannotation = new DialTextAnnotation(s1);
-			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 18));
+			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 20));
 			dialtextannotation.setRadius(0.69999999999999996D);
 			dialplot.addLayer(dialtextannotation);
+                        
+                        DialTextAnnotation dta = new DialTextAnnotation(label);
+                        dta.setFont(new Font(Font.DIALOG, 1, 20));
+                        dta.setRadius(0.5);
+                        dta.setAngle(90);
+                        dialplot.addLayer(dta);
+                        
                         
                         DialValueIndicator dvi = new DialValueIndicator(1);
                         dvi.setNumberFormat(f1);
@@ -59,6 +66,7 @@ public class DialMeter extends JFrame{
                         dvi.setAngle(90);
                         dialplot.addLayer(dvi);
                         
+                       
 			DialValueIndicator dialvalueindicator = new DialValueIndicator(0);
                         dialvalueindicator.setNumberFormat(f);
 			dialplot.addLayer(dialvalueindicator);
@@ -85,11 +93,11 @@ public class DialMeter extends JFrame{
 			return new JFreeChart(s, dialplot);
 		}
 
-		public DialPanel(String title, String units, int min, int max, int leap){          
+		public DialPanel(String title, String units, String label, int min, int max, int leap){          
 			super(new BorderLayout());
 			dataset = new DefaultValueDataset(0D); //define a posição inicial do ponteiro
                         dts = new DefaultValueDataset(0);
-			JFreeChart jfreechart = createStandardDialChart(title, units, dts, dataset, min, max, leap, 10); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
+			JFreeChart jfreechart = createStandardDialChart(title, units, label, dts, dataset, min, max, leap, 10); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
                         
 			DialPlot dialplot = (DialPlot)jfreechart.getPlot();
                         
@@ -140,15 +148,15 @@ public class DialMeter extends JFrame{
 	}
 
         
-	public DialMeter(String title, String units, int min, int max, int leap){
+	public DialMeter(String title, String units, String label, int min, int max, int leap){
 		super(title);
 		setDefaultCloseOperation(3);
-                p = (DialPanel) Panel(title, units, min, max, leap);
+                p = (DialPanel) Panel(title, units,label, min, max, leap);
 		setContentPane(p);
 	}
 
-	public static JPanel Panel(String title, String units, int min, int max, int leap){
-		return new DialPanel(title, units, min, max, leap);
+	public static JPanel Panel(String title, String units, String label, int min, int max, int leap){
+		return new DialPanel(title, units, label, min, max, leap);
 	}
         
         public void addValue(int v){

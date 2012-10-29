@@ -104,10 +104,16 @@ public class LineChart extends ApplicationFrame {
     public void saveChart(String file, int testTime){
         try {
             ChartUtilities.saveChartAsJPEG(new File(file), cp.getChart(), 800, 800);
-            ChartUtilities.saveChartAsJPEG(new File("Full_"+file), cp.getChart(), (testTime*40), 800);
-            
         } catch (IOException ex) {
-            Logger.getLogger(LineChart.class.getName()).log(Level.SEVERE, null, ex);
+            Log.logError(this.getClass().getCanonicalName(), "ERRO AO GRAVAR CHART \n " + ex.getMessage(), Log.getLineNumber());
+        }
+    }
+    
+    public void saveFullChart(String file, int testTime){
+        try {
+            ChartUtilities.saveChartAsJPEG(new File("Full_"+file), cp.getChart(), (testTime*40), 800);
+        } catch (IOException ex) {
+            Log.logError(this.getClass().getCanonicalName(), "ERRO AO GRAVAR FULL CHART \n " + ex.getMessage(), Log.getLineNumber());
         }
     }
     
