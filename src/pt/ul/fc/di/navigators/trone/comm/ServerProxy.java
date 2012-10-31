@@ -100,7 +100,7 @@ public class ServerProxy {
             if (sharedServerConfig.enableShortTermConnections()) {
                 Log.logOut(this, "Starting " + sharedServerConfig.getNumberOfThreadsForShortTermConnections() + " threads for SHORT term connections on PORT: " + si.getPortForShortTerm(), Log.getLineNumber());
                 for (int i = 0; i < sharedServerConfig.getNumberOfThreadsForShortTermConnections(); i++) {
-                    ServerProxyThreadShortTermConn newThread = new ServerProxyThreadShortTermConn(sharedStorage, sharedServerSocketForShortTerm, sharedServerConfig, sharedReplicaId);
+                    ServerProxyThreadShortTermConn newThread = new ServerProxyThreadShortTermConn(sharedStorage, sharedServerSocketForShortTerm, sharedServerConfig, sharedReplicaId, slow, lie);
                     newThread.start();
                 }
             }
@@ -110,7 +110,7 @@ public class ServerProxy {
             if (sharedServerConfig.enableLongTermConnections()) {
                 Log.logOut(this, "Starting " + sharedServerConfig.getNumberOfThreadsForLongTermConnections() + " threads for LONG term connections on PORT: " + si.getPortForLongTerm(), Log.getLineNumber());
                 for (int i = 0; i < sharedServerConfig.getNumberOfThreadsForLongTermConnections(); i++) {
-                    ServerProxyThreadLongTermConn newThread = new ServerProxyThreadLongTermConn(sharedStorage, sharedServerSocketForLongTerm, sharedServerConfig, sharedReplicaId);
+                    ServerProxyThreadLongTermConn newThread = new ServerProxyThreadLongTermConn(sharedStorage, sharedServerSocketForLongTerm, sharedServerConfig, sharedReplicaId, slow, lie);
                     newThread.start();
                 }
             }
@@ -127,13 +127,13 @@ public class ServerProxy {
         
         if(si != null && sharedServerConfig.useBFT()){
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
-            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex);
+            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex, slow, lie);
             
         }
         
         if(si != null && sharedServerConfig.controlled()){
-            Log.logOut(this.getClass().getCanonicalName(), "Starting controller thread", Log.getLineNumber());
-            ReplicaController rc = new ReplicaController(sharedServerConfig.getControllerPort(),slow, lie); 
+            Log.logOut(this.getClass().getCanonicalName(), "Starting controller thread on port: "+(sharedServerConfig.getControllerPort()+serverIndex), Log.getLineNumber());
+            ReplicaController rc = new ReplicaController((sharedServerConfig.getControllerPort()+serverIndex),slow, lie); 
             rc.start();
         }
        
@@ -147,14 +147,19 @@ class ServerProxyThreadShortTermConn extends Thread {
     private MessageBrokerServer thMessageBroker;
     private Log logger;
     private int thReplicaId;
+    
+    boolean slow;
+    boolean lie;
 
     // FIXME
-    public ServerProxyThreadShortTermConn(Storage sto, ServerSocket s, ConfigServerManager scm, int replicaId) throws UnknownHostException, NoSuchAlgorithmException {
+    public ServerProxyThreadShortTermConn(Storage sto, ServerSocket s, ConfigServerManager scm, int replicaId, boolean sl, boolean l) throws UnknownHostException, NoSuchAlgorithmException {
         thStorage = sto;
         thServerSocket = s;
         thMessageBroker = new MessageBrokerServer(scm);
         thReplicaId = replicaId;
         logger = new Log(1000);
+        slow = sl;
+        lie = l;
     }
 
     @Override
@@ -191,6 +196,12 @@ class ServerProxyThreadShortTermConn extends Thread {
                 if (thInReq != null &&  (thStorage.getQoP(thInReq.getChannelTag())).equals(QoP.CFT)) {
 
                     Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
+                    
+                    //Servidor esta lento
+                    if(slow){
+                        Thread.sleep(100);
+                    }
+                    
                     
                     switch (thInReq.getMethod()) {
                         case REGISTER:
@@ -293,7 +304,14 @@ class ServerProxyThreadShortTermConn extends Thread {
                     Log.logDebug(this, "STATS: NUMBER OF NULL RESULTED INVOKES: " + logger.getSpecificCounterValue("NNULLINVOKES") + " NUMBER OF REQUESTS EQUAL NULL: " + logger.getSpecificCounterValue("NNULLREQSRECV"), Log.getLineNumber());
                     thMessageBroker.currentStats();
                 }
-
+                
+                if(lie){
+                    thOutReq = new Request();
+                    thOutReq.setClientId("LIE");
+                    thOutReq.setOperationStatus(true);
+                    thOutReq.setMethod(METHOD.POLL);
+                }
+                
                 // send a responde to the client
                 cOut.writeObject(thOutReq);
                 cOut.flush();
@@ -318,13 +336,19 @@ class ServerProxyThreadLongTermConn extends Thread {
     private MessageBrokerServer thMessageBroker;
     private int thReplicaId;
     private Log logger;
+    
+    boolean slow;
+    boolean lie;
 
-    public ServerProxyThreadLongTermConn(Storage sto, ServerSocket s, ConfigServerManager scm, int replicaId) throws UnknownHostException, NoSuchAlgorithmException {
+    public ServerProxyThreadLongTermConn(Storage sto, ServerSocket s, ConfigServerManager scm, int replicaId, boolean sl, boolean l) throws UnknownHostException, NoSuchAlgorithmException {
         thStorage = sto;
         thServerSocket = s;
         thMessageBroker = new MessageBrokerServer(scm);
         thReplicaId = replicaId;
         logger = new Log(100);
+        
+        slow = sl;
+        lie = l;
     }
 
     @Override
@@ -372,7 +396,10 @@ class ServerProxyThreadLongTermConn extends Thread {
                         if (thInReq != null &&  thStorage.getQoP(thInReq.getChannelTag()).equals(QoP.CFT)) {
 
                             Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
-
+                            if(slow){
+                                Thread.sleep(100);
+                            }
+                            
                             switch (thInReq.getMethod()) {
                                 case REGISTER:
                                     if (thMessageBroker.register(thInReq, thStorage)) {
@@ -474,7 +501,13 @@ class ServerProxyThreadLongTermConn extends Thread {
                             Log.logDebug(this, "STATS: NUMBER OF NULL RESULTED INVOKES: " + logger.getSpecificCounterValue("NNULLINVOKES") + " NUMBER OF REQUESTS EQUAL NULL: " + logger.getSpecificCounterValue("NNULLREQSRECV"), Log.getLineNumber());
                             thMessageBroker.currentStats();
                         }
-
+                        if(lie){
+                            thOutReq = new Request();
+                            thOutReq.setClientId("LIE");
+                            thOutReq.setOperationStatus(true);
+                            thOutReq.setMethod(METHOD.POLL);
+                        }
+                        
                         // send a responde to the client
                         cOut.writeObject(thOutReq);
                         cOut.flush();
@@ -521,15 +554,21 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     private ConfigServerManager configServer;
     private ReplicaContext rctx;
     
-    public BftServer( Storage sto, ConfigServerManager scm, int replicaId){
+    private boolean slow;
+    private boolean lie;
+    
+    public BftServer( Storage sto, ConfigServerManager scm, int replicaId, boolean sl, boolean l){
         this.storage = sto;
         this.replicaId = replicaId;
         this.configServer = scm;
         this.thMessageBroker = new MessageBrokerServer(scm);
         this.logger = new Log(100);
+        this.slow = sl;
+        this.lie = l;
         Log.logInfo(this, "LAUNCHING SERVICEREPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configServer.getConfigPath() , Log.getLineNumber());
-        
         this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
+        
+        
         
         
     }
@@ -581,12 +620,15 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     }
     
     @SuppressWarnings("UnusedAssignment")
-    private Request resolveRequest(Request req) throws IOException, ClassNotFoundException{
+    private Request resolveRequest(Request req) throws IOException, ClassNotFoundException, InterruptedException{
             Request response = new Request();
             response.setChannelTag(req.getChannelTag());
         
             ArrayList<Event> events = null;
-
+            if(lie){
+                Thread.sleep(100);
+            }
+            
             switch (req.getMethod()) {
                   case REGISTER:
                       if (thMessageBroker.register(req, storage)) {
@@ -671,7 +713,13 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setId(req.getId());
             response.setClientId(req.getClientId());
             response.setMethod(req.getMethod());
-
+            if(lie){
+               response = new Request();
+               response.setClientId("LIE");
+               response.setOperationStatus(true);
+               response.setMethod(METHOD.POLL);
+            }
+            
             return response;
     }
     
@@ -701,12 +749,15 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
                 logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
                 Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
                 try {
-                    return convertRequestToByte((resolveRequest(req)));
+                        return convertRequestToByte((resolveRequest(req)));
                 } catch (IOException ex) {
                     Log.logInfo(BftServer.class.getCanonicalName(), ex.toString(), Log.getLineNumber());
                 } catch (ClassNotFoundException ex) {
                     Log.logInfo(BftServer.class.getCanonicalName(), ex.toString(), Log.getLineNumber());
+                } catch (InterruptedException ex) {
+                        Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
             }else{
                 Log.logInfo(BftServer.class.getCanonicalName(), "ERRO NAS CONFIGURAÇÕES DO CLIENTE", Log.getLineNumber());
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
@@ -755,7 +806,10 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
                     Log.logOut(this, "INSIDE PRIMEIRO CATCH", replicaId);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);   
+                } catch (InterruptedException ex) {
+                        Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
             /*}else{
                 Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
@@ -909,28 +963,27 @@ class ServerStorageGarbageCollectorThread extends Thread {
                         switch(inCommand.getCommand()){
                             case KILL:
                                 Log.logInfo(this.getClass().getCanonicalName(), "Killing replica", Log.getLineNumber());
+                                
                                 System.exit(0);
-                                // set flag to kill
+                                
                                 break;
                             case SLOW:
                                 if(slow == false)
                                     slow = true;
                                 else
                                     slow = false;
-                                //set flag to slow
                                 break;
                             case LIE:
                                 if(lie == false)
                                     lie = true;
                                 else
                                     lie = false;
-                                //set flag to lie
                                 break;
                             case PING:
                                 outCommand = new Command();
                                 outCommand.setCommand(Define.ReplicaCommand.PONG);
                                 try {
-                                    cOut.writeObject(cOut);
+                                    cOut.writeObject(outCommand);
                                 } catch (IOException ex) {
                                     Log.logError(this.getClass().getCanonicalName(), "ERRO AO ENVIAR PONG", Log.getLineNumber());
                                 }
