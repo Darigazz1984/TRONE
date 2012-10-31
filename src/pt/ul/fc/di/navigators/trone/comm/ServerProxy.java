@@ -88,6 +88,29 @@ public class ServerProxy {
             Log.logInfo(this, "channel with TAG: " + tag + " CREATED", Log.getLineNumber());
         }
     }
+    
+    public void lie(){
+        if(lie)
+            lie = false;
+        else
+            lie = true;
+    }
+    
+    
+    public void slow(){
+        if(slow)
+            slow = false;
+        else
+            slow = true;
+    }
+    
+    public boolean getLie(){
+        return lie;
+    }
+    
+    public boolean getSlow(){
+        return slow;
+    }
 
     public void startWorkerThreadPools() throws IOException, UnknownHostException, NoSuchAlgorithmException {
 
@@ -127,13 +150,13 @@ public class ServerProxy {
         
         if(si != null && sharedServerConfig.useBFT()){
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
-            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex, slow, lie);
+            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex, this);
             
         }
         
         if(si != null && sharedServerConfig.controlled()){
             Log.logOut(this.getClass().getCanonicalName(), "Starting controller thread on port: "+(sharedServerConfig.getControllerPort()+serverIndex), Log.getLineNumber());
-            ReplicaController rc = new ReplicaController((sharedServerConfig.getControllerPort()+serverIndex),slow, lie); 
+            ReplicaController rc = new ReplicaController((sharedServerConfig.getControllerPort()+serverIndex), this); 
             rc.start();
         }
        
@@ -397,7 +420,7 @@ class ServerProxyThreadLongTermConn extends Thread {
 
                             Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
                             if(slow){
-                                Thread.sleep(100);
+                                Thread.sleep(300);
                             }
                             
                             switch (thInReq.getMethod()) {
@@ -553,24 +576,17 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     private MessageBrokerServer thMessageBroker;
     private ConfigServerManager configServer;
     private ReplicaContext rctx;
+    private ServerProxy serverProxy;
     
-    private boolean slow;
-    private boolean lie;
-    
-    public BftServer( Storage sto, ConfigServerManager scm, int replicaId, boolean sl, boolean l){
+    public BftServer( Storage sto, ConfigServerManager scm, int replicaId, ServerProxy sp){
         this.storage = sto;
         this.replicaId = replicaId;
         this.configServer = scm;
         this.thMessageBroker = new MessageBrokerServer(scm);
         this.logger = new Log(100);
-        this.slow = sl;
-        this.lie = l;
+        this.serverProxy = sp;
         Log.logInfo(this, "LAUNCHING SERVICEREPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configServer.getConfigPath() , Log.getLineNumber());
         this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
-        
-        
-        
-        
     }
     
     
@@ -623,9 +639,14 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
     private Request resolveRequest(Request req) throws IOException, ClassNotFoundException, InterruptedException{
             Request response = new Request();
             response.setChannelTag(req.getChannelTag());
-        
+            Long sTime, time;
             ArrayList<Event> events = null;
-            if(lie){
+            if(serverProxy.getSlow()){
+                sTime = System.currentTimeMillis();
+                do{
+                    time = System.currentTimeMillis();
+                }while(time < sTime+100);
+                
                 Thread.sleep(100);
             }
             
@@ -713,7 +734,8 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setId(req.getId());
             response.setClientId(req.getClientId());
             response.setMethod(req.getMethod());
-            if(lie){
+            if(serverProxy.getLie()){
+               //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>LIE");
                response = new Request();
                response.setClientId("LIE");
                response.setOperationStatus(true);
@@ -913,12 +935,12 @@ class ServerStorageGarbageCollectorThread extends Thread {
         int port; // port do servidir
         boolean slow;
         boolean lie;
+        ServerProxy serverProxy;
         
-        ReplicaController(int p, boolean s, boolean l) throws IOException{
+        ReplicaController(int p, ServerProxy sp) throws IOException{
             port = p;
             theServerSocket = new ServerSocket(port);
-            slow = s;
-            lie = l;
+            serverProxy = sp;
         }
         
         
@@ -939,45 +961,35 @@ class ServerStorageGarbageCollectorThread extends Thread {
                     
                     try {
                         client = theServerSocket.accept();
-                        Log.logInfo(this.getClass().getCanonicalName(), "Cliente com o ip: "+client.getInetAddress().getHostAddress()+" acabou de se connectar.", Log.getLineNumber());
-                        
+                        //Log.logInfo(this.getClass().getCanonicalName(), "Cliente com o ip: "+client.getInetAddress().getHostAddress()+" acabou de se connectar.", Log.getLineNumber());
+                        Thread.sleep(50); // por alguma razao e necessario
                         cIn = new ObjectInputStream(client.getInputStream());
                         cOut = new ObjectOutputStream(client.getOutputStream());
-                      
-                        while (inCommand == null && !(inCommand instanceof Command)) {
-                               inCommand = (Command) cIn.readObject();
+                        while (inCommand == null || !(inCommand instanceof Command)){
+                            inCommand = (Command) cIn.readObject();    
                         }
-                        
-                        
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ReplicaController.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (IOException ex) {
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao aceitar com do cliente\n" + ex.toString(), Log.getLineNumber());
                     } catch (ClassNotFoundException ex) {
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao ler pedido do cliente\n" + ex.toString(), Log.getLineNumber());
-                      }
-                    
-                     
-                    
+                    }
                     
                     
                     if(inCommand != null){
                         switch(inCommand.getCommand()){
                             case KILL:
-                                Log.logInfo(this.getClass().getCanonicalName(), "Killing replica", Log.getLineNumber());
-                                
+                                Log.logInfo(this.getClass().getCanonicalName(), "KILLING REPLICA", Log.getLineNumber());
                                 System.exit(0);
-                                
                                 break;
                             case SLOW:
-                                if(slow == false)
-                                    slow = true;
-                                else
-                                    slow = false;
+                                Log.logInfo(this.getClass().getCanonicalName(), "SLOWING REPLICA", Log.getLineNumber());
+                                serverProxy.slow();
                                 break;
                             case LIE:
-                                if(lie == false)
-                                    lie = true;
-                                else
-                                    lie = false;
+                                Log.logInfo(this.getClass().getCanonicalName(), "BYZANTINE BEHAVIOUR", Log.getLineNumber());
+                                serverProxy.lie();
                                 break;
                             case PING:
                                 outCommand = new Command();
@@ -993,16 +1005,13 @@ class ServerStorageGarbageCollectorThread extends Thread {
                                 break;
                         }
                         
-                        
-                        
-                        
                     }else{
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao aceitar com do cliente", Log.getLineNumber());
                     }
-                    
-                    
                     try {
                         client.close();
+                        cIn.close();
+                        cOut.close();
                     } catch (IOException ex) {
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar ligacao com o cliente", Log.getLineNumber());
                     }

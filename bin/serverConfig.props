@@ -25,4 +25,8 @@ numberOfThreadsForShortTermConnections=10
 useLongTermConnections=1
 # REQUIRES SYNCHRONIZED WATCHES - 1 = active
 enableGarbageCollector=0
+# CONTROLLER CONFIGURATION
+controlled=1
+controllerPort=6001
+
 

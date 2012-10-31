@@ -3,8 +3,8 @@
 configLookUpPort=4009
 eventTimeToLiveInMilliseconds=5000
 timeoutForReplicaCounterReset=10000
-maxNumberOfEventsToFetchPerRequest=100
-numberOfEventsToCachePerRequest=100
+maxNumberOfEventsToFetchPerRequest=0
+numberOfEventsToCachePerRequest=0
 maxTimeToWaitWithCaching=1000
 majorityInPercentage=75
 cacheCleanUpPeriodInNumberOfRequests=10

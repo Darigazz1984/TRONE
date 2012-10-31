@@ -16,6 +16,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -57,6 +58,8 @@ public class ReplicaControlPanel {
    private String myIP;
    private int port;
    private Socket cSocket;
+   
+   Semaphore sem;
    
    boolean lie;
    boolean slow;
@@ -123,8 +126,8 @@ public class ReplicaControlPanel {
        
        
        addListeners();
-       
-       Alive ping = new Alive(myIP, port);
+       sem = new Semaphore(1);
+       Alive ping = new Alive(myIP, port,sem);
        
        Timer t = new Timer();
        t.schedule(ping, 0, 2000);
@@ -199,14 +202,18 @@ public class ReplicaControlPanel {
    //Este metodo e reponsavel por enviar os comandos para a replica
    
    private void sendCommand(Command c){
+       
        Socket cSocket = null;
        ObjectOutputStream out = null;
         try {
+            sem.acquire();
             cSocket = new Socket(myIP, port);
         } catch (UnknownHostException ex) {
              Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
         } catch (IOException ex) {
              Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
+        } catch (InterruptedException ex) {
+             Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer acquire do sem", Log.getLineNumber());
         }
         
         try {
@@ -224,6 +231,7 @@ public class ReplicaControlPanel {
         try {
             out.close();
             cSocket.close();
+            sem.release();
         } catch (IOException ex) {
             Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar socket e stream", Log.getLineNumber());
         }
@@ -238,10 +246,12 @@ public class ReplicaControlPanel {
    class Alive extends TimerTask{
        String ip;
        int port;
+       Semaphore sem;
        
-        public Alive(String i, int p){
+        public Alive(String i, int p, Semaphore s){
             ip = i;
             port = p;
+            sem = s;
             
         }
         @Override
@@ -252,7 +262,8 @@ public class ReplicaControlPanel {
             Command cOut = null, cIn = null;
             boolean proceed = true;
             //criar socket
-            try {    
+            try {
+                sem.acquire();
                 cSocket = new Socket(ip, port);
             } catch (UnknownHostException ex) {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
@@ -262,6 +273,8 @@ public class ReplicaControlPanel {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
                 dot.setIcon(redDot);
                 proceed = false;
+            } catch (InterruptedException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer acquire do semaforo", Log.getLineNumber());
             }
             //criar streams
             if(proceed)
@@ -314,6 +327,7 @@ public class ReplicaControlPanel {
                out.close();
                in.close();
                cSocket.close();
+               sem.release();
            } catch (IOException ex) {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar socket e streams", Log.getLineNumber());
            }

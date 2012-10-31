@@ -269,20 +269,23 @@ public class Channel {
             
             //subscriberHashMap.get(id).updateLocalTimestamp();
             //s.updateLocalTimestamp();
-                
+            
             if (s.queueIsNotEmpty()) {
-               // Log.logInfo(this.getClass().getCanonicalName(), "------------ENTERING", Log.getLineNumber());
-                    do{
-                        e = s.getNextEvent();
-                        events.add(e);
-                        counter++;
-                    }while(s.queueIsNotEmpty() && counter < numberOfEvents);
+                
+                    if(numberOfEvents == 0){
+                        do{
+                            e = s.getNextEvent();
+                            events.add(e);
+                        }while(s.queueIsNotEmpty());
+                    }else{
+                        do{
+                            e = s.getNextEvent();
+                            events.add(e);
+                            counter++;
+                        }while(s.queueIsNotEmpty() && counter < numberOfEvents);
+                    }
                     
-                    /*
-                while ((e = s.getNextEvent()) != null && counter < numberOfEvents) {
-                    events.add(e);
-                    counter++;
-                }*/
+                   
             }else{
                // Log.logInfo(this.getClass().getCanonicalName(), "NOT------------ENTERING", Log.getLineNumber());
             }

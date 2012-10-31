@@ -218,7 +218,6 @@ public class CmdPublisherClientMeter {
         }
         
         public void run(){
-            
             int eventsToShow = sum() - displayedEvents;
             displayedEvents += eventsToShow;
             dm.addValue(eventsToShow);

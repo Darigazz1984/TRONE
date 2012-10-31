@@ -173,7 +173,7 @@ public class CmdSubscriberClientMeter {
 
               long termTime = System.currentTimeMillis()+(testDuration*1000);
               Event e = new Event();
-              e.setContent(Long.toString(termTime % 10) + Long.toString(termTime % 5));
+              //e.setContent(Long.toString(termTime % 10) + Long.toString(termTime % 5));
 
               while(System.currentTimeMillis()<termTime){
                   try {
