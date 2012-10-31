@@ -26,7 +26,7 @@ public class CmdReplicaControler {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws FileNotFoundException, IOException {
-       int numberOfReplicas = Integer.parseInt(args[0]); // numero de replicas
+       
        LinkedList<ReplicaControlPanel> repControlPanel = new LinkedList<ReplicaControlPanel>();
        HashMap<String, String> ipPort = new HashMap<String, String>();
        ReplicasControlWindow rcw;
@@ -61,7 +61,7 @@ public class CmdReplicaControler {
        }*/
        
        
-       rcw = new ReplicasControlWindow("TRONE - Replicas", numberOfReplicas);
+       rcw = new ReplicasControlWindow("TRONE - Replicas", number);
        
        for(ReplicaControlPanel r: repControlPanel){
            rcw.addFrame(r);
