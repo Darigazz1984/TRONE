@@ -127,4 +127,17 @@ public class ConfigServerManager {
     public String getChannelPath(){
         return serverConfig.getStringValue("channelConfigPath");
     }
+    
+    public boolean controlled(){
+        
+        if(serverConfig.getIntValue("controlled") == 1){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public int getControllerPort(){
+        return serverConfig.getIntValue("controllerPort");
+    }
 }

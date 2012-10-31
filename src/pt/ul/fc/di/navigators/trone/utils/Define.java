@@ -51,5 +51,11 @@ public class Define {
         CFT,
         BFT;
     }
-    
+     public static enum ReplicaCommand{
+         PING, // o ping pong e para saber se a replica esta viva
+         PONG,
+         KILL,
+         SLOW,
+         LIE;
+     }
 }

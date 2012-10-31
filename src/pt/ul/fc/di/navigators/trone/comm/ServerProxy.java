@@ -29,12 +29,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.data.Storage;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigChannelManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigServerManager;
 import pt.ul.fc.di.navigators.trone.mgt.MessageBrokerServer;
+import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Define.METHOD;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
@@ -51,9 +53,16 @@ public class ServerProxy {
     static boolean sharedUseLongTermConn;
     static long sharedMessageTimeToLive;
     static int sharedReplicaId;
+    
+    //FLAGS DE CONTROLO DA REPLCIA
+    static boolean lie;
+    static boolean slow;
 
     public ServerProxy(int replicaId) throws FileNotFoundException, IOException {
-
+        lie = false;
+        slow = false;
+        
+        
         Log.logDebugFlush(this, "SERVER PROXY STARTING ...", Log.getLineNumber());
         sharedStorage = new Storage(replicaId);
         sharedServerConfig = new ConfigServerManager("netConfig.props", "serverConfig.props");
@@ -62,6 +71,7 @@ public class ServerProxy {
         sharedServerSocketForShortTerm = null;
         sharedServerSocketForLongTerm = null;
         sharedReplicaId = replicaId;
+        
 
         Log.logDebugFlush(this, "SERVER PROXY IS UP AND RUNNING...", Log.getLineNumber());
     }
@@ -119,6 +129,12 @@ public class ServerProxy {
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
             BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex);
             
+        }
+        
+        if(si != null && sharedServerConfig.controlled()){
+            Log.logOut(this.getClass().getCanonicalName(), "Starting controller thread", Log.getLineNumber());
+            ReplicaController rc = new ReplicaController(sharedServerConfig.getControllerPort(),slow, lie); 
+            rc.start();
         }
        
     }
@@ -834,4 +850,114 @@ class ServerStorageGarbageCollectorThread extends Thread {
             Log.logInfo(this, "REMOVING: " + number + " old EVENTS have been REMOVED", Log.getLineNumber());
         }
     }
+}
+    /**
+     * Esta class vai servir para controlar esta réplica
+     */
+    class ReplicaController extends Thread{
+        ServerSocket theServerSocket; // socket para receber com
+        int port; // port do servidir
+        boolean slow;
+        boolean lie;
+        
+        ReplicaController(int p, boolean s, boolean l) throws IOException{
+            port = p;
+            theServerSocket = new ServerSocket(port);
+            slow = s;
+            lie = l;
+        }
+        
+        
+        @Override
+        public void run(){
+            Socket client;
+            ObjectOutputStream cOut = null;
+            ObjectInputStream cIn = null;
+            Command inCommand;
+            Command outCommand;
+            
+            if(theServerSocket != null){
+                while(true){
+                    
+                    client = null;
+                    inCommand = null;
+                    outCommand = null;
+                    
+                    try {
+                        client = theServerSocket.accept();
+                        Log.logInfo(this.getClass().getCanonicalName(), "Cliente com o ip: "+client.getInetAddress().getHostAddress()+" acabou de se connectar.", Log.getLineNumber());
+                        
+                        cIn = new ObjectInputStream(client.getInputStream());
+                        cOut = new ObjectOutputStream(client.getOutputStream());
+                      
+                        while (inCommand == null && !(inCommand instanceof Command)) {
+                               inCommand = (Command) cIn.readObject();
+                        }
+                        
+                        
+                    } catch (IOException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao aceitar com do cliente\n" + ex.toString(), Log.getLineNumber());
+                    } catch (ClassNotFoundException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao ler pedido do cliente\n" + ex.toString(), Log.getLineNumber());
+                      }
+                    
+                     
+                    
+                    
+                    
+                    if(inCommand != null){
+                        switch(inCommand.getCommand()){
+                            case KILL:
+                                Log.logInfo(this.getClass().getCanonicalName(), "Killing replica", Log.getLineNumber());
+                                System.exit(0);
+                                // set flag to kill
+                                break;
+                            case SLOW:
+                                if(slow == false)
+                                    slow = true;
+                                else
+                                    slow = false;
+                                //set flag to slow
+                                break;
+                            case LIE:
+                                if(lie == false)
+                                    lie = true;
+                                else
+                                    lie = false;
+                                //set flag to lie
+                                break;
+                            case PING:
+                                outCommand = new Command();
+                                outCommand.setCommand(Define.ReplicaCommand.PONG);
+                                try {
+                                    cOut.writeObject(cOut);
+                                } catch (IOException ex) {
+                                    Log.logError(this.getClass().getCanonicalName(), "ERRO AO ENVIAR PONG", Log.getLineNumber());
+                                }
+                                break;
+                            default:
+                                
+                                break;
+                        }
+                        
+                        
+                        
+                        
+                    }else{
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao aceitar com do cliente", Log.getLineNumber());
+                    }
+                    
+                    
+                    try {
+                        client.close();
+                    } catch (IOException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar ligacao com o cliente", Log.getLineNumber());
+                    }
+                }//fim do while
+            }else{
+                Log.logError(this.getClass().getCanonicalName(), "Erro ao tentar iniciar o run do controlador da replica", Log.getLineNumber());
+            }
+        }
+        
+    
 }
