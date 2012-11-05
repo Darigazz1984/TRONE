@@ -150,7 +150,7 @@ public class ReplicaControlPanel {
        sem = new Semaphore(1);
        Timer t = new Timer();
        Alive ping = new Alive(myIP, port,sem);
-       t.schedule(ping, 0, 2000);
+       t.schedule(ping, 1000, 2000);
    }
    
    private void addListeners(){
