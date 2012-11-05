@@ -17,8 +17,6 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,6 +55,7 @@ public class ReplicaControlPanel {
    //Variaveis para se ligar ao servidor
    private String myIP;
    private int port;
+   private int repNumber;
    private Socket cSocket;
    
    Semaphore sem;
@@ -69,7 +68,7 @@ public class ReplicaControlPanel {
        //ip da replica a que se vai ligar
        myIP = ip;
        port = p;
-       int repNumber = Integer.parseInt(number)+1;
+       repNumber = Integer.parseInt(number)+1;
        //representacao do estado da replica
        boolean lie = false;
        boolean slow = false;
@@ -157,6 +156,7 @@ public class ReplicaControlPanel {
    private void addListeners(){
         killButton.addActionListener(new ActionListener() {  // Note: inner class
       // This method is called when the Yes button is clicked.
+            @Override
                 public void actionPerformed(ActionEvent e) { 
                     Command c = new Command();
                     c.setCommand(Define.ReplicaCommand.KILL);
@@ -166,11 +166,23 @@ public class ReplicaControlPanel {
         
         startButton.addActionListener(new ActionListener() {  // Note: inner class
       // This method is called when the Yes button is clicked.
-        public void actionPerformed(ActionEvent e) { startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
+            @Override
+        public void actionPerformed(ActionEvent e) { 
+                
+                String command = "/Users/igorantunes/Documents/FCUL/TRONE/remoteExec.sh weq312@@ "+myIP+" /home/igor/Testes/TRONE/trone-fiteb/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
+                        
+                Runtime rt = Runtime.getRuntime();
+                try {
+                    Process pr = rt.exec(command);
+                } catch (IOException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
+                }
+                startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
         });
         
         lieButton.addActionListener(new ActionListener() {  // Note: inner class
       // This method is called when the Yes button is clicked.
+            @Override
                 public void actionPerformed(ActionEvent e) { 
                     Command c = new Command();
                     c.setCommand(Define.ReplicaCommand.LIE);
@@ -189,6 +201,7 @@ public class ReplicaControlPanel {
         
         slowButton.addActionListener(new ActionListener() {  // Note: inner class
       // This method is called when the Yes button is clicked.
+            @Override
                 public void actionPerformed(ActionEvent e) { 
                     Command c = new Command();
                     c.setCommand(Define.ReplicaCommand.SLOW);
@@ -288,8 +301,8 @@ public class ReplicaControlPanel {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer acquire do semaforo", Log.getLineNumber());
             }
             //criar streams
-            if(proceed)
-                try {
+            if(proceed){
+                try{
                     out = new ObjectOutputStream(cSocket.getOutputStream());
                     in = new ObjectInputStream(cSocket.getInputStream());
                 } catch (IOException ex) {
@@ -298,6 +311,7 @@ public class ReplicaControlPanel {
                     proceed = false;
                     setTimer();
                 }
+            }
            
            //enviar e receber resposta
            if(out != null && in != null && proceed){

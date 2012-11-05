@@ -76,7 +76,7 @@ public class CmdPublisherClientMeter {
         }
         
         
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 200, 20);
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 80, 10);
         dm.pack();
         dm.setVisible(true);
         

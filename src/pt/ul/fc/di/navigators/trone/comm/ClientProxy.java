@@ -124,8 +124,9 @@ public class ClientProxy {
     }
     
     private Request BftSendOrderedRequest(Request req){
-        byte [] r = this.longTermServiceProxy.invokeOrdered(convertRequestToByte(req));
-        return convertByteToRequest(r);
+            byte [] r = this.longTermServiceProxy.invokeOrdered(convertRequestToByte(req));
+            return convertByteToRequest(r);
+        
     }
     
     
