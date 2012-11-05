@@ -24,6 +24,7 @@ public class ReplicasControlWindow {
     public ReplicasControlWindow(String name, int numberOfReplicas){
         window = new JFrame(name);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setLocationRelativeTo(null);
         window.getContentPane().setLayout(new GridLayout(numberOfReplicas+1, 0));
         window.setSize(250*(numberOfReplicas+1), 200*numberOfReplicas);
         window.setBackground(Color.white);

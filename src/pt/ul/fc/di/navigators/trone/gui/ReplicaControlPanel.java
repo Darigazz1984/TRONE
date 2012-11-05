@@ -17,11 +17,15 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -129,7 +133,7 @@ public class ReplicaControlPanel {
        Timer t = new Timer();
        Alive ping = new Alive(myIP, port,sem);
        t.schedule(ping, 0, 2000);*/
-       setTimer();
+       //setTimer();
        
    }
    
@@ -168,15 +172,58 @@ public class ReplicaControlPanel {
       // This method is called when the Yes button is clicked.
             @Override
         public void actionPerformed(ActionEvent e) { 
+                final JFrame frame = new JFrame();
+                frame.setVisible(true);
+                frame.setTitle("Status");
+                frame.requestFocus();
+                frame.setSize(100, 200);
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLocationRelativeTo(null);
+                String action = "Copying code...";
+                JLabel label = new JLabel(action, SwingConstants.CENTER);
+                label.setVisible(true);
+                frame.add(label);
+                frame.setResizable(true);
                 
-                String command = "/Users/igorantunes/Documents/FCUL/TRONE/remoteExec.sh weq312@@ "+myIP+" /home/igor/Testes/TRONE/trone-fiteb/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
-                        
+                //COPIAR CODIGO
+                String command = "remoteExec.sh weq312@@ "+myIP+" /home/igor/Dropbox/ReplicaExecCode/CopyScript.sh";
                 Runtime rt = Runtime.getRuntime();
+                Process pr;
                 try {
-                    Process pr = rt.exec(command);
+                    pr = rt.exec(command);
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
+                
+                //COMPILAR CODIGO
+                action = "Compiling code...";
+                frame.repaint();
+                command = "remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/CompileScript.sh";
+                try {
+                    pr = rt.exec(command);
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
+                }
+                
+                //INICIAR REPLICA
+                action = "Starting replica...";
+                frame.repaint();
+                command = "remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/ExecScript.sh 1 "+(repNumber-1)+" xterm";
+                try {
+                    pr = rt.exec(command);
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
+                }
+                frame.dispose();
                 startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
         });
         
