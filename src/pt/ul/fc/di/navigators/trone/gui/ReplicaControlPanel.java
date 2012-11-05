@@ -126,11 +126,11 @@ public class ReplicaControlPanel {
        
        
        addListeners();
-       sem = new Semaphore(1);
-       Alive ping = new Alive(myIP, port,sem);
-       
+       /*sem = new Semaphore(1);
        Timer t = new Timer();
-       t.schedule(ping, 0, 2000);
+       Alive ping = new Alive(myIP, port,sem);
+       t.schedule(ping, 0, 2000);*/
+       setTimer();
        
    }
    
@@ -146,6 +146,13 @@ public class ReplicaControlPanel {
        return panel;
    }
    
+   
+   public void setTimer(){
+       sem = new Semaphore(1);
+       Timer t = new Timer();
+       Alive ping = new Alive(myIP, port,sem);
+       t.schedule(ping, 0, 2000);
+   }
    
    private void addListeners(){
         killButton.addActionListener(new ActionListener() {  // Note: inner class
@@ -206,15 +213,15 @@ public class ReplicaControlPanel {
        Socket cSocket = null;
        ObjectOutputStream out = null;
         try {
-            sem.acquire();
+            //sem.acquire();
             cSocket = new Socket(myIP, port);
         } catch (UnknownHostException ex) {
              Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
         } catch (IOException ex) {
              Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
-        } catch (InterruptedException ex) {
+        } /*catch (InterruptedException ex) {
              Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer acquire do sem", Log.getLineNumber());
-        }
+        }*/
         
         try {
             out = new ObjectOutputStream(cSocket.getOutputStream());
@@ -231,7 +238,7 @@ public class ReplicaControlPanel {
         try {
             out.close();
             cSocket.close();
-            sem.release();
+            //sem.release();
         } catch (IOException ex) {
             Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar socket e stream", Log.getLineNumber());
         }
@@ -248,12 +255,14 @@ public class ReplicaControlPanel {
        int port;
        Semaphore sem;
        
-        public Alive(String i, int p, Semaphore s){
+       
+
+        private Alive(String i, int p, Semaphore s) {
             ip = i;
             port = p;
             sem = s;
-            
         }
+        
         @Override
         public void run() {
             Socket cSocket = null;
@@ -269,10 +278,12 @@ public class ReplicaControlPanel {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
                 dot.setIcon(redDot);
                 proceed = false;
+                setTimer();
             } catch (IOException ex) {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao criar socket", Log.getLineNumber());
                 dot.setIcon(redDot);
                 proceed = false;
+                setTimer();
             } catch (InterruptedException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer acquire do semaforo", Log.getLineNumber());
             }
@@ -285,6 +296,7 @@ public class ReplicaControlPanel {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao criar streams", Log.getLineNumber());
                     dot.setIcon(redDot);
                     proceed = false;
+                    setTimer();
                 }
            
            //enviar e receber resposta
@@ -297,6 +309,7 @@ public class ReplicaControlPanel {
                } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao enviar PING", Log.getLineNumber());
                     dot.setIcon(redDot);
+                    setTimer();
                }
                
                //Receber
@@ -308,9 +321,11 @@ public class ReplicaControlPanel {
                } catch (IOException ex) {
                    Log.logError(this.getClass().getCanonicalName(), "Erro ao receber PONG", Log.getLineNumber());
                    dot.setIcon(redDot);
+                   setTimer();
                } catch (ClassNotFoundException ex) {
                    Log.logError(this.getClass().getCanonicalName(), "Erro ao receber PONG", Log.getLineNumber());
                    dot.setIcon(redDot);
+                   setTimer();
                }
                
                if(cIn.getCommand().equals(Define.ReplicaCommand.PONG)){
@@ -330,6 +345,7 @@ public class ReplicaControlPanel {
                sem.release();
            } catch (IOException ex) {
                 Log.logError(this.getClass().getCanonicalName(), "Erro ao fechar socket e streams", Log.getLineNumber());
+                setTimer();
            }
           
         }//fim run

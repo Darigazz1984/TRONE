@@ -641,15 +641,15 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setChannelTag(req.getChannelTag());
             Long sTime, time;
             ArrayList<Event> events = null;
-            if(serverProxy.getSlow()){
+            /*if(serverProxy.getSlow()){
                 sTime = System.currentTimeMillis();
                 do{
                     time = System.currentTimeMillis();
-                }while(time < sTime+100);
+                }while(time < sTime+50);
                 
-                Thread.sleep(100);
-            }
-            
+                //
+            }*/
+            Thread.sleep(10);
             switch (req.getMethod()) {
                   case REGISTER:
                       if (thMessageBroker.register(req, storage)) {
