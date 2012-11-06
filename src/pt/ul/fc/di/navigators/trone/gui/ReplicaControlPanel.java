@@ -184,9 +184,6 @@ public class ReplicaControlPanel {
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
-                
-                
-                
                 command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
                 try {
                     pr = rt.exec(command);

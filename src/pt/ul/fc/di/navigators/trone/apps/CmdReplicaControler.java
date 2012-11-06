@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.LinkedList;
+import pt.ul.fc.di.navigators.trone.gui.DisplayPanel;
 import pt.ul.fc.di.navigators.trone.gui.ReplicaControlPanel;
 import pt.ul.fc.di.navigators.trone.gui.ReplicasControlWindow;
 
@@ -36,9 +37,6 @@ public class CmdReplicaControler {
         * Fazer para ler uma pasta com as especificações das replicas, isto é so teste
         */
        
-       
-      // BufferedReader in = new BufferedReader(new FileReader("monitor.props"));
-       
        FileInputStream fstream = new FileInputStream("controller.props");
        DataInputStream in = new DataInputStream(fstream);
        BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -53,12 +51,6 @@ public class CmdReplicaControler {
                 
        }
        
-       /******************************/
-      /* 
-       for(int i = 0;i<numberOfReplicas;i++){
-           repControlPanel.add(new ReplicaControlPanel(""+i, ""+i,10));
-       }*/
-       
        
        rcw = new ReplicasControlWindow("TRONE - Replicas", number);
        
@@ -67,5 +59,9 @@ public class CmdReplicaControler {
        }
        
        rcw.show();
+       
+       DisplayPanel dp = new DisplayPanel("Averege time per request");
+       dp.changeText("PRIMEIRO TESTE");
+       dp.build();
     }
 }
