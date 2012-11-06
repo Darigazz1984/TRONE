@@ -173,49 +173,28 @@ public class ReplicaControlPanel {
             @Override
         public void actionPerformed(ActionEvent e) { 
                 
-                JFrame frame = new JFrame();
-                frame.setVisible(true);
-                frame.setResizable(true);
-                frame.setSize(200, 100);
-                frame.setLocationRelativeTo(null);
-                frame.requestFocus();
-                
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                JLabel message = new JLabel("Copying code...",SwingConstants.CENTER);
-                message.setVisible(true);
-                frame.setResizable(true);
-                
-                frame.add(message);
-                
                 //COPIAR CODIGO
                 String command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Dropbox/ReplicaExecCode/CopyScript.sh";
                 Runtime rt = Runtime.getRuntime();
                 Process pr;
-                
-                
+               
                 try {
                     pr = rt.exec(command);
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                 
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
                 
-                message.setText("Executing replica...");
-                frame.repaint();
-                //INICIAR REPLICA
-               
+                
+                
                 command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
                 try {
                     pr = rt.exec(command);
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
-                frame.dispose();
+                
                 startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
         });
         
