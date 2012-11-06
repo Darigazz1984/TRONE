@@ -44,8 +44,8 @@ public class ReplicaControlPanel {
    //icones representativos do estado da replica
    private Icon greenDot; //tudo ok
    private Icon redDot; //em baixo
-   private Icon yellowDot; //sobre ataque ou lenta
-   
+   private Icon yellowDot; // lenta
+   private Icon blackDot; //sobre ataque
    
    
    
@@ -83,6 +83,7 @@ public class ReplicaControlPanel {
        greenDot = new ImageIcon("img/greendot.jpg");
        redDot = new ImageIcon("img/reddot.jpg");
        yellowDot = new ImageIcon("img/yellowdot.jpg");
+       blackDot = new ImageIcon("img/blackdot.gif");
        
       
        
@@ -133,7 +134,7 @@ public class ReplicaControlPanel {
        Timer t = new Timer();
        Alive ping = new Alive(myIP, port,sem);
        t.schedule(ping, 0, 2000);*/
-       setTimer();
+      // setTimer();
        
    }
    
@@ -184,6 +185,11 @@ public class ReplicaControlPanel {
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer sleep entre comandos", Log.getLineNumber());
+                }
                 command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
                 try {
                     pr = rt.exec(command);
@@ -207,7 +213,8 @@ public class ReplicaControlPanel {
                         dot.setIcon(greenDot);
 
                     }else{
-                        dot.setIcon(yellowDot);
+                        slow = false;
+                        dot.setIcon(blackDot);
                         lie = true;
                     }
 
@@ -226,7 +233,7 @@ public class ReplicaControlPanel {
                         slow =false;
                         dot.setIcon(greenDot);
                     }else{
-
+                        lie = false;
                         slow = true;
                         dot.setIcon(yellowDot);
                     }
@@ -358,10 +365,14 @@ public class ReplicaControlPanel {
                }
                
                if(cIn.getCommand().equals(Define.ReplicaCommand.PONG)){
-                   if(lie || slow){
-                       dot.setIcon(yellowDot);
+                   if(lie){
+                       dot.setIcon(blackDot);
                    }else
-                       dot.setIcon(greenDot);
+                       if(slow) {
+                            dot.setIcon(yellowDot);
+                       } else {
+                            dot.setIcon(greenDot);
+                       }
                }
                 
                 

@@ -26,7 +26,7 @@ public class DisplayPanel {
         frame.add(label);
         frame.setVisible(true);
         frame.setResizable(true);
-        frame.setSize(200, 100);
+        frame.setSize(300, 100);
         frame.setLocationRelativeTo(null);
         frame.requestFocus();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

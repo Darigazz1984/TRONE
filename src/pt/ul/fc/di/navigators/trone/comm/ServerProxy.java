@@ -93,6 +93,7 @@ public class ServerProxy {
         if(lie)
             lie = false;
         else
+            slow = false;
             lie = true;
     }
     
@@ -101,6 +102,7 @@ public class ServerProxy {
         if(slow)
             slow = false;
         else
+            lie = false;
             slow = true;
     }
     
