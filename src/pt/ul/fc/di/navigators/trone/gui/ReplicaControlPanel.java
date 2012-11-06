@@ -17,11 +17,15 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -169,8 +173,19 @@ public class ReplicaControlPanel {
             @Override
         public void actionPerformed(ActionEvent e) { 
                 
+                JFrame frame = new JFrame();
+                frame.setVisible(true);
+                frame.setResizable(true);
+                frame.setSize(200, 100);
+                frame.setLocationRelativeTo(null);
+                frame.requestFocus();
                 
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                JLabel message = new JLabel("Copying code...",SwingConstants.CENTER);
+                message.setVisible(true);
+                frame.setResizable(true);
                 
+                frame.add(message);
                 
                 //COPIAR CODIGO
                 String command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Dropbox/ReplicaExecCode/CopyScript.sh";
@@ -180,18 +195,27 @@ public class ReplicaControlPanel {
                 
                 try {
                     pr = rt.exec(command);
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
+                
+                message.setText("Executing replica...");
+                frame.repaint();
                 //INICIAR REPLICA
                
                 command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
                 try {
                     pr = rt.exec(command);
-                    
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ReplicaControlPanel.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
+                frame.dispose();
                 startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
         });
         
