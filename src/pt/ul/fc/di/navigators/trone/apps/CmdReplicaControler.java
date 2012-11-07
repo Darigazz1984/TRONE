@@ -166,7 +166,6 @@ public class CmdReplicaControler {
             if(ss != null){
                 while(true){
                     try {
-                        System.out.println("----------------ESPERANDO------------------");
                         client = ss.accept();
                         stream = new ObjectInputStream(client.getInputStream());
 

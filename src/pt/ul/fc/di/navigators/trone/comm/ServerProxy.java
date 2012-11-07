@@ -222,10 +222,7 @@ class ServerProxyThreadShortTermConn extends Thread {
 
                     Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
                     
-                    //Servidor esta lento
-                    if(slow){
-                        Thread.sleep(100);
-                    }
+                  
                     
                     
                     switch (thInReq.getMethod()) {
@@ -421,9 +418,6 @@ class ServerProxyThreadLongTermConn extends Thread {
                         if (thInReq != null &&  thStorage.getQoP(thInReq.getChannelTag()).equals(QoP.CFT)) {
 
                             Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + thInReq.getUniqueId() + " METHOD: " + thInReq.getMethod() + " OBJ ID: " + thInReq, Log.getLineNumber());
-                            if(slow){
-                                Thread.sleep(300);
-                            }
                             
                             switch (thInReq.getMethod()) {
                                 case REGISTER:
@@ -643,14 +637,6 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setChannelTag(req.getChannelTag());
             Long sTime, time;
             ArrayList<Event> events = null;
-            /*if(serverProxy.getSlow()){
-                sTime = System.currentTimeMillis();
-                do{
-                    time = System.currentTimeMillis();
-                }while(time < sTime+50);
-                
-                //
-            }*/
             Thread.sleep(10);
             switch (req.getMethod()) {
                   case REGISTER:
@@ -737,11 +723,15 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             response.setClientId(req.getClientId());
             response.setMethod(req.getMethod());
             if(serverProxy.getLie()){
-               //System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>LIE");
-               response = new Request();
+               //response = new Request();
                response.setClientId("LIE");
-               response.setOperationStatus(true);
-               response.setMethod(METHOD.POLL);
+               //response.setOperationStatus(true);
+               //
+               //response.setMethod(METHOD.POLL);
+            }
+            
+            if(serverProxy.getSlow()){
+               Thread.sleep(50); 
             }
             
             return response;
