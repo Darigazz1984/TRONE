@@ -331,6 +331,12 @@ public class ClientProxy {
     }
     
     
+    public String getTimeIp(){
+        return clientConfig.getTimeIP();
+    }
     
+    public int getTimePort(){
+        return clientConfig.getTimePort();
+    }
     
 }

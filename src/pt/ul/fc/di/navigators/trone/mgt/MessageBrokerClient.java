@@ -67,6 +67,7 @@ public class MessageBrokerClient {
         return localClientId;
     }
     
+    
     public Request register(String tag) throws IOException, ClassNotFoundException, UnknownHostException, NoSuchAlgorithmException, Exception {
         globalRequest.prepare(requestNextId());
         globalRequest.setMethod(METHOD.REGISTER);
@@ -183,5 +184,13 @@ public class MessageBrokerClient {
     public void closeConnection() throws IOException{
         Log.logInfo(this.getClass().getCanonicalName(), "CLOSING CONNECTION", Log.getLineNumber());
         clientProxy.closeConnection();
+    }
+    
+    public String getTimeIP(){
+        return clientProxy.getTimeIp();
+    }
+    
+    public int getTimePort(){
+        return clientProxy.getTimePort();
     }
 }

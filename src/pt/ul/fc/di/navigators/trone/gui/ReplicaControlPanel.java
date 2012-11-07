@@ -17,15 +17,11 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
 import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -134,7 +130,7 @@ public class ReplicaControlPanel {
        Timer t = new Timer();
        Alive ping = new Alive(myIP, port,sem);
        t.schedule(ping, 0, 2000);*/
-      // setTimer();
+       
        
    }
    
@@ -197,7 +193,7 @@ public class ReplicaControlPanel {
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
-                
+                setTimer();
                 startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
         });
         

@@ -20,4 +20,7 @@ useAllReplicasOnCFT=0
 #BFT CONFIG
 useSBFT=1
 configPath=config/
+#CONFIGURATION OF TIME MEASURMENT
+timeIp=
+timePort=
 

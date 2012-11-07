@@ -7,6 +7,8 @@ package pt.ul.fc.di.navigators.trone.apps;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -55,8 +57,8 @@ public class CmdPublisherClientMeter {
         
         for(int i = 0; i<numberOfClients; i++){
             Log.logInfo(CmdPublisherClientMeter.class.getCanonicalName(), args[4+i], testTime);
-          map.put(args[4+i], new MessageBrokerClient(startingID+i, "pubclientConfig.props"));
-          counter.put(args[4+i],new AtomicInteger());
+            map.put(args[4+i], new MessageBrokerClient(startingID+i, "pubclientConfig.props"));
+            counter.put(args[4+i],new AtomicInteger());
         }
         
         CountDownLatch sem = new CountDownLatch(1);
@@ -110,6 +112,7 @@ public class CmdPublisherClientMeter {
         CountDownLatch sem;
         int testDuration;
         AtomicInteger counter;
+        SenderPing sp;
         
         Sender(String t, MessageBrokerClient m, CountDownLatch cdl, int td, AtomicInteger c){
             mbc = m;
@@ -117,6 +120,7 @@ public class CmdPublisherClientMeter {
             sem = cdl;
             testDuration = td;
             counter = c;
+            sp = new SenderPing("pub="+tag, mbc.getTimeIP(), mbc.getTimePort());
         }
         
         boolean register(){
@@ -180,8 +184,9 @@ public class CmdPublisherClientMeter {
                 } catch (Exception ex) {
                     Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+                //Significa que o pedido foi enviado
                 if(response != null){
+                    sp.run();
                     counter.addAndGet(mbc.getNumberOfEventsPerCachedRequest());
                     response = null;
                 }
@@ -241,4 +246,50 @@ public class CmdPublisherClientMeter {
         }
     }
     
+    
+    static class SenderPing implements Runnable{
+        Socket s;
+        ObjectOutputStream out;
+        String message;
+        String ip;
+        int port;
+        
+        public SenderPing(String m, String i, int p){
+            s = null;
+            out = null;
+            message = m;
+            ip = i;
+            port = p;
+        }
+
+        @Override
+        public void run() {
+            try {
+                s = new Socket(ip, port);
+                out = new ObjectOutputStream(s.getOutputStream());
+                out.flush();
+            } catch (UnknownHostException ex) {
+                Log.logError(SenderPing.class.getCanonicalName(), "Erro ao criar SOCKET", Log.getLineNumber());
+            } catch (IOException ex) {
+                Log.logError(SenderPing.class.getCanonicalName(), "Erro ao criar SOCKET", Log.getLineNumber());
+            }
+            try {
+                out.writeObject(message);
+            } catch (IOException ex) {
+                Log.logError(SenderPing.class.getCanonicalName(), "Erro ao enviar mensagem", Log.getLineNumber());
+            }
+            try {
+                out.close();
+                s.close();
+            } catch (IOException ex) {
+                Log.logError(SenderPing.class.getCanonicalName(), "Erro ao fechar stream e socket", Log.getLineNumber());
+            }
+            
+            
+            
+        }
+        
+        
+        
+    }
 }

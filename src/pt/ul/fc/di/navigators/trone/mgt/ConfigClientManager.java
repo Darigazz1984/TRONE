@@ -115,4 +115,12 @@ public class ConfigClientManager {
     public int numberOfFaults(){
         return configData.getIntValue("numerOfFaults");
     }
+    
+    public String getTimeIP(){
+        return configData.getStringValue("timeIp");
+    }
+    
+    public int getTimePort(){
+        return configData.getIntValue("timePort");
+    }
 }
