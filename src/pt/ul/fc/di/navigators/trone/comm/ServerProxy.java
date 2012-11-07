@@ -90,20 +90,26 @@ public class ServerProxy {
     }
     
     public void lie(){
-        if(lie)
+        if(lie){
+            Log.logInfo(ServerProxy.class.getCanonicalName(), "STOPING BYZANTINE", Log.getLineNumber());
             lie = false;
-        else
-            slow = false;
+        }
+        else{
+            Log.logInfo(ServerProxy.class.getCanonicalName(), "STARTING BYZANTINE", Log.getLineNumber());
             lie = true;
+        }
+        
     }
     
     
     public void slow(){
-        if(slow)
+        if(slow){
+            Log.logInfo(ServerProxy.class.getCanonicalName(), "STOPING SLOW", Log.getLineNumber());
             slow = false;
-        else
-            lie = false;
+        }else{
+            Log.logInfo(ServerProxy.class.getCanonicalName(), "STARTING SLOW", Log.getLineNumber());
             slow = true;
+        }
     }
     
     public boolean getLie(){
@@ -976,11 +982,11 @@ class ServerStorageGarbageCollectorThread extends Thread {
                                 System.exit(0);
                                 break;
                             case SLOW:
-                                Log.logInfo(this.getClass().getCanonicalName(), "SLOWING REPLICA", Log.getLineNumber());
+                               // Log.logInfo(this.getClass().getCanonicalName(), "SLOWING REPLICA", Log.getLineNumber());
                                 serverProxy.slow();
                                 break;
                             case LIE:
-                                Log.logInfo(this.getClass().getCanonicalName(), "BYZANTINE BEHAVIOUR", Log.getLineNumber());
+                               // Log.logInfo(this.getClass().getCanonicalName(), "BYZANTINE BEHAVIOUR", Log.getLineNumber());
                                 serverProxy.lie();
                                 break;
                             case PING:

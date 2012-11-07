@@ -186,7 +186,7 @@ public class CmdPublisherClientMeter {
                 }
                 //Significa que o pedido foi enviado
                 if(response != null){
-                    sp.run();
+                    //sp.run();
                     counter.addAndGet(mbc.getNumberOfEventsPerCachedRequest());
                     response = null;
                 }

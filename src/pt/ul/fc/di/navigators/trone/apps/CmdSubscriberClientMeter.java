@@ -54,7 +54,7 @@ public class CmdSubscriberClientMeter {
          //vamos dar a possibilidade de correr testes "infinitos"
         if (testTime == 0)
             testTime = 28800;
-        
+        testTime = testTime+(1000*60); // fazer com que o subscriber corra mais tempo que o publisher
         //Preencher as estruturas
         for(int i = 0; i<numberOfClients; i++){
             Log.logInfo(CmdSubscriberClientMeter.class.getCanonicalName(), args[4+i], testTime);
@@ -193,7 +193,6 @@ public class CmdSubscriberClientMeter {
                   }
 
                   if(response != null){
-                      sp.run();
                       counter.addAndGet(response.getAllEvents().size());
                       response = null;
                   }

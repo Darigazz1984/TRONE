@@ -76,15 +76,15 @@ public class CmdReplicaControler {
        
        ConcurrentHashMap<String, LinkedList<Long>> sub = new ConcurrentHashMap<String, LinkedList<Long>>();
        Semaphore sem = new Semaphore(1);
-       DisplayPanel dp = new DisplayPanel("Averege time per request");
-       dp.changeText("0 seconds");
-       dp.build();
-       Tempo t = new Tempo(pub, sub, sem, dp);
-       Timer timer = new Timer();
-       timer.schedule(t, 10000, 30000);
+       //DisplayPanel dp = new DisplayPanel("Averege time per request");
+       //dp.changeText("0 seconds");
+       //dp.build();
+      // Tempo t = new Tempo(pub, sub, sem, dp);
+      // Timer timer = new Timer();
+      // timer.schedule(t, 10000, 30000);
        
-       Server s = new Server(1250, sem);
-       s.run();
+      // Server s = new Server(1250, sem);
+      // s.run();
     }
     
     /*
