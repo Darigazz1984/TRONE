@@ -82,7 +82,7 @@ public class CmdSubscriberClientMeter {
         }
         
         
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 80, 10);
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 8, 1);
         dm.pack();
         dm.setVisible(true);
         
