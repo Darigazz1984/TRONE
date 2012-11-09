@@ -1,6 +1,0 @@
-javac: invalid flag: ../src/pt/ul/fc/di/navigators/trone/apps/Cmd*
-Usage: javac <options> <source files>
-use -help for a list of possible options
-javac: invalid flag: ../src/pt/ul/fc/di/navigators/trone/apps/Conf*
-Usage: javac <options> <source files>
-use -help for a list of possible options

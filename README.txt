@@ -16,21 +16,36 @@ BASIC INFO:
 ======================================================================
 STEPS TO USE AND TEST THE FIT BROKER:
 ======================================================================
-
+THIS SET UP WILL RUN ONLY WITH QoP = BFT AND QoS = TOTALORDER 
 (a) go to the bin/ directory;
 
-(b) compile all required stuff: ./compile-all.sh
+(b) compile all required stuff: ./compile-fitm.sh
 
-(c) write the config files in place: ./write-and-read-config.sh - CURRENTLY WORKING BUT NOT WRITING THE RIGHT CONFIGS
-    for configuring channels just add/remove channels in the bin/channels folder, make shure you use NAMECHANNEL.props
-    (required only on the first time or every time the configuration changes inside ConfigsWriter.java class)
- 
-(d) execute the replica: ./run-replicas.sh 4 xterm
+(c) write the config files in place:
+	/***************CONFIGURE REPLICAS*****************/
+	1. go to folder /config 
+	2. open file hosts.config and write the ip address of the FIT Event replicas
+	/***************CONFIGURE PUBLISHERS***************/
+	3. go back the /bin folder
+	4. open the pubclientConfig.props 
+	5. Make sure that userSBFT is at value 1
+	6. Make sure that useOrdered is at value 1
+	/***************CONFIGURE SUBSCRIBERS***************/
+	7. open the subclientConfig.props
+	8. Make sure that userSBFT is at value 1
+	9. Make sure that useOrdered is at value 1
+	/***************CONFIGURE CONTROLLER***************/	
+	The controller only works on a specific file system. This is one of the future improvements to make
+
+(d) execute the replica: ./run-replicas.sh 4 0 xterm where 4 represents the number of replicas and 0 the starting id of the first replica (all others will be the increment of the starting id)
     (you can use "xterm" windows of run in background - it is recommended to use xterm to see the execution logs)
 
-(e) execute the ./run.sh it will start 2 publishers for channels mysql and apache and 2 subscribers, one for each channel. These channels are BFT
-    (this command in particular will instantiate three channels and two clients per channel, being one publisher and one subscriber)
-    (you can chose and run many different configurations)
+(e) execute the clients: ./runMeter.sh execTime samplingTime startingId numberOfClients
+	- execTime -> Time that the simulation will run, specified in seconds. if the value is 0 the simulation will run for 8hours
+	- samplingTime -> refresh rate of the meters
+	- startingId -> the starting id of the client
+	- numberOfClients -> number of publishers and subscribers. Currently only 4 at max are supported
+	EXEMPLE: ./runMeter.sh 180 1 0 2 -> this will start a simulation for 3minutes withe a refresh rate of 1 second, starting id 0 and 2 clients
 
 ======================================================================
 SOME FAST NOTES:
