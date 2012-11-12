@@ -4,6 +4,7 @@
  */
 package pt.ul.fc.di.navigators.trone.apps;
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -29,7 +30,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  * @author igor
  */
 public class CmdSubscriberClientMeter {
-
+    static int samplingRate = 1000;
     /**
      * @param args the command line arguments
      */
@@ -45,9 +46,10 @@ public class CmdSubscriberClientMeter {
         HashMap<String, AtomicInteger> counter = new HashMap<String, AtomicInteger>();
         
         int testTime = Integer.parseInt(args[0]); // tempo de duracao do teste
-        int samplingRate = Integer.parseInt(args[1]); //sampling rate
+        //int samplingRate = Integer.parseInt(args[1]); //sampling rate
         int startingID = Integer.parseInt(args[2]); // id inicial dos clientes
         int numberOfClients = Integer.parseInt(args[3]); // numero total de clientes
+        
         
         
         
@@ -62,6 +64,18 @@ public class CmdSubscriberClientMeter {
             counter.put(args[4+i],new AtomicInteger());
         }
         
+        StringBuilder sb = new StringBuilder();
+        sb.append("TRONE - Received request per second ");
+        for(String s: map.keySet()){
+            sb.append(s);
+            sb.append(" ");
+        }
+        
+        
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 8000, 1000, new Color(144,238,144));
+        dm.pack();
+        dm.setVisible(true);
+        
         
         CountDownLatch sem = new CountDownLatch(1);
         for(String x: map.keySet()){
@@ -74,17 +88,7 @@ public class CmdSubscriberClientMeter {
         
         
         
-        StringBuilder sb = new StringBuilder();
-        sb.append("TRONE - Received request per second");
-        for(String s: map.keySet()){
-            sb.append(s);
-            sb.append(" ");
-        }
-        
-        
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 8, 1);
-        dm.pack();
-        dm.setVisible(true);
+       
         
         LineChart lc = new LineChart(sb.toString(), "Received Events", "Seconds");
         lc.pack();
@@ -95,9 +99,9 @@ public class CmdSubscriberClientMeter {
         Thread.sleep(500);
         sem.countDown();
         Timer t = new Timer();
-        t.schedule(d, 0, (samplingRate*1000));
+        t.schedule(d, 0, (samplingRate/**1000*/));
         try {
-            Thread.sleep(testTime*1000+1500);
+            Thread.sleep(testTime*1000+1500); // isto é o tempo do teste NÃO MEXER
         } catch (InterruptedException ex) {
             Logger.getLogger(CmdSubscriberClientMeter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -216,14 +220,14 @@ public class CmdSubscriberClientMeter {
          DialMeter dm;
          LineChart lc;
          int timesCalled;
-         int intervalTime;
+         int samplingRate;
          int displayedEvents;
          HashMap<String, AtomicInteger> counter;
 
          Drawer(DialMeter d, LineChart l, int it, HashMap<String, AtomicInteger> c){
              dm = d;
              lc = l;
-             intervalTime = it;
+             samplingRate = it;
              counter = c;
              timesCalled = 0;
          }
@@ -232,11 +236,11 @@ public class CmdSubscriberClientMeter {
 
              int eventsToShow = sum() - displayedEvents;
              displayedEvents += eventsToShow;
-             dm.addValue(eventsToShow);
+             dm.addValue(eventsToShow/**(1000/samplingRate)*/);
              dm.setNumberOfEvents(displayedEvents);
              dm.refresh();
 
-             lc.addValueNoRange(eventsToShow, timesCalled*intervalTime);
+             lc.addValueNoRange(eventsToShow, timesCalled*samplingRate);
              timesCalled++;
          }
 

@@ -5,6 +5,7 @@
 package pt.ul.fc.di.navigators.trone.apps;
 
 
+import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -30,7 +31,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  * @author igor
  */
 public class CmdPublisherClientMeter {
-
+    static int samplingRate = 1000;
     /**
      * @param args the command line arguments
      */
@@ -47,7 +48,7 @@ public class CmdPublisherClientMeter {
         HashMap<String, AtomicInteger> counter = new HashMap<String, AtomicInteger>();
         
         int testTime = Integer.parseInt(args[0]); // tempo de duracao do teste
-        int samplingRate = Integer.parseInt(args[1]); //sampling rate
+        //int samplingRate = Integer.parseInt(args[1]); //sampling rate
         int startingID = Integer.parseInt(args[2]); // id inicial dos clientes
         int numberOfClients = Integer.parseInt(args[3]); // numero total de clientes
         
@@ -61,6 +62,18 @@ public class CmdPublisherClientMeter {
             counter.put(args[4+i],new AtomicInteger());
         }
         
+        StringBuilder sb = new StringBuilder();
+        sb.append("TRONE - Sent request per second ");
+        for(String s: map.keySet()){
+            sb.append(s);
+            sb.append(" ");
+        }
+        
+        //Titulo, unidades, Label em cima, inicio, fim, distancia entre os valores, cor de fundo
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 8000, 1000, new Color(240,128,128));
+        dm.pack();
+        dm.setVisible(true);
+        
         CountDownLatch sem = new CountDownLatch(1);
         for(String x: map.keySet()){
             Sender s = new Sender(x, map.get(x), sem, testTime, counter.get(x));
@@ -70,17 +83,7 @@ public class CmdPublisherClientMeter {
                 Log.logError(CmdPublisherClientMeter.class.getCanonicalName(), "ERRO AO TENTAR REGISTAR TAG: "+x, Log.getLineNumber());
         }
         
-        StringBuilder sb = new StringBuilder();
-        sb.append("TRONE - Sent request per second");
-        for(String s: map.keySet()){
-            sb.append(s);
-            sb.append(" ");
-        }
-        
-        
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 8, 1);
-        dm.pack();
-        dm.setVisible(true);
+       
         
         LineChart lc = new LineChart(sb.toString(), "Sent Events", "Seconds");
         lc.pack();
@@ -90,9 +93,9 @@ public class CmdPublisherClientMeter {
         
         sem.countDown();
         Timer t = new Timer();
-        t.schedule(d, 0, (samplingRate*1000));
+        t.schedule(d, 0, (int)(samplingRate/**1000*/));
         try {
-            Thread.sleep(testTime*1000+1500);
+            Thread.sleep(testTime*1000+1500); // isto é o tempo do teste NÃO MEXER
         } catch (InterruptedException ex) {
             Logger.getLogger(CmdPublisherClientMeter.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -186,7 +189,6 @@ public class CmdPublisherClientMeter {
                 }
                 //Significa que o pedido foi enviado
                 if(response != null){
-                    //sp.run();
                     counter.addAndGet(mbc.getNumberOfEventsPerCachedRequest());
                     response = null;
                 }
@@ -210,26 +212,29 @@ public class CmdPublisherClientMeter {
         LineChart lc;
         //int total;
         int timesCalled;
-        int intervalTime;
+        int samplingRate;
         int displayedEvents;
         HashMap<String, AtomicInteger> counter;
+        
         
         Drawer(DialMeter d, LineChart l, int it, HashMap<String, AtomicInteger> c){
             dm = d;
             lc = l;
-            intervalTime = it;
+            samplingRate = it;
             counter = c;
             timesCalled = 0;
+           
         }
         
         public void run(){
-            int eventsToShow = sum() - displayedEvents;
-            displayedEvents += eventsToShow;
-            dm.addValue(eventsToShow);
-            dm.setNumberOfEvents(displayedEvents);
+            int eventsToShow = sum() - displayedEvents; // soma de todos os eventos enviados menos os que já foram mostrados
+            displayedEvents += eventsToShow; //eventos que já foram mostrados
+            dm.addValue(eventsToShow/**(1000/samplingRate)*/); //eventos para mostrar
+            dm.setNumberOfEvents(displayedEvents); 
+            
             dm.refresh();
             
-            lc.addValueNoRange(eventsToShow, timesCalled*intervalTime);
+            lc.addValueNoRange(eventsToShow, timesCalled*samplingRate);
             timesCalled++;
         }
         

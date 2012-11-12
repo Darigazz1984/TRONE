@@ -30,10 +30,11 @@ public class DialMeter extends JFrame{
 		
 		DefaultValueDataset dataset;
                 DefaultValueDataset dts;
-
+                
 		public static JFreeChart createStandardDialChart(String s, String s1, String label,  ValueDataset dt, ValueDataset valuedataset, double d, double d1, double d2, int i){
                         
-                        NumberFormat f = new DecimalFormat("0K");
+                        //NumberFormat f = new DecimalFormat("0K");
+                        NumberFormat f = new DecimalFormat("0");
                         f.setMinimumFractionDigits(0);
                         
                         NumberFormat f1 = NumberFormat.getIntegerInstance();
@@ -92,12 +93,13 @@ public class DialMeter extends JFrame{
 			dialplot.setCap(dialcap);
 			return new JFreeChart(s, dialplot);
 		}
-
-		public DialPanel(String title, String units, String label, int min, int max, int leap){          
+                //ADICIONAR AQUI A NOVA COR
+		public DialPanel(String title, String units, String label, int min, int max, int leap, Color c){                                  
 			super(new BorderLayout());
+                        Color backColor = c;
 			dataset = new DefaultValueDataset(0D); //define a posição inicial do ponteiro
                         dts = new DefaultValueDataset(0);
-			JFreeChart jfreechart = createStandardDialChart(title, units, label, dts, dataset, min, max, leap, 10); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
+			JFreeChart jfreechart = createStandardDialChart(title, units, label, dts, dataset, min, max, leap, 4); //Nome, nome do valor no ponteiro, dataset, range min/max, distancia entre valores, numero de tracos entre cada 2 valores
                         
 			DialPlot dialplot = (DialPlot)jfreechart.getPlot();
                         
@@ -116,18 +118,20 @@ public class DialMeter extends JFrame{
 			dialplot.addLayer(standarddialrange2);
                         */
                         //Background
-			GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(), new Color(170, 170, 220));
+                        //VER AQUI PARA MUDAR A COR DOS METERS
+                        // LIGHT GREEN 144,238,144 -> EM PRINCIPIO ESTE PARA O SUBSCRIBER
+                        //LIGHTCORAL 240,128,128 -> EM PRINCIPIO ESTE PARA O PUBLSHER
+			GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(255, 255, 255), new Point(), c);
 			DialBackground dialbackground = new DialBackground(gradientpaint);
 			dialbackground.setGradientPaintTransformer(new StandardGradientPaintTransformer(GradientPaintTransformType.VERTICAL));
 			dialplot.setBackground(dialbackground);
-                        
                         
 			dialplot.removePointer(0);
 			org.jfree.chart.plot.dial.DialPointer.Pointer pointer = new org.jfree.chart.plot.dial.DialPointer.Pointer();
 			pointer.setFillPaint(Color.yellow);
 			dialplot.addPointer(pointer);
 			ChartPanel chartpanel = new ChartPanel(jfreechart);
-			chartpanel.setPreferredSize(new Dimension(800, 800));
+			chartpanel.setPreferredSize(new Dimension(600, 600));
 			
 			add(chartpanel);
 			
@@ -139,6 +143,7 @@ public class DialMeter extends JFrame{
                 }
                 
                 void setNumberOfEvents(int v){
+                    
                     dts.setValue(v);
                 }
                 
@@ -148,20 +153,20 @@ public class DialMeter extends JFrame{
 	}
 
         
-	public DialMeter(String title, String units, String label, int min, int max, int leap){
+	public DialMeter(String title, String units, String label, int min, int max, int leap, Color c){
 		super(title);
 		setDefaultCloseOperation(3);
-                p = (DialPanel) Panel(title, units,label, min, max, leap);
+                p = (DialPanel) Panel(title, units,label, min, max, leap, c);
 		setContentPane(p);
 	}
 
-	public static JPanel Panel(String title, String units, String label, int min, int max, int leap){
-		return new DialPanel(title, units, label, min, max, leap);
+	public static JPanel Panel(String title, String units, String label, int min, int max, int leap, Color c){
+		return new DialPanel(title, units, label, min, max, leap, c);
 	}
         
         public void addValue(int v){
             //Log.logInfo(this.getClass().getCanonicalName(), "ADDING VALUE: "+v, Log.getLineNumber());
-            p.addValue(v/1000);
+            p.addValue(v);
         }
         
         public void setNumberOfEvents(int v){
