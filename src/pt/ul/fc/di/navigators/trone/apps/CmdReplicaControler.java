@@ -77,7 +77,7 @@ public class CmdReplicaControler {
         }
        
        
-       rcw = new ReplicasControlWindow("TRONE - Replicas", number-2);
+       rcw = new ReplicasControlWindow("TRONE - Replicas", repControlPanel.size());
        
        for(ReplicaControlPanel r: repControlPanel){
            rcw.addFrame(r);
