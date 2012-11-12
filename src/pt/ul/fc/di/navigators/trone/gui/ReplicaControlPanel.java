@@ -63,6 +63,8 @@ public class ReplicaControlPanel {
    boolean lie;
    boolean slow;
    
+   String pathToCommand;
+   String pass;
    
    public ReplicaControlPanel(String number, String ip, int p){
        //ip da replica a que se vai ligar
@@ -134,6 +136,14 @@ public class ReplicaControlPanel {
        
    }
    
+   public void setPass(String p){
+       pass = p;
+   }
+   
+   public void setPath(String p){
+       this.pathToCommand = p;
+   }
+   
    public JPanel getPanel(){
        
        panel.add(label);
@@ -171,7 +181,7 @@ public class ReplicaControlPanel {
         public void actionPerformed(ActionEvent e) { 
                 
                 //COPIAR CODIGO
-                String command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Dropbox/ReplicaExecCode/CopyScript.sh";
+                String command = "./remoteExec.sh "+pass+" "+myIP+" "+pathToCommand+"CopyScript.sh";
                 Runtime rt = Runtime.getRuntime();
                 Process pr;
                
@@ -186,7 +196,7 @@ public class ReplicaControlPanel {
                 } catch (InterruptedException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer sleep entre comandos", Log.getLineNumber());
                 }
-                command = "./remoteExec.sh weq312@@ "+myIP+" /home/igor/Execution/bin/run-replicas-remote.sh 1 "+(repNumber-1)+" xterm";
+                command = "./remoteExec.sh "+pass+" "+myIP+" "+pathToCommand+"ExecScript.sh 1 "+(repNumber-1)+" xterm";
                 try {
                     pr = rt.exec(command);
                     
@@ -194,7 +204,7 @@ public class ReplicaControlPanel {
                     Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                 }
                 setTimer();
-                startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); dot.setIcon(greenDot); }
+                startButton.setSelected(true); killButton.setSelected(false); lieButton.setSelected(false); slowButton.setSelected(false); /*dot.setIcon(greenDot);*/ }
         });
         
         lieButton.addActionListener(new ActionListener() {  // Note: inner class

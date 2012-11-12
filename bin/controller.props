@@ -4,3 +4,9 @@
 10.101.233.161=6002
 10.101.233.161=6003
 10.101.233.161=6004
+#PASS FOR TARGET MACHINE
+pass=weq312@@
+#PATH TO SCRIPTS 
+#THE SCRIPT SHOULD BE: CopyScript.sh to copy to target directory AND ExecScript to exec the replica from the directory
+path=/home/igor/Dropbox/ReplicaExecCode/
+

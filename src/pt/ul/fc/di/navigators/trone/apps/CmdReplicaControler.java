@@ -15,7 +15,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
@@ -50,20 +49,35 @@ public class CmdReplicaControler {
        BufferedReader br = new BufferedReader(new InputStreamReader(in));
        String strLine;
        int number = 0;
+       String pass = null, pathToCommand = null;
         try {
             while ((strLine = br.readLine()) != null)   {
                 //Queremos saltar os comentarios
                  if(!strLine.startsWith("#") && !strLine.isEmpty()){
-                     repControlPanel.add(new ReplicaControlPanel(""+number, strLine.split("=")[0],Integer.parseInt(strLine.split("=")[1])));
+                     if(strLine.startsWith("pass")){
+                         pass = strLine.split("=")[1];
+                     }else
+                         if(strLine.startsWith("path")){
+                            pathToCommand =  strLine.split("=")[1];
+                         }else
+                            repControlPanel.add(new ReplicaControlPanel(""+number, strLine.split("=")[0],Integer.parseInt(strLine.split("=")[1])));
                      number++;
                  }
             }
         } catch (IOException ex) {
             Log.logError( CmdReplicaControler.class.getCanonicalName(), "Erro ao ler ficheiro", Log.getLineNumber());
         }
+        System.out.println(pass+"     "+pathToCommand);
+        if(pass != null && pathToCommand != null){
+            for(ReplicaControlPanel p : repControlPanel){
+                p.setPass(pass);
+                p.setPath(pathToCommand);
+            }
+                
+        }
        
        
-       rcw = new ReplicasControlWindow("TRONE - Replicas", number);
+       rcw = new ReplicasControlWindow("TRONE - Replicas", number-2);
        
        for(ReplicaControlPanel r: repControlPanel){
            rcw.addFrame(r);
