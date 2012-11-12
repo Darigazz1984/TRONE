@@ -48,12 +48,12 @@ public class DialMeter extends JFrame{
 			dialplot.setBackground(new DialBackground());
                         
 			DialTextAnnotation dialtextannotation = new DialTextAnnotation(s1);
-			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 20));
+			dialtextannotation.setFont(new Font(Font.DIALOG, 1, 24));
 			dialtextannotation.setRadius(0.69999999999999996D);
 			dialplot.addLayer(dialtextannotation);
                         
                         DialTextAnnotation dta = new DialTextAnnotation(label);
-                        dta.setFont(new Font(Font.DIALOG, 1, 20));
+                        dta.setFont(new Font(Font.DIALOG, 1, 24));
                         dta.setRadius(0.5);
                         dta.setAngle(90);
                         dialplot.addLayer(dta);
