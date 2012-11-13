@@ -126,12 +126,7 @@ public class ReplicaControlPanel {
        dot.setIcon(redDot);
        dot.setVisible(true);
        
-       
        addListeners();
-       /*sem = new Semaphore(1);
-       Timer t = new Timer();
-       Alive ping = new Alive(myIP, port,sem);
-       t.schedule(ping, 0, 2000);*/
        
        
    }

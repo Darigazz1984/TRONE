@@ -1,0 +1,12 @@
+# THIS IS THE CONFIGURATION FILE FOR THE CLIENT LAUNCHER
+# THIS INDICATES THE IP WHERE THE CLIENTS WILL RUN
+pubIP=127.0.0.1
+subIP=127.0.0.1
+#PASS FOR TARGET MACHINE
+pass=weq312@@
+#PATH TO SCRIPTS
+#THE SCRIPT SHOULD BE: run-publishersMeter.sh AND run-subscribersMeter.sh
+path=~/Dropbox/ClientExecCode/bin/
+#THIS IS THE USERNAME
+user=igorantunes
+

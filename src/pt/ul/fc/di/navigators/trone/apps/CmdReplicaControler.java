@@ -67,7 +67,7 @@ public class CmdReplicaControler {
         } catch (IOException ex) {
             Log.logError( CmdReplicaControler.class.getCanonicalName(), "Erro ao ler ficheiro", Log.getLineNumber());
         }
-        System.out.println(pass+"     "+pathToCommand);
+        
         if(pass != null && pathToCommand != null){
             for(ReplicaControlPanel p : repControlPanel){
                 p.setPass(pass);
