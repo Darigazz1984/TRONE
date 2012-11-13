@@ -115,7 +115,7 @@ public class ClientControlPanel {
                     }
                     
                     
-                    command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"ExecScriptSub.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"ExecScriptSub.sh "+user+" "+duration.getText() +" 1 4 "+numClients.getSelectedItem();
                     System.out.println("RUN SUB:"+command);
                     try {
                         pr = rt.exec(command);
