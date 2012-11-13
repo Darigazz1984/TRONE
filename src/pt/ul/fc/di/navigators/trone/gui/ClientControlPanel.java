@@ -57,7 +57,7 @@ public class ClientControlPanel {
         stop.setIcon(new ImageIcon("img/no.png"));
         
         numClients = new JComboBox(clientOptions);
-        duration = new JTextField("", 10);
+        duration = new JTextField("0", 10);
         
         label1 = new JLabel();
         label2 = new JLabel();
@@ -84,7 +84,7 @@ public class ClientControlPanel {
             @Override
                 public void actionPerformed(ActionEvent e) {
                     String command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"CopyScript.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
-                    System.out.println(command);
+                    System.out.println("COPY SUB:"+command);
                     Runtime rt = Runtime.getRuntime();
                     Process pr;
 
@@ -101,6 +101,7 @@ public class ClientControlPanel {
                     }
                     
                     command = "./remoteExecClients.sh "+pass+" "+pubIP+" "+path+"CopyScript.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    System.out.println("COPY PUB:"+command);
                     try {
                         pr = rt.exec(command);
 
@@ -115,6 +116,7 @@ public class ClientControlPanel {
                     
                     
                     command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"ExecScriptSub.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    System.out.println("RUN SUB:"+command);
                     try {
                         pr = rt.exec(command);
 
@@ -129,6 +131,7 @@ public class ClientControlPanel {
                     
                     
                     command = "./remoteExecClients.sh "+pass+" "+pubIP+" "+path+"ExecScriptPub.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    System.out.println("RUN PUB:"+command);
                     try {
                         pr = rt.exec(command);
 
@@ -141,7 +144,22 @@ public class ClientControlPanel {
       // This method is called when the Yes button is clicked.
             @Override
                 public void actionPerformed(ActionEvent e) { 
-                    System.out.println(numClients.getSelectedItem());
+                    String command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"bin/kill-all-java-proc.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    //System.out.println("COPY SUB:"+command);
+                    Runtime rt = Runtime.getRuntime();
+                    Process pr;
+
+                    try {
+                        pr = rt.exec(command);
+
+                    } catch (IOException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer sleep entre comandos", Log.getLineNumber());
+                    }
                 }
         });
     }
