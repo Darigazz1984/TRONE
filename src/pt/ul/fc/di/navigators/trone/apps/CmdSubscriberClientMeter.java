@@ -56,10 +56,10 @@ public class CmdSubscriberClientMeter {
          //vamos dar a possibilidade de correr testes "infinitos"
         if (testTime == 0)
             testTime = 28800;
-        testTime = testTime+(1000*60); // fazer com que o subscriber corra mais tempo que o publisher
+        testTime = testTime+60; // fazer com que o subscriber corra mais tempo que o publisher -> O testTime esta em segundos
         //Preencher as estruturas
         for(int i = 0; i<numberOfClients; i++){
-            Log.logInfo(CmdSubscriberClientMeter.class.getCanonicalName(), args[4+i], testTime);
+            Log.logInfo(CmdSubscriberClientMeter.class.getCanonicalName(), "A criar subscriber para: "+args[4+i]+" que vai executar: "+testTime, Log.getLineNumber());
             map.put(args[4+i], new MessageBrokerClient(startingID+i, "subclientConfig.props"));
             counter.put(args[4+i],new AtomicInteger());
         }
@@ -67,7 +67,7 @@ public class CmdSubscriberClientMeter {
         StringBuilder sb = new StringBuilder();
         sb.append("TRONE - Received request per second ");
         for(String s: map.keySet()){
-            sb.append(s);
+            sb.append("["+s+"]");
             sb.append(" ");
         }
         
@@ -96,7 +96,8 @@ public class CmdSubscriberClientMeter {
         Drawer d = new Drawer(dm, lc, samplingRate, counter);
         
         //vamos esperar um pouco para dar tempo de publicar alguns eventos
-        Thread.sleep(500);
+        //Thread.sleep(500);
+        //TEM EM SLEEP DE 100ms antes do request
         sem.countDown();
         Timer t = new Timer();
         t.schedule(d, 0, (samplingRate/**1000*/));
@@ -140,7 +141,6 @@ public class CmdSubscriberClientMeter {
               try {
                   r = mbc.subscribe(tag);
                   if(r!= null && r.isOpSuccess()){
-
                       Log.logInfo(this, "CLIENTE: "+r.getClientId()+" SUBSCRITO EM: "+r.getChannelTag(), testDuration);
                   }
               } catch (IOException ex) {
@@ -185,6 +185,7 @@ public class CmdSubscriberClientMeter {
 
               while(System.currentTimeMillis()<termTime){
                   try {
+                      Thread.sleep(100);
                       response = mbc.pollEventsFromChannel(tag, mbc.getNumberOfEventsPerPoll());
                   } catch (ClassNotFoundException ex) {
                       Logger.getLogger(CmdSubscriberClientMeter.class.getName()).log(Level.SEVERE, null, ex);
@@ -200,6 +201,7 @@ public class CmdSubscriberClientMeter {
                       counter.addAndGet(response.getAllEvents().size());
                       response = null;
                   }
+                  
               }
 
               try {

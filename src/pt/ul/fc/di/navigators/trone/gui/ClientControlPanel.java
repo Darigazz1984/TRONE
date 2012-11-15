@@ -83,7 +83,7 @@ public class ClientControlPanel {
       // This method is called when the Yes button is clicked.
             @Override
                 public void actionPerformed(ActionEvent e) {
-                    String command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"CopyScript.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    String command = "./remoteExecClients.sh "+pass+" "+subIP+" "+path+"CopyScript.sh "+user+" "+duration.getText() +" 1 4 "+numClients.getSelectedItem();
                     System.out.println("COPY SUB:"+command);
                     Runtime rt = Runtime.getRuntime();
                     Process pr;

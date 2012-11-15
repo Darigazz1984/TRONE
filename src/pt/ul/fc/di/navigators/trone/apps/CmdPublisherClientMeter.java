@@ -65,7 +65,7 @@ public class CmdPublisherClientMeter {
         StringBuilder sb = new StringBuilder();
         sb.append("TRONE - Sent request per second ");
         for(String s: map.keySet()){
-            sb.append(s);
+            sb.append("["+s+"]");
             sb.append(" ");
         }
         
