@@ -70,7 +70,7 @@ public class CmdPublisherClientMeter {
         }
         
         //Titulo, unidades, Label em cima, inicio, fim, distancia entre os valores, cor de fundo
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 8000, 1000, new Color(240,128,128));
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Sent Requests", 0, 9000, 1000, new Color(240,128,128));
         dm.pack();
         dm.setVisible(true);
         

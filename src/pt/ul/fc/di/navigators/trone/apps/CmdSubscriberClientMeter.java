@@ -72,7 +72,7 @@ public class CmdSubscriberClientMeter {
         }
         
         
-        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 8000, 1000, new Color(144,238,144));
+        DialMeter dm = new DialMeter(sb.toString(), "req/sec", "Received Requests", 0, 9000, 1000, new Color(144,238,144));
         dm.pack();
         dm.setVisible(true);
         

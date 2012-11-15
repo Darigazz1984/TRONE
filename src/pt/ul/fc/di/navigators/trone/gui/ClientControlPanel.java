@@ -156,9 +156,16 @@ public class ClientControlPanel {
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                     }
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
                         Log.logError(this.getClass().getCanonicalName(), "Erro ao fazer sleep entre comandos", Log.getLineNumber());
+                    }
+                    
+                    command = "./remoteExecClients.sh "+pass+" "+pubIP+" "+path+"bin/kill-all-java-proc.sh "+user+" "+duration.getText() +" 1 0 "+numClients.getSelectedItem();
+                    try {
+                        pr = rt.exec(command);
+                    } catch (IOException ex) {
+                        Log.logError(this.getClass().getCanonicalName(), "Erro ao executar command", Log.getLineNumber());
                     }
                 }
         });

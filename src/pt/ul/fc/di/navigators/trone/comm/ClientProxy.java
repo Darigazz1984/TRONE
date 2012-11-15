@@ -114,6 +114,7 @@ public class ClientProxy {
     private void setupSBFTConnection(){
         Log.logDebug(this, "STARTING SBFT CLIENT WITH ID: "+this.clientID+" AND CONFIGURATION PATH: "+clientConfig.getConfigPath(), Log.getLineNumber());
         longTermServiceProxy = new ServiceProxy (this.clientID, clientConfig.getConfigPath());
+        
     }
     
     public void closeConnection() throws IOException{
