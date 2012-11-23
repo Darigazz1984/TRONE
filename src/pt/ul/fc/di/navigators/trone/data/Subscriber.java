@@ -82,11 +82,10 @@ public class Subscriber {
     public int getNumberOfEvents() {
         return myEvents.size();
     }
-
+   
     public boolean queueIsNotFull() {
         if (myEvents.size() >= maxNumberOfEvents) {
-            //return false;
-            return true;
+            return false;
         }
         return true;
     }

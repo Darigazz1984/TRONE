@@ -115,7 +115,7 @@ public class Channel {
                 Iterator it = c.iterator();
                 while (it.hasNext()) {
                     Subscriber s = (Subscriber) it.next();
-                    if (s.queueIsNotFull()) {
+                    if (s.queueIsNotFull()) { // ISTO PODE FALHAR SE O SUBSCRIBER JA MORREU OU  NÃO COLHE OS EVENTOS A TEMPO, ARRANJAR FORMA DE VERIFICAR SE O SUBSCRIBER ESTA VIVO. ISTO OCORRE QUANDO UM SUBSCRIBER FALHA SEM SER REGISTADO PELO SISTEMA, ELE VAI CONTINUAR SUBSCRITO NO CANAL
                         s.insertNewEvent(e);
                     } else {
                         logger.logWarningIfCounterReachedAndIncrement(this, "QUEUE for subscriber ID " + s.getId() + ", on channel " + myTag + ", is FULL (" + s.getNumberOfEvents() + " events) [event " + e.getUniqueId() + " will be discharged] (total so far discharged: " + logger.getWarningCounter() + " )", Log.getLineNumber());
@@ -287,13 +287,13 @@ public class Channel {
                     
                    
             }else{
-               // Log.logInfo(this.getClass().getCanonicalName(), "NOT------------ENTERING", Log.getLineNumber());
+               Log.logInfo(this.getClass().getCanonicalName(), "EMPTY QUEUE", Log.getLineNumber());
             }
             Log.logDebug(this, "SUB ID: " + id + " STORAGE NUMBER OF EVENTS RETRIEVED: " + events.size(), Log.getLineNumber());
             
             return events;
         } else {
-                Log.logWarning(this, "SUBSCRIBER " + id + " does not exists anymore", Log.getLineNumber());
+                Log.logWarning(this, "SUBSCRIBER " + id + " DOES NOT EXISTS ANYMORE", Log.getLineNumber());
         }
         return null;
     }
