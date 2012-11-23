@@ -13,7 +13,7 @@ subscriberCleanerRoundPeriod=100000
 subscribersPerChannel=2000
 publisherTimeToLive=200000
 subscriberTimeToLive=300000
-#BFT CONFIGURATION
+#BFT-SMaRt CONFIGURATION
 useBFT=1
 configPath=config/
 #CFT CONFIGURATION
