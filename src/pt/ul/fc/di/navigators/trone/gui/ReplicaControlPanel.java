@@ -22,6 +22,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -35,6 +36,7 @@ public class ReplicaControlPanel {
    
    private JLabel label; //image do servidor
    private JLabel label1; //numero da reploca
+   private JTextField sleepTime; //Tempo que a replica espera para responder a um pedido
    
    private JLabel dot; //imagem que vai conter o estado da replica
    //icones representativos do estado da replica
@@ -74,7 +76,7 @@ public class ReplicaControlPanel {
        //representacao do estado da replica
        lie = false;
        slow = false;
-       
+       sleepTime = new JTextField("50", 3);
        
        
        //estados da replica
@@ -147,6 +149,7 @@ public class ReplicaControlPanel {
        panel.add(killButton);
        panel.add(lieButton);
        panel.add(slowButton);
+       panel.add(sleepTime);
        panel.add(dot);
        return panel;
    }
@@ -228,6 +231,7 @@ public class ReplicaControlPanel {
                 public void actionPerformed(ActionEvent e) { 
                     Command c = new Command();
                     c.setCommand(Define.ReplicaCommand.SLOW);
+                    c.setSleeplTime(Long.parseLong(sleepTime.getText()));
                     sendCommand(c);
 
                     if(slow){

@@ -53,6 +53,7 @@ public class ServerProxy {
     static boolean sharedUseLongTermConn;
     static long sharedMessageTimeToLive;
     static int sharedReplicaId;
+    static long sleepTime; //tempo que a replica vai esperar para responder a uma mensagem
     
     //FLAGS DE CONTROLO DA REPLCIA
     static boolean lie;
@@ -61,7 +62,7 @@ public class ServerProxy {
     public ServerProxy(int replicaId) throws FileNotFoundException, IOException {
         lie = false;
         slow = false;
-        
+        sleepTime = 0;
         
         Log.logDebugFlush(this, "SERVER PROXY STARTING ...", Log.getLineNumber());
         sharedStorage = new Storage(replicaId);
@@ -102,12 +103,14 @@ public class ServerProxy {
     }
     
     
-    public void slow(){
+    public void slow(long st){
         if(slow){
             Log.logInfo(ServerProxy.class.getCanonicalName(), "STOPING SLOW", Log.getLineNumber());
+            sleepTime = 0;
             slow = false;
         }else{
             Log.logInfo(ServerProxy.class.getCanonicalName(), "STARTING SLOW", Log.getLineNumber());
+            sleepTime = st;
             slow = true;
         }
     }
@@ -120,6 +123,11 @@ public class ServerProxy {
         return slow;
     }
 
+    public long getSleepTime(){
+        return sleepTime;
+    }
+    
+    
     public void startWorkerThreadPools() throws IOException, UnknownHostException, NoSuchAlgorithmException {
 
         ServerInfo si = sharedServerConfig.getLocalServerInfo(serverIndex);
@@ -737,7 +745,7 @@ class BftServer extends Thread implements SingleExecutable, Recoverable{
             }
             
             if(serverProxy.getSlow()){
-               Thread.sleep(50); 
+               Thread.sleep(serverProxy.getSleepTime()); 
             }
             
             return response;
@@ -983,7 +991,7 @@ class ServerStorageGarbageCollectorThread extends Thread {
                                 break;
                             case SLOW:
                                // Log.logInfo(this.getClass().getCanonicalName(), "SLOWING REPLICA", Log.getLineNumber());
-                                serverProxy.slow();
+                                serverProxy.slow(inCommand.getSleepTime());
                                 break;
                             case LIE:
                                // Log.logInfo(this.getClass().getCanonicalName(), "BYZANTINE BEHAVIOUR", Log.getLineNumber());

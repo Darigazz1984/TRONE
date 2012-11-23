@@ -18,10 +18,11 @@ import pt.ul.fc.di.navigators.trone.utils.Define.ReplicaCommand;
  */
 public class Command implements Serializable{
     ReplicaCommand rc;
-    
+    long sleepTime;
     
     public Command(){
         rc = ReplicaCommand.KILL;
+        sleepTime = 50;
     }
     
     public void setCommand(ReplicaCommand r){
@@ -32,11 +33,21 @@ public class Command implements Serializable{
         return rc;
     }
     
+    public void setSleeplTime(long st){
+        sleepTime = st;
+    }
+    
+    public long getSleepTime(){
+        return sleepTime;
+    }
+    
     public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
         this.rc = (Define.ReplicaCommand) objectInput.readObject();
+        this.sleepTime = objectInput.readLong();
     }
     
     public void writeObject(ObjectOutput objectOutput) throws IOException {
         objectOutput.writeObject(rc);
+        objectOutput.writeLong(sleepTime);
     }
 }
