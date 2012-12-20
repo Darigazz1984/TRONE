@@ -8,8 +8,7 @@ import bftsmart.statemanagment.ApplicationState;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ReplicaContext;
 import bftsmart.tom.ServiceReplica;
-import bftsmart.tom.server.Recoverable;
-import bftsmart.tom.server.SingleExecutable;
+import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,7 +30,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  *
  * @author igor
  */
-public class BftServer extends Thread implements SingleExecutable, Recoverable{
+public class BftServer extends DefaultSingleRecoverable implements Runnable{
     private Storage storage;
     private int replicaId;
     private ServiceReplica serviceReplica;
@@ -200,7 +199,7 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
             return response;
     }
     
-    
+    /*
     @Override
     public byte[] executeOrdered(byte[] command, MessageContext msgCtx) {
         
@@ -250,8 +249,62 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
         response.setClientId(req.getClientId());
         response.setMethod(req.getMethod());
         return convertRequestToByte(response);
-    }
+    }*/
 
+    @Override
+    public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
+       
+        Request response = new Request();
+        Request req = null;
+        
+        if(command != null )
+            req = convertByteToRequest(command);
+        else
+            Log.logError(this.getClass().getCanonicalName(), "NULL request", Log.getLineNumber());
+        
+        
+        
+        if(req == null){
+            Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to request", Log.getLineNumber());
+            logger.incrementSpecificCounter("NNULLREQSRECV", 1);
+            response.setOperationStatus(false);
+            response.setMethod(Define.METHOD.NOT_DEFINED);
+            return convertRequestToByte(response);
+        }else{
+            if(storage.getQoP(req.getChannelTag()).equals(Define.QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(Define.QoSchannel.TOTAL_ORDER)){
+                logger.incrementSpecificCounter("NREQS", 1);
+                logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
+                Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
+                try {
+                        return convertRequestToByte((resolveRequest(req)));
+                } catch (IOException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Error returning request", Log.getLineNumber());
+                } catch (ClassNotFoundException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Error returning request", Log.getLineNumber());
+                } catch (InterruptedException ex) {
+                    Log.logError(this.getClass().getCanonicalName(), "Error returning request", Log.getLineNumber());
+                }
+                
+            }else{
+                Log.logError(this.getClass().getCanonicalName(), "Client config error", Log.getLineNumber());
+                logger.incrementSpecificCounter("WORNGCONFIGS", 1);
+                //response.setClientId(String.valueOf(replicaId));
+                //response.setOperationStatus(false);
+                response.setMethod(Define.METHOD.WRONG_CONFIGURATIONS);
+            }
+               
+        }
+        response.setChannelTag(req.getChannelTag());
+        response.setOperationStatus(false);
+        response.setId(req.getId());
+        response.setClientId(req.getClientId());
+        response.setMethod(req.getMethod());
+        return convertRequestToByte(response);
+    }
+    
+    
+    
+    
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
         
@@ -313,15 +366,40 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
     }
 
     @Override
-    public ApplicationState getState(int eid, boolean sendState) {
-        System.out.println("GET_STATE");
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void installSnapshot(byte[] state) {
+        System.out.println("STETING SNAPSHOT");
+        ByteArrayInputStream bis = new ByteArrayInputStream(state);
+        ObjectInputStream in = null;
+        try {
+            in = new ObjectInputStream(bis);
+            storage = (Storage)in.readObject();
+            in.close();
+            bis.close();
+        } catch (ClassNotFoundException ex) {
+            System.out.println("ERRO CLASS NOT FOUND EXCEPTION");
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println("ERRO IO EXCEPTION");
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
-    public int setState(ApplicationState state) {
-        System.out.println("SET_STATE");
-        throw new UnsupportedOperationException("Not supported yet.");
+    public byte[] getSnapshot() {
+        System.out.println("GETING SNAPSHOT");
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = null;
+        try {
+            out = new ObjectOutputStream(bos);
+            out.writeObject(storage);
+            out.flush();
+            out.close();
+            bos.close();
+            return bos.toByteArray();
+        } catch (IOException ex) {
+            System.out.println("ERRO AO FAZER GETSNAPSHOT");
+            Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
+            return new byte[0];
+        }
     }
-    
 }
