@@ -296,6 +296,20 @@ public class Storage extends HashMap {
     }
     
     public AppState getState(){
+        AppState state = new AppState();
+        Channel ch = null;
+        for(String c: syncChannelHashMap.keySet()){
+           ch = syncChannelHashMap.get(c);
+           if(c != null){
+            state.addSubscribers(c, ch.getSubscribers());
+            state.addPublishers(c, ch.getPublishers());
+           }
+        }
+        
         return null;
+    }
+    
+    public void buildStorageFromState(AppState state){
+        //TODO 
     }
 }
