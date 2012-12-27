@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import pt.ul.fc.di.navigators.trone.utils.CurrentTime;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
@@ -298,30 +296,5 @@ public class Channel {
                 Log.logWarning(this, "SUBSCRIBER " + id + " DOES NOT EXISTS ANYMORE", Log.getLineNumber());
         }
         return null;
-    }
-    /**
-     * 
-     * @return The publishers of this channel
-     */
-    public List<String> getPublishers(){
-        List<String> publishers = new LinkedList<String>();
-        
-        for(String pub: publisherHashMap.keySet())
-            publishers.add(pub);
-        
-        return publishers;
-    }
-    
-    /**
-     * 
-     * @return The list of subscribers of this channel
-     */
-    public List<String> getSubscribers(){
-        List<String> subscribers = new LinkedList<String>();
-        
-        for(String sub: subscriberHashMap.keySet())
-            subscribers.add(sub);
-        
-        return subscribers;
     }
 }

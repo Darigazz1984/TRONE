@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pt.ul.fc.di.navigators.trone.comm.ServerProxy;
-import pt.ul.fc.di.navigators.trone.data.AppState;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.data.Storage;
@@ -368,15 +367,12 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
 
     @Override
     public void installSnapshot(byte[] state) {
-        //TENS DE CRIAR O STORAGE A PARTIR DO STATE e TENS DE VER BEM ISTO
         System.out.println("STETING SNAPSHOT");
         ByteArrayInputStream bis = new ByteArrayInputStream(state);
         ObjectInputStream in = null;
-        storage = new Storage(replicaId);
         try {
             in = new ObjectInputStream(bis);
-            storage.buildStorageFromState((AppState)in.readObject());
-            //storage = (Storage)in.readObject();
+            storage = (Storage)in.readObject();
             in.close();
             bis.close();
         } catch (ClassNotFoundException ex) {
@@ -390,12 +386,12 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
 
     @Override
     public byte[] getSnapshot() {
-       System.out.println("GETING SNAPSHOT");
+        System.out.println("GETING SNAPSHOT");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
         try {
             out = new ObjectOutputStream(bos);
-            out.writeObject(storage.getState());
+            out.writeObject(storage);
             out.flush();
             out.close();
             bos.close();
@@ -405,6 +401,5 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
             return new byte[0];
         }
-        
     }
 }

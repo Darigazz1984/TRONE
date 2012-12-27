@@ -4,10 +4,6 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +14,7 @@ import java.util.Set;
  * This class represents the application state
  * contains the name of all channels, all subscribers and all publishers
  */
-public class AppState implements Serializable{
+public class AppState {
     private HashMap<String, List<String>> publishers;
     private HashMap<String, List<String>> subscribers;
     
@@ -62,14 +58,4 @@ public class AppState implements Serializable{
     public List<String> getSubscribers(String channel){
         return subscribers.get(channel);
     }
-    public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException{
-        publishers = (HashMap<String, List<String>>)objectInput.readObject();
-        subscribers = (HashMap<String, List<String>>)objectInput.readObject();
-    }
-
-    public void writeObject(ObjectOutput objectOutput) throws IOException{
-        objectOutput.writeObject(publishers);
-        objectOutput.writeObject(subscribers);
-    }
-    
 }
