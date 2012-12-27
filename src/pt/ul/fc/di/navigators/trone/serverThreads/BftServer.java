@@ -367,7 +367,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
 
     @Override
     public void installSnapshot(byte[] state) {
-        System.out.println("STETING SNAPSHOT");
+      /*  System.out.println("STETING SNAPSHOT");
         ByteArrayInputStream bis = new ByteArrayInputStream(state);
         ObjectInputStream in = null;
         try {
@@ -381,12 +381,12 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         } catch (IOException ex) {
             System.out.println("ERRO IO EXCEPTION");
             Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
     @Override
     public byte[] getSnapshot() {
-        System.out.println("GETING SNAPSHOT");
+        /*System.out.println("GETING SNAPSHOT");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream out = null;
         try {
@@ -400,6 +400,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             System.out.println("ERRO AO FAZER GETSNAPSHOT");
             Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, ex);
             return new byte[0];
-        }
+        }*/
+        return null;
     }
 }

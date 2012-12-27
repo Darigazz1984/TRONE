@@ -295,7 +295,4 @@ public class Storage extends HashMap {
         return syncChannelHashMap.get(tag).getQoS();
     }
     
-    public AppState getState(){
-        return null;
-    }
 }
