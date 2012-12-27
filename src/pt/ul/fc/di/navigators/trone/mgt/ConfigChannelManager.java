@@ -12,7 +12,7 @@ import pt.ul.fc.di.navigators.trone.data.Channel;
 import pt.ul.fc.di.navigators.trone.utils.ConfigHandler;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
-
+import pt.ul.fc.di.navigators.trone.utils.Log;
 
 /**
  *
@@ -53,9 +53,6 @@ public class ConfigChannelManager {
         }
     }
     
-    public boolean isBFT(){
-        return (type.equals(QoP.BFT));
-    }
     
     public Channel generateChannel(String t, int id){
         return (new Channel(t.toLowerCase(), id, type, order));
