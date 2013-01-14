@@ -34,6 +34,10 @@ public class Channel {
         logger = new Log(100);
     }
     
+    public void setNextIdWithinTheChannel(long id){
+        nextEventIdWithinTheChannel = id;
+    }
+    
     public Channel(String tag, int replicaId, QoP flt, QoSchannel order) {
         switch(flt){
             case CFT:
@@ -55,6 +59,19 @@ public class Channel {
         logger = new Log(100);
     }
 
+    /**
+     * Returns the state of the channel
+     * @return Object representing the channel state
+     */
+    public ChannelState getState(){
+        ChannelState state = new ChannelState(myTag);
+        state.setPublishers(this.publisherHashMap.keySet());
+        state.setSubscribers(this.subscriberHashMap.keySet());
+        state.setQoP(this.faultLevel);
+        state.setQoS(this.channelOrdering);
+        return state;
+    }
+    
     public String getTag() {
         return myTag;
     }

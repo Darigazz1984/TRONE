@@ -40,6 +40,45 @@ public class Storage extends HashMap {
         eventsPubTimes = new AtomicLong(0);
         eventsSubTimes = new AtomicLong(0);
     }
+    
+    
+    public Storage(int replicaId, StorageState st){
+        syncChannelHashMap = new HashMap<String, Channel>();
+        myReplicaId = replicaId;
+        
+        //add all channels and contents
+        //each cycle represents one channel
+        for(String s: st.getChannelsTag()){
+            //
+            ChannelState cs = st.getChannelState(s);
+            Channel c = new Channel(s, replicaId, cs.getQoP(), cs.getQoS());
+            syncChannelHashMap.put(s, c);
+            
+            
+            //insert next ID in the channel
+            c.setNextIdWithinTheChannel(cs.getNextEventNumber());
+            
+            //add publishers
+            for(String p: cs.getPublishers()){
+                Publisher pub = new Publisher(p);
+                c.addPublisher(pub);
+            }
+            
+            //add Subscribers
+            for(String su: cs.getSubscribers()){
+                Subscriber sub = new Subscriber(su, 10000);
+                c.addSubscriber(sub);
+            }
+            
+            
+        }
+        //VER BEM ISTO
+        logger = new Log(100);
+        eventsPub = new AtomicLong(0);
+        eventsSub = new AtomicLong(0);
+        eventsPubTimes = new AtomicLong(0);
+        eventsSubTimes = new AtomicLong(0);
+    }
 
     public void insertNewChannel(String tag) {
         syncChannelHashMap.put(tag.toLowerCase(), new Channel(tag.toLowerCase(), myReplicaId));

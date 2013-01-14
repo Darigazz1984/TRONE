@@ -10,6 +10,7 @@ import bftsmart.tom.ReplicaContext;
 import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.Recoverable;
 import bftsmart.tom.server.SingleExecutable;
+import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,7 +32,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  *
  * @author igor
  */
-public class BftServer extends Thread implements SingleExecutable, Recoverable{
+public class BftServer extends DefaultSingleRecoverable implements Runnable{
     private Storage storage;
     private int replicaId;
     private ServiceReplica serviceReplica;
@@ -199,11 +200,10 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
             
             return response;
     }
-    
-    
-    @Override
-    public byte[] executeOrdered(byte[] command, MessageContext msgCtx) {
-        
+ 
+     @Override
+    public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
+            
         Request response = new Request();
         Request req = null;
         
@@ -251,7 +251,8 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
         response.setMethod(req.getMethod());
         return convertRequestToByte(response);
     }
-
+     
+     
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
         
@@ -313,14 +314,12 @@ public class BftServer extends Thread implements SingleExecutable, Recoverable{
     }
 
     @Override
-    public ApplicationState getState(int eid, boolean sendState) {
-        System.out.println("GET_STATE");
+    public void installSnapshot(byte[] state) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int setState(ApplicationState state) {
-        System.out.println("SET_STATE");
+    public byte[] getSnapshot() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
