@@ -4,6 +4,9 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
@@ -107,5 +110,25 @@ public class ChannelState implements Serializable{
     
     public QoSchannel getQoS(){
         return this.channelOrdering;
+    }
+    
+    
+    
+    public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
+          tag = (String)objectInput.readObject();
+          subscribers = (Set<String>)objectInput.readObject();
+          publishers = (Set<String>)objectInput.readObject();
+          nextEventIdWithinTheChannel = objectInput.readLong();
+          faultLevel = (pt.ul.fc.di.navigators.trone.utils.Define.QoP)objectInput.readObject();
+          channelOrdering = (pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel)objectInput.readObject();
+    }
+
+    public void writeObject(ObjectOutput objectOutput) throws IOException {
+        objectOutput.writeObject(tag);
+        objectOutput.writeObject(subscribers);
+        objectOutput.writeObject(publishers);
+        objectOutput.writeLong(nextEventIdWithinTheChannel);
+        objectOutput.writeObject(faultLevel);
+        objectOutput.writeObject(channelOrdering);
     }
 }

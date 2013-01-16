@@ -1,3 +1,19 @@
 #DESCRIBE THE CHANNEL PROPERTIES
 type=BFT
 totalOrder=1
+#order of the channel
+ordering=TotalOrder
+#Maximum number of publishers of the channel
+maxPublishers=2
+#Maximum subscribers of the channel
+maxSubscribers=10
+#Maximum amout of events peer queue
+maxEventsPerQueue=1000
+#Client time to live in secounds. After they will be removed from channel
+clientsTimeToLive=10000
+#Time an event may remain in the queue
+eventsTimeToLive=10000
+#Order that events will be discharged if queue is full
+eventsDischargingOrder=older
+
+

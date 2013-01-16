@@ -4,6 +4,9 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
@@ -49,5 +52,12 @@ public class StorageState implements Serializable{
         return channels.get(tag);
     }
     
+     public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
+        channels = (HashMap<String, ChannelState>)objectInput.readObject();
+    }
+
+    public void writeObject(ObjectOutput objectOutput) throws IOException {
+        objectOutput.writeObject(channels);
+    }
    
 }

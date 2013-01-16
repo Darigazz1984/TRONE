@@ -333,4 +333,14 @@ public class Storage extends HashMap {
     public QoSchannel getQoS(String tag){
         return syncChannelHashMap.get(tag).getQoS();
     }
+    //TODO
+    public StorageState getStorageState(){
+        StorageState st = new StorageState();
+        synchronized (this){
+            for(String ch: syncChannelHashMap.keySet()){
+                st.addChannel(ch, syncChannelHashMap.get(ch).getState());
+            }
+        }
+        return st;
+    }
 }
