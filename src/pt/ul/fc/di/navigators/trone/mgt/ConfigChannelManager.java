@@ -22,6 +22,13 @@ public class ConfigChannelManager {
     ConfigHandler handler;
     private QoP type;
     private QoSchannel order;
+    private long maxEvent;
+    private long clientTimeToLive;
+    private String eventDischargOrder;
+    private long eventTimeToLive;
+    private int maxPublishers;
+    private int maxSubscribers;
+   
     
     public ConfigChannelManager(String path){
             handler = null;
@@ -34,12 +41,14 @@ public class ConfigChannelManager {
             Logger.getLogger(ConfigChannelManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        maxPublishers = 0;
+        maxSubscribers = 0;
         initiate();
     }
     
     private void initiate(){
         if(handler == null){
-            
+            //DO NOTHING
         }else{
             if(handler.getStringValue("type").equals("BFT"))
                 type = QoP.BFT;
@@ -50,6 +59,14 @@ public class ConfigChannelManager {
                 order = QoSchannel.TOTAL_ORDER;
             else
                 order = QoSchannel.NO_ORDER;
+            
+            //read max pub and max sub
+            maxPublishers = handler.getIntValue("maxPublishers");
+            maxSubscribers = handler.getIntValue("maxSubscribers");
+            maxEvent = handler.getLongValue("maxEventsPerQueue");
+            clientTimeToLive = handler.getLongValue("clientsTimeToLive");
+            eventTimeToLive = handler.getLongValue("eventsTimeToLive");
+            eventDischargOrder = handler.getStringValue("eventsDischargingOrder");
         }
     }
     
@@ -58,6 +75,34 @@ public class ConfigChannelManager {
     }
     
     public Channel generateChannel(String t, int id){
-        return (new Channel(t.toLowerCase(), id, type, order));
+        //public Channel(String tag, int replicaId, QoP flt, QoSchannel order, long clientTimeToLive, long eventTimeToLive, long maxEvent, int maxPub, int maxSub, String eventDischargeOrder)
+        //return (new Channel(t.toLowerCase(), id, type, order));
+        //new Channel(t.toLowerCase(), id, type, order, clientTimeToLive, eventTimeToLive, maxEvent, maxPublishers, maxSubscribers, eventDischargOrder);
+        return (new Channel(t.toLowerCase(), id, type, order, clientTimeToLive, eventTimeToLive, maxEvent, maxPublishers, maxSubscribers, eventDischargOrder));
     }
+    
+    public int getMaxPublishers(){
+        return maxPublishers;
+    }
+    
+    public int getMaxSubscribers(){
+        return maxSubscribers;
+    }
+    
+    public long getMaxEvent(){
+        return maxEvent;
+    }
+    
+    public long getClientTimeToLive(){
+        return clientTimeToLive;
+    }
+    
+    public long getEventTimeToLive(){
+        return eventTimeToLive;
+    }
+    
+    public boolean dischargeOlder(){
+        return eventDischargOrder.equals("older");
+    }
+            
 }

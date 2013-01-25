@@ -1,4 +1,6 @@
 #DESCRIBE THE CHANNEL PROPERTIES
+#Not necessary to put the tag, the name of the file is the channel tag
+tag=apache
 type=BFT
 totalOrder=1
 #order of the channel

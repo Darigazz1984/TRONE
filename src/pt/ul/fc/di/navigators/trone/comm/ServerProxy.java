@@ -210,15 +210,15 @@ class ServerStorageGarbageCollectorThread extends Thread {
             currentTime = System.currentTimeMillis();
 
             if ((publisherLastCheck + publisherCleanerRoundPeriod) < currentTime) {
-                number = thStorage.removeAllOldPublishers(publisherTimeToLive, currentTime);
-
+                //number = thStorage.removeAllOldPublishers(publisherTimeToLive, currentTime);
+                  number = thStorage.removeAllOldPublishers(currentTime);
                 Log.logInfo(this, "REMOVING: " + number + " old PUBLISHERS have been REMOVED", Log.getLineNumber());
 
                 publisherLastCheck = currentTime;
             }
             if ((subscriberLastCheck + subscriberCleanerRoundPeriod) < currentTime) {
-                number = thStorage.removeAllOldSubscribers(subscriberTimeToLive, currentTime);
-
+                //number = thStorage.removeAllOldSubscribers(subscriberTimeToLive, currentTime);
+                  number = thStorage.removeAllOldSubscribers(currentTime);
                 Log.logInfo(this, "REMOVING: " + number + " old SUBSCRIBERS have been REMOVED", Log.getLineNumber());
 
                 subscriberLastCheck = currentTime;

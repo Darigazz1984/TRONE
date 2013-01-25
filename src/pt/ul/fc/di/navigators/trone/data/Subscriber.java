@@ -17,7 +17,7 @@ public class Subscriber {
     private String myId;
     private ArrayList<Event> myEvents;
     private long myLocalTimestamp;
-    private int maxNumberOfEvents;
+    private long maxNumberOfEvents;
 
     public Subscriber(String id, int maxEvents) {
         myId = id;
@@ -30,6 +30,9 @@ public class Subscriber {
         return myId;
     }
     
+    public void setMaxEvents(long maxE){
+        maxNumberOfEvents = maxE;
+    }
     public Event getNextEvent() {
             Iterator it = myEvents.iterator();
 

@@ -25,6 +25,13 @@ public class Channel {
     private Log logger;
     private QoP faultLevel;
     private QoSchannel channelOrdering;
+    private long clientTimeToLive;
+    private long eventTimeToLive;
+    private long maxEvent;
+    private int maxPublishers;
+    private int maxSubscribers;
+    private String dischargeOrder;
+    
     
     public Channel(String tag, int replicaId){
         myTag = tag;
@@ -37,6 +44,34 @@ public class Channel {
     public void setNextIdWithinTheChannel(long id){
         nextEventIdWithinTheChannel = id;
     }
+    
+     public Channel(String tag, int replicaId, QoP flt, QoSchannel order, long clientTimeToLive, long eventTimeToLive, long maxEvent, int maxPub, int maxSub, String eventDischargeOrder){
+         switch(flt){
+            case CFT:
+                Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: CFT", Log.getLineNumber());
+                break;
+            case BFT:
+                Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: BFT", Log.getLineNumber());
+                break;
+            default:
+                Log.logWarning(this, "PROBS", Log.getLineNumber());
+                break;
+        }
+        myTag = tag;
+        faultLevel = flt;
+        channelOrdering = order;
+        subscriberHashMap = new HashMap<String, Subscriber>();
+        publisherHashMap = new HashMap<String, Publisher>();
+        nextEventIdWithinTheChannel = 0;
+        logger = new Log(100);
+        this.clientTimeToLive = clientTimeToLive;
+        this.eventTimeToLive = eventTimeToLive;
+        this.maxEvent = maxEvent;
+        maxPublishers = maxPub;
+        maxSubscribers = maxSub;
+        dischargeOrder = eventDischargeOrder;
+     }
+    
     
     public Channel(String tag, int replicaId, QoP flt, QoSchannel order) {
         switch(flt){
@@ -88,9 +123,14 @@ public class Channel {
         if (publisherHashMap.containsKey(pub.getId())) {
             return false;
         }
-        Log.logInfo(this, "ADDING NEW PUBLISHER: " + pub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
-        publisherHashMap.put(pub.getId(), pub);
-        return true;
+        if(publisherHashMap.size() < maxPublishers){
+            Log.logInfo(this, "ADDING NEW PUBLISHER: " + pub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
+            publisherHashMap.put(pub.getId(), pub);
+            return true;
+        }else{
+            Log.logInfo(this, "Max publishers reached",Log.getLineNumber());
+            return false;
+        }
     }
 
     synchronized public boolean removePublisher(String id) {
@@ -103,18 +143,24 @@ public class Channel {
     }
 
     synchronized public boolean addSubscriber(Subscriber sub) {
+        
         if (subscriberHashMap.containsKey(sub.getId())) {
             return false;
-        } 
-        Log.logInfo(this, "ADDING NEW SUBSCRIBER: " + sub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
-        subscriberHashMap.put(sub.getId(), sub);
-        return true;
+        }
+        if(subscriberHashMap.size() < maxSubscribers){
+            sub.setMaxEvents(this.maxEvent);
+            Log.logInfo(this, "ADDING NEW SUBSCRIBER: " + sub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
+            subscriberHashMap.put(sub.getId(), sub);
+            return true;
+        }
+        Log.logInfo(this, "Max subscribers reached",Log.getLineNumber());
+        return false;
     }
 
     synchronized public boolean removeSubscriber(String id) {
         if (subscriberHashMap.containsKey(id)) {
             subscriberHashMap.remove(id);
-            Log.logInfo(this, "REMOVIND SUBSCRIBER: " + id + " FROM CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
+            Log.logInfo(this, "REMOVING SUBSCRIBER: " + id + " FROM CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
             return true;
         }
         return false;
@@ -178,7 +224,7 @@ public class Channel {
 
         return sum;
     }
-
+/*
     synchronized public long removeAllOldPublishers(long publisherTimeToLive, long currentTime) {
         ArrayList pubToRemove = new ArrayList<String>();
         Iterator it = publisherHashMap.keySet().iterator();
@@ -194,14 +240,52 @@ public class Channel {
         }
 
         return pubToRemove.size();
-    }
+    }*/
+    
+      synchronized public long removeAllOldPublishers(long currentTime) {
+        ArrayList pubToRemove = new ArrayList<String>();
+        Iterator it = publisherHashMap.keySet().iterator();
+        while (it.hasNext()) {
+            Publisher pub = publisherHashMap.get(it.next().toString());
+            if ((pub.getLocalTimestamp() + clientTimeToLive) < currentTime) {
+                pubToRemove.add(pub.getId());
+            }
+        }
 
+        for (int i = 0; i < pubToRemove.size(); i++) {
+            publisherHashMap.remove((String) pubToRemove.get(i));
+        }
+
+        return pubToRemove.size();
+    }
+    
+    
+    
+    
+/*
     synchronized public long removeAllOldSubscribers(long subscriberTimeToLive, long currentTime) {
         ArrayList subToRemove = new ArrayList<String>();
         Iterator it = subscriberHashMap.keySet().iterator();
         while (it.hasNext()) {
             Subscriber sub = subscriberHashMap.get(it.next().toString());
             if ((sub.getLocalTimestamp() + subscriberTimeToLive) < currentTime) {
+                subToRemove.add(sub.getId());
+            }
+        }
+
+        for (int i = 0; i < subToRemove.size(); i++) {
+            subscriberHashMap.remove((String) subToRemove.get(i));
+        }
+
+        return subToRemove.size();
+    }*/
+    
+    synchronized public long removeAllOldSubscribers(/*long subscriberTimeToLive,*/ long currentTime) {
+        ArrayList subToRemove = new ArrayList<String>();
+        Iterator it = subscriberHashMap.keySet().iterator();
+        while (it.hasNext()) {
+            Subscriber sub = subscriberHashMap.get(it.next().toString());
+            if ((sub.getLocalTimestamp() + clientTimeToLive) < currentTime) {
                 subToRemove.add(sub.getId());
             }
         }

@@ -232,7 +232,7 @@ public class Storage extends HashMap {
         return true;
     }
 
-    public long removeAllOldPublishers(long publisherTimeToLive, long currentTime) {
+    public long removeAllOldPublishers(/*long publisherTimeToLive,*/ long currentTime) {
 
         long sum = 0;
         
@@ -242,14 +242,15 @@ public class Storage extends HashMap {
             while (iterator.hasNext()) {
                 String tag = (String) iterator.next();
                 Channel c = syncChannelHashMap.get(tag);
-                sum += c.removeAllOldPublishers(publisherTimeToLive, currentTime);
+                //sum += c.removeAllOldPublishers(publisherTimeToLive, currentTime);
+                sum += c.removeAllOldPublishers(currentTime);
             }
         }
         
         return sum;
     }
     
-    public long removeAllOldSubscribers(long subscriberTimeToLive, long currentTime) {
+    public long removeAllOldSubscribers(/*long subscriberTimeToLive,*/ long currentTime) {
 
         long sum = 0;
         
@@ -259,7 +260,8 @@ public class Storage extends HashMap {
             while (iterator.hasNext()) {
                 String tag = (String) iterator.next();
                 Channel c = syncChannelHashMap.get(tag);
-                sum += c.removeAllOldSubscribers(subscriberTimeToLive, currentTime);
+                //sum += c.removeAllOldSubscribers(subscriberTimeToLive, currentTime);
+                sum += c.removeAllOldSubscribers(currentTime);
             }
         }
         
