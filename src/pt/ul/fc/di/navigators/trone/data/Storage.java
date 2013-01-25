@@ -277,7 +277,8 @@ public class Storage extends HashMap {
             while (iterator.hasNext()) {
                 String tag = (String) iterator.next();
                 Channel c = syncChannelHashMap.get(tag);
-                sum += c.removeAllOldEvents(messageTimeToLive, currentTime);
+              //sum += c.removeAllOldEvents(messageTimeToLive, currentTime);
+                sum += c.removeAllOldEvents(currentTime);
             }
         }
         

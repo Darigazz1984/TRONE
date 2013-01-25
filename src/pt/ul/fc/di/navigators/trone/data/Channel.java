@@ -211,6 +211,7 @@ public class Channel {
         return subscriberHashMap.size();
     }
 
+    /*
     synchronized public long removeAllOldEvents(long messageTimeToLive, long currentTime) {
         long sum = 0;
         Iterator it = subscriberHashMap.keySet().iterator();
@@ -223,7 +224,22 @@ public class Channel {
         }
 
         return sum;
+    }*/
+    
+    synchronized public long removeAllOldEvents(long currentTime) {
+        long sum = 0;
+        Iterator it = subscriberHashMap.keySet().iterator();
+        while (it.hasNext()) {
+            String str = (String) it.next();
+            Subscriber s = subscriberHashMap.get(str);
+            if (s != null) {
+                sum += s.removeAllOldEvents(eventTimeToLive, currentTime);
+            }
+        }
+
+        return sum;
     }
+    
 /*
     synchronized public long removeAllOldPublishers(long publisherTimeToLive, long currentTime) {
         ArrayList pubToRemove = new ArrayList<String>();
