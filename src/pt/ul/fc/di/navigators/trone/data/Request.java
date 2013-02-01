@@ -127,7 +127,7 @@ public class Request implements Serializable {
         listOfEvents.addAll(eventsToSend);
     }
         
-    public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
         this.clientId = (String) objectInput.readObject();
         this.channelTag = (String) objectInput.readObject();
         this.method = (METHOD) objectInput.readObject();
@@ -142,7 +142,7 @@ public class Request implements Serializable {
         }
     }
 
-    public void writeObject(ObjectOutput objectOutput) throws IOException {
+    private void writeObject(ObjectOutput objectOutput) throws IOException {
         objectOutput.writeObject(clientId);
         objectOutput.writeObject(channelTag);
         objectOutput.writeObject(method);

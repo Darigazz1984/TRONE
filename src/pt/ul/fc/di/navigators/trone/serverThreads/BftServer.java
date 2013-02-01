@@ -212,8 +212,6 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         else
             Log.logError(this.getClass().getCanonicalName(), "NULL request", Log.getLineNumber());
         
-        
-        
         if(req == null){
             Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to request", Log.getLineNumber());
             logger.incrementSpecificCounter("NNULLREQSRECV", 1);

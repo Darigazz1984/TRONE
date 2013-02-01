@@ -143,6 +143,7 @@ public class Subscriber implements Serializable {
     
     
     private void writeObject(ObjectOutputStream stream) throws IOException {
+        System.out.println("SERIALIZING SUBSCRIBER");
         stream.writeUTF(myId);
         stream.writeObject(myEvents);
         stream.writeLong(maxNumberOfEvents);
@@ -150,12 +151,13 @@ public class Subscriber implements Serializable {
     }
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        System.out.println("DESERIALIZING SUBSCRIBER");
         myId = (String) stream.readUTF();
         myEvents = (ArrayList<Event>) stream.readObject();
         maxNumberOfEvents = (long) stream.readLong();
         this.myLocalTimestamp = System.currentTimeMillis();
     }
-    
+    /*
     public byte[] getState() throws IOException{
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(b);
@@ -178,5 +180,5 @@ public class Subscriber implements Serializable {
             this.myEvents.add(e);
             e = (Event) o.readObject();
         }
-    }
+    }*/
 }

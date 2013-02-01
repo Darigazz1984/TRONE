@@ -347,7 +347,8 @@ public class Storage extends HashMap {
             //TODO
     }
     
-    public void writeObject(ObjectOutputStream stream) throws IOException {
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+       System.out.println("SERIALIZING STORAGE");
        stream.writeObject(syncChannelHashMap);
        stream.writeLong(eventsPub.longValue());
        stream.writeLong(eventsSub.longValue());
@@ -356,7 +357,8 @@ public class Storage extends HashMap {
        
     }
     
-    public void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        System.out.println("DESERIALIZING STORAGE");
         syncChannelHashMap = (HashMap<String, Channel>) stream.readObject();      
         eventsPub = new AtomicLong((long) stream.readLong());
         eventsSub = new AtomicLong((long) stream.readLong());

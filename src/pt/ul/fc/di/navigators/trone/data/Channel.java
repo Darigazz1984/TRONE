@@ -4,6 +4,7 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -40,6 +41,8 @@ public class Channel implements Serializable{
     
     public Channel(){
         logger = new Log(100);
+        publisherHashMap = new HashMap<String, Publisher>();
+        subscriberHashMap = new HashMap<String, Subscriber>();
     }
     
     public Channel(String tag, int replicaId){
@@ -423,6 +426,7 @@ public class Channel implements Serializable{
     }
     
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        System.out.println("DESERIALIZING CHANNEL");
         myTag = (String) stream.readUTF();
         publisherHashMap = (HashMap<String, Publisher>)stream.readObject();
         subscriberHashMap = (HashMap<String, Subscriber>)stream.readObject();
@@ -438,6 +442,7 @@ public class Channel implements Serializable{
     }
     
     private void writeObject(ObjectOutputStream stream) throws IOException {
+        System.out.println("SERIALIZING CHANNEL");
         stream.writeUTF(myTag);
         stream.writeObject(publisherHashMap);
         stream.writeObject(subscriberHashMap);
@@ -455,7 +460,7 @@ public class Channel implements Serializable{
     public Set<String> getListOfPublishers(){
         return publisherHashMap.keySet();
     }
-    
+    /*
     public byte[] getState() throws IOException{
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(b);
@@ -482,8 +487,33 @@ public class Channel implements Serializable{
         return b.toByteArray();
     }
     
-    public void setState(byte[] state){
+    public void setState(byte[] state) throws IOException, ClassNotFoundException{
+        ByteArrayInputStream b = new ByteArrayInputStream(state);
+        ObjectInputStream o = new ObjectInputStream(b);
+        this.myTag = (String) o.readUTF();
+        this.nextEventIdWithinTheChannel = (long) o.readLong();
+        this.faultLevel = (QoP) o.readObject();
+        this.channelOrdering = (QoSchannel) o.readObject();
+        this.clientTimeToLive = (long) o.readLong();
+        this.eventTimeToLive = (long) o.readLong();
+        this.maxEvent = (long) o.readLong();
+        this.maxPublishers = (int) o.readInt();
+        this.maxSubscribers = (int) o.readInt();
+        this.dischargeOrder = (String) o.readUTF();
+        int n = (int) o.readInt();
         
-    }
+        for(int i =0; i< n; i++){
+            Publisher p = new Publisher();
+            byte[] pub = null;
+            int s = o.read(pub);
+            if(s > 0){
+                p.setState(state);
+                publisherHashMap.put(p.getId(), p);
+            }
+        }
+        
+        
+        
+    }*/
     
 }

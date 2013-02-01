@@ -47,14 +47,16 @@ public class Publisher implements Serializable {
     }
 
     private void writeObject(ObjectOutputStream stream) throws IOException {
+        System.out.println("SERIALIZING PUBLISHER");
         stream.writeUTF(myId);
     }
     
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        System.out.println("DESERIALIZING PUBLISHER");
         myId = (String)stream.readUTF();
         myLocalTimestamp = System.currentTimeMillis();
     }
-    
+    /*
     public byte[] getState() throws IOException{
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         ObjectOutputStream o = new ObjectOutputStream(b);
@@ -67,5 +69,5 @@ public class Publisher implements Serializable {
         ObjectInputStream o = new ObjectInputStream(b);
         this.myId = (String)o.readUTF();
         this.myLocalTimestamp = System.currentTimeMillis();
-    }
+    }*/
 }
