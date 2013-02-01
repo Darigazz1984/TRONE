@@ -4,6 +4,7 @@
  */
 package pt.ul.fc.di.navigators.trone.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author kreutz
  */
-public class Log {
+public class Log implements Serializable{
 
     static boolean enableOut = true;
     static boolean enableInfo = true;

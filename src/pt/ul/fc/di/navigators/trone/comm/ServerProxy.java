@@ -34,8 +34,8 @@ import pt.ul.fc.di.navigators.trone.utils.ServerInfo;
 public class ServerProxy {
 
     static int serverIndex;
-    static Storage sharedStorage;
-    //static Storage cftStorage, bftStorage;//STORAGE SEPARADOS
+    static Storage sharedStorage; // Em principio este sera para separar
+    static Storage cftStorage, bftStorage;//STORAGE SEPARADOS
     static ServerSocket sharedServerSocketForShortTerm;
     static ServerSocket sharedServerSocketForLongTerm;
     static ConfigServerManager sharedServerConfig;
@@ -55,6 +55,8 @@ public class ServerProxy {
         
         Log.logDebugFlush(this, "SERVER PROXY STARTING ...", Log.getLineNumber());
         sharedStorage = new Storage(replicaId); //OLHAR BEM PARA ISTO PARA DIVIDIR O STORAGE, CRIAR STORAGE BFT E CTF EM SEPARADO
+        cftStorage = new Storage(replicaId); //Por agora estao
+        bftStorage = new Storage(replicaId); //Por agora estao
         sharedServerConfig = new ConfigServerManager("netConfig.props", "serverConfig.props");
         createChannelsFromConfig();
         serverIndex = replicaId;
@@ -76,6 +78,15 @@ public class ServerProxy {
                 String tag = ((fileEntry.getName()).split("[.]"))[0];
                 ConfigChannelManager ccm = new ConfigChannelManager(path+fileEntry.getName());
                 //METER AQUI UM IF PARA VER SE VAI SER INSERIDO NO CFT OU NO BFT, JA TENS O METODO CRIADO NO CCM
+                //POR AGORA VAMOS METER AMBOS SIM?
+                if(ccm.isBFT()){
+                    this.bftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                    Log.logInfo(this, "channel with TAG: " + tag + " CREATED and inserted in the BFT Storage", Log.getLineNumber());
+                }else{
+                    this.cftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                    Log.logInfo(this, "channel with TAG: " + tag + " CREATED and inserted in the CFT Storage", Log.getLineNumber());
+                }
+                //ESTE EM PRINCIPIO SERA PARA TIRAR 
                 sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
                 Log.logInfo(this, "channel with TAG: " + tag + " CREATED", Log.getLineNumber());
             }

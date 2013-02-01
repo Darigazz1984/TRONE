@@ -1,4 +1,4 @@
-#DESCRIBE THE CHANNEL PROPERTIES
+#DESCRIBE THE CHANNEL PROPERTIES --> the name of the file is the channel tag; must follow the CHANNELTAG.props
 #Not necessary to put the tag, the name of the file is the channel tag
 tag=apache
 type=BFT
@@ -15,7 +15,7 @@ maxEventsPerQueue=1000
 clientsTimeToLive=10000
 #Time an event may remain in the queue
 eventsTimeToLive=10000
-#Order that events will be discharged if queue is full
+#Order that events will be discharged if queue is full, if older isn't specified, the newer events will be discharged
 eventsDischargingOrder=older
 
 

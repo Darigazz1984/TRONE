@@ -4,6 +4,10 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,6 +32,7 @@ public class Storage extends HashMap {
     private static AtomicLong eventsPubTimes;
     private static AtomicLong eventsSubTimes;
     
+        
     
     public Storage(int replicaId) {
         
@@ -42,13 +47,14 @@ public class Storage extends HashMap {
     }
     
     
-    public Storage(int replicaId, StorageState st){
+   /* public Storage(int replicaId, StorageState st){
         syncChannelHashMap = new HashMap<String, Channel>();
         myReplicaId = replicaId;
         
         //add all channels and contents
         //each cycle represents one channel
-        for(String s: st.getChannelsTag()){
+        Set<String> cTags = st.getChannelsTag();
+        for(String s: cTags){
             //
             ChannelState cs = st.getChannelState(s);
             Channel c = new Channel(s, replicaId, cs.getQoP(), cs.getQoS());
@@ -78,7 +84,7 @@ public class Storage extends HashMap {
         eventsSub = new AtomicLong(0);
         eventsPubTimes = new AtomicLong(0);
         eventsSubTimes = new AtomicLong(0);
-    }
+    }*/
 
     public void insertNewChannel(String tag) {
         syncChannelHashMap.put(tag.toLowerCase(), new Channel(tag.toLowerCase(), myReplicaId));
@@ -336,14 +342,35 @@ public class Storage extends HashMap {
     public QoSchannel getQoS(String tag){
         return syncChannelHashMap.get(tag).getQoS();
     }
-    //TODO
-    public StorageState getStorageState(){
-        StorageState st = new StorageState();
-        synchronized (this){
-            for(String ch: syncChannelHashMap.keySet()){
-                st.addChannel(ch, syncChannelHashMap.get(ch).getState());
-            }
+    
+    public void getStorageState(){
+            //TODO
+    }
+    
+    public void writeObject(ObjectOutputStream stream) throws IOException {
+       stream.writeObject(syncChannelHashMap);
+       stream.writeLong(eventsPub.longValue());
+       stream.writeLong(eventsSub.longValue());
+       stream.writeLong(eventsPubTimes.longValue());
+       stream.writeLong(eventsSubTimes.longValue());
+       
+    }
+    
+    public void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        syncChannelHashMap = (HashMap<String, Channel>) stream.readObject();      
+        eventsPub = new AtomicLong((long) stream.readLong());
+        eventsSub = new AtomicLong((long) stream.readLong());
+        eventsPubTimes = new AtomicLong((long) stream.readLong());
+        eventsSubTimes = new AtomicLong((long) stream.readLong());
+    }
+    
+    public void listPublishersByChannel(){
+        for(String s: this.syncChannelHashMap.keySet()){
+            System.out.println("Listing for channel: "+s);
+                for(String p: this.syncChannelHashMap.get(s).getListOfPublishers()){
+                    System.out.println("Publisher: "+p);
+                }
+ 
         }
-        return st;
     }
 }

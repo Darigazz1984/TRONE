@@ -4,10 +4,16 @@
  */
 package pt.ul.fc.di.navigators.trone.data;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import pt.ul.fc.di.navigators.trone.utils.CurrentTime;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
@@ -16,7 +22,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
 /**
  * @author kreutz
  */
-public class Channel {
+public class Channel implements Serializable{
 
     private String myTag;
     private HashMap<String, Publisher> publisherHashMap;
@@ -32,8 +38,12 @@ public class Channel {
     private int maxSubscribers;
     private String dischargeOrder;
     
+    public Channel(){
+        logger = new Log(100);
+    }
     
     public Channel(String tag, int replicaId){
+        super();
         myTag = tag;
         subscriberHashMap = new HashMap<String, Subscriber>();
         publisherHashMap = new HashMap<String, Publisher>();
@@ -45,7 +55,7 @@ public class Channel {
         nextEventIdWithinTheChannel = id;
     }
     
-     public Channel(String tag, int replicaId, QoP flt, QoSchannel order, long clientTimeToLive, long eventTimeToLive, long maxEvent, int maxPub, int maxSub, String eventDischargeOrder){
+    public Channel(String tag, int replicaId, QoP flt, QoSchannel order, long clientTimeToLive, long eventTimeToLive, long maxEvent, int maxPub, int maxSub, String eventDischargeOrder){
          switch(flt){
             case CFT:
                 Log.logInfo(this, "CREATING CHANNEL WITH TAG: "+tag+ " AND QoP: CFT", Log.getLineNumber());
@@ -70,7 +80,7 @@ public class Channel {
         maxPublishers = maxPub;
         maxSubscribers = maxSub;
         dischargeOrder = eventDischargeOrder;
-     }
+    }
     
     
     public Channel(String tag, int replicaId, QoP flt, QoSchannel order) {
@@ -92,19 +102,6 @@ public class Channel {
         publisherHashMap = new HashMap<String, Publisher>();
         nextEventIdWithinTheChannel = 0;
         logger = new Log(100);
-    }
-
-    /**
-     * Returns the state of the channel
-     * @return Object representing the channel state
-     */
-    public ChannelState getState(){
-        ChannelState state = new ChannelState(myTag);
-        state.setPublishers(this.publisherHashMap.keySet());
-        state.setSubscribers(this.subscriberHashMap.keySet());
-        state.setQoP(this.faultLevel);
-        state.setQoS(this.channelOrdering);
-        return state;
     }
     
     public String getTag() {
@@ -181,7 +178,14 @@ public class Channel {
                     if (s.queueIsNotFull()) { // ISTO PODE FALHAR SE O SUBSCRIBER JA MORREU OU  NÃO COLHE OS EVENTOS A TEMPO, ARRANJAR FORMA DE VERIFICAR SE O SUBSCRIBER ESTA VIVO. ISTO OCORRE QUANDO UM SUBSCRIBER FALHA SEM SER REGISTADO PELO SISTEMA, ELE VAI CONTINUAR SUBSCRITO NO CANAL
                         s.insertNewEvent(e);
                     } else {
-                        logger.logWarningIfCounterReachedAndIncrement(this, "QUEUE for subscriber ID " + s.getId() + ", on channel " + myTag + ", is FULL (" + s.getNumberOfEvents() + " events) [event " + e.getUniqueId() + " will be discharged] (total so far discharged: " + logger.getWarningCounter() + " )", Log.getLineNumber());
+                        if(dischargeOrder.equals("older")){
+                            s.removeOlder();
+                            logger.logWarningIfCounterReached(this, "QUEUE for subscriber ID " + s.getId() + " is full. The oldest event was discharged", Log.getLineNumber());
+                        }else{
+                            s.removeNewer();
+                            logger.logWarningIfCounterReached(this, "QUEUE for subscriber ID " + s.getId() + " is full. The newer event was discharged", Log.getLineNumber());
+                        }
+                        s.insertNewEvent(e);
                     }
                 }
             }
@@ -388,7 +392,10 @@ public class Channel {
             //s.updateLocalTimestamp();
             
             if (s.queueIsNotEmpty()) {
-                
+                    /**
+                     * If the number of events is 0, then all the events are fetched,
+                     * Otherwise only the requested number of events are pulled
+                     */
                     if(numberOfEvents == 0){
                         do{
                             e = s.getNextEvent();
@@ -414,4 +421,69 @@ public class Channel {
         }
         return null;
     }
+    
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        myTag = (String) stream.readUTF();
+        publisherHashMap = (HashMap<String, Publisher>)stream.readObject();
+        subscriberHashMap = (HashMap<String, Subscriber>)stream.readObject();
+        nextEventIdWithinTheChannel = stream.readLong();
+        faultLevel = (QoP)stream.readObject();
+        channelOrdering = (QoSchannel)stream.readObject();
+        clientTimeToLive = (long)stream.readLong();
+        eventTimeToLive = stream.readLong();
+        maxEvent = stream.readLong();
+        maxPublishers = stream.readInt();
+        maxSubscribers = stream.readInt();
+        dischargeOrder = (String) stream.readUTF();
+    }
+    
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.writeUTF(myTag);
+        stream.writeObject(publisherHashMap);
+        stream.writeObject(subscriberHashMap);
+        stream.writeLong(nextEventIdWithinTheChannel);
+        stream.writeObject(faultLevel);
+        stream.writeObject(channelOrdering);
+        stream.writeLong(clientTimeToLive);
+        stream.writeLong(eventTimeToLive);
+        stream.writeLong(maxEvent);
+        stream.writeInt(maxPublishers);
+        stream.writeInt(maxSubscribers);
+        stream.writeUTF(dischargeOrder);
+    }
+    
+    public Set<String> getListOfPublishers(){
+        return publisherHashMap.keySet();
+    }
+    
+    public byte[] getState() throws IOException{
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        ObjectOutputStream o = new ObjectOutputStream(b);
+        
+        o.writeUTF(myTag);
+        o.writeLong(nextEventIdWithinTheChannel);
+        o.writeObject(faultLevel);
+        o.writeObject(channelOrdering);
+        o.writeLong(clientTimeToLive);
+        o.writeLong(eventTimeToLive);
+        o.writeLong(maxEvent);
+        o.writeInt(maxPublishers);
+        o.writeInt(maxSubscribers);
+        o.writeUTF(dischargeOrder);
+        o.writeInt(publisherHashMap.size());
+            for(String p: publisherHashMap.keySet()){
+                o.write(publisherHashMap.get(p).getState());
+            }
+        o.writeInt(subscriberHashMap.size());
+            for(String s: subscriberHashMap.keySet()){
+                o.write(subscriberHashMap.get(s).getState());
+            }
+        
+        return b.toByteArray();
+    }
+    
+    public void setState(byte[] state){
+        
+    }
+    
 }

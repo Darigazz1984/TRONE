@@ -86,7 +86,7 @@ public class Event implements Serializable {
         return myContent;
     }
    
-    public void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
+    private void readObject(ObjectInput objectInput) throws ClassNotFoundException, IOException {
         this.eventId = objectInput.readLong();
         this.myClientId = (String) objectInput.readObject();
         this.myContent = (String) objectInput.readObject();
@@ -94,7 +94,7 @@ public class Event implements Serializable {
         this.myLocalTimeStamp = objectInput.readLong();
     }
 
-    public void writeObject(ObjectOutput objectOutput) throws IOException {
+    private void writeObject(ObjectOutput objectOutput) throws IOException {
         objectOutput.writeLong(eventId);
         objectOutput.writeObject(myClientId);
         objectOutput.writeObject(myContent);

@@ -75,9 +75,10 @@ public class ConfigChannelManager {
     }
     
     public Channel generateChannel(String t, int id){
-        //public Channel(String tag, int replicaId, QoP flt, QoSchannel order, long clientTimeToLive, long eventTimeToLive, long maxEvent, int maxPub, int maxSub, String eventDischargeOrder)
-        //return (new Channel(t.toLowerCase(), id, type, order));
-        //new Channel(t.toLowerCase(), id, type, order, clientTimeToLive, eventTimeToLive, maxEvent, maxPublishers, maxSubscribers, eventDischargOrder);
+        if(type.equals(QoP.BFT))
+            System.out.println("Creating channel with TAG: "+t+" and QoP: BFT  "+clientTimeToLive+" "+eventTimeToLive+"");
+        else
+            System.out.println("Creating channel with TAG: "+t+" and QoP: CFT  "+clientTimeToLive+" "+eventTimeToLive+"");
         return (new Channel(t.toLowerCase(), id, type, order, clientTimeToLive, eventTimeToLive, maxEvent, maxPublishers, maxSubscribers, eventDischargOrder));
     }
     

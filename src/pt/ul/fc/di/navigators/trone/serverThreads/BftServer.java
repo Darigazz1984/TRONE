@@ -4,12 +4,9 @@
  */
 package pt.ul.fc.di.navigators.trone.serverThreads;
 
-import bftsmart.statemanagment.ApplicationState;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ReplicaContext;
 import bftsmart.tom.ServiceReplica;
-import bftsmart.tom.server.Recoverable;
-import bftsmart.tom.server.SingleExecutable;
 import bftsmart.tom.server.defaultservices.DefaultSingleRecoverable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,8 +14,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import pt.ul.fc.di.navigators.trone.comm.ServerProxy;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
@@ -69,34 +64,39 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
     private Request convertByteToRequest(byte[] bytes){
        
         ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-       
+        Request aux = null;
         ObjectInputStream is;
         try {
             is = new ObjectInputStream(in);
-            return (Request)is.readObject();
+            aux = (Request) is.readObject();
+            in.close();
+            is.close();
+            //return (Request)is.readObject();
         } catch (ClassNotFoundException ex) {
             Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to request", Log.getLineNumber());
         } catch (IOException ex) {
             Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to request", Log.getLineNumber());
         }
-        return null;
+        return aux;
     }
     
     
     @SuppressWarnings("UnusedAssignment")
     private byte[] convertRequestToByte(Request req){
-         ByteArrayOutputStream out = new ByteArrayOutputStream();    
-         ObjectOutputStream os = null;
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectOutputStream os = null;
+        byte [] result = null;
         try {
             os = new ObjectOutputStream(out);
             os.writeObject(req);
             logger.incrementSpecificCounter("NRETEVENTS", req.getAllEvents().size());
-            return out.toByteArray();
+            result = out.toByteArray();
+            out.close();
+            os.close();
         } catch (IOException ex) {
             Log.logError(this.getClass().getCanonicalName(), "Error converting from request to bytes", Log.getLineNumber());
-        }
-         
-         return null;
+        } 
+        return result;
     }
     
     @SuppressWarnings("UnusedAssignment")
@@ -226,7 +226,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
                 logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
                 Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
                 try {
-                        return convertRequestToByte((resolveRequest(req)));
+                    return convertRequestToByte((resolveRequest(req)));
                 } catch (IOException ex) {
                     Log.logError(this.getClass().getCanonicalName(), "Error returning request", Log.getLineNumber());
                 } catch (ClassNotFoundException ex) {
@@ -309,20 +309,50 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
 
     @Override
     public void setReplicaContext(ReplicaContext replicaContext) {
-        System.out.println("REPLICA_CONTEXT");
+        Log.logOut(this.getClass().getCanonicalName(), "Seting replica context", Log.getLineNumber());
         this.rctx = replicaContext;
     }
 
     @Override
     public void installSnapshot(byte[] state) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("INSTALLING SNAPSHOT");
+        Log.logOut(this.getClass().getCanonicalName(), "Installing new Snapshot", Log.getLineNumber());
+        ByteArrayInputStream in;
+        ObjectInputStream is;
+        try {
+            in = new ByteArrayInputStream(state);
+            is = new ObjectInputStream(in);
+            storage = (Storage) is.readObject();
+            in.close();
+            is.close();
+        } catch (ClassNotFoundException ex) {
+            Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to storage", Log.getLineNumber());
+        } catch (IOException ex) {
+            Log.logError(this.getClass().getCanonicalName(), "Error converting from bytes to storage", Log.getLineNumber());
+        }      
+        storage.listPublishersByChannel();
     }
 
     @Override
     public byte[] getSnapshot() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Log.logOut(this.getClass().getCanonicalName(), "Geting Snapshot", Log.getLineNumber());
+        ByteArrayOutputStream out;
+        ObjectOutputStream os = null;
+        byte [] result = null;
+        try {
+            out = new ByteArrayOutputStream();
+            os = new ObjectOutputStream(out);
+            System.out.println("HERE1");
+            os.writeObject(storage);
+            System.out.println("HERE2");
+            result = out.toByteArray();
+            System.out.println("HERE3");
+            out.close();
+            os.close();
+        } catch (IOException ex) {
+            Log.logError(this.getClass().getCanonicalName(), "Error converting from storage to bytes", Log.getLineNumber());
+            
+        } 
+        return result;
     }
-    
-    
-    
 }

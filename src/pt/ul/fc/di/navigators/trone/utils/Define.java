@@ -4,11 +4,13 @@
  */
 package pt.ul.fc.di.navigators.trone.utils;
 
+import java.io.Serializable;
+
 /**
  *
  * @author kreutz
  */
-public class Define {
+public class Define implements Serializable {
     
     public static int DEFAULTEVENTSIZE = 10;
     
