@@ -17,11 +17,24 @@ public class MessageBrokerServer {
 
     private Log logger;
     private static ConfigServerManager thServerConfigManager;
-    
+    /*
     public MessageBrokerServer(ConfigServerManager scm) {
         Log.logDebugFlush(this, "MBS: STARTING IN THREAD " + Thread.currentThread().getId(), Log.getLineNumber());
         
         thServerConfigManager = scm;
+        
+        logger = new Log(100);
+        logger.initSpecificCounter("NPUBLISHEDEVENTS", 0);
+        logger.initSpecificCounter("NPOLLEDEVENTS", 0);
+        
+        Log.logDebugFlush(this, "MBS: UP AND RUNNING IN THREAD " + Thread.currentThread().getId(), Log.getLineNumber());
+    }*/
+    
+    
+    public MessageBrokerServer() {
+        Log.logDebugFlush(this, "MBS: STARTING IN THREAD " + Thread.currentThread().getId(), Log.getLineNumber());
+        
+        //thServerConfigManager = scm;
         
         logger = new Log(100);
         logger.initSpecificCounter("NPUBLISHEDEVENTS", 0);
@@ -39,7 +52,7 @@ public class MessageBrokerServer {
                     return rStorage.insertNewPublisher(p, r.getChannelTag());
                 } else {
                     Log.logWarning(this, "Number of PUBLISHERS for channel " + tag + " exceeded", Log.getLineNumber());
-                }*/
+                }*/ 
                 Publisher p = new Publisher(r.getClientId());
                 if( rStorage.insertNewPublisher(p, tag)){
                     return true;
@@ -94,8 +107,9 @@ public class MessageBrokerServer {
                     return rStorage.insertNewSubscriber(s, r.getChannelTag());
                 } else {
                     Log.logWarning(this, "Number of Subscribers for channel " + tag + " exceeded.", Log.getLineNumber());
-                }*/
-                Subscriber s = new Subscriber(r.getClientId(), thServerConfigManager.getMaxNumberOfEventsPerQueue());
+                }
+                Subscriber s = new Subscriber(r.getClientId(), thServerConfigManager.getMaxNumberOfEventsPerQueue());*/
+                Subscriber s = new Subscriber (r.getClientId());
                 if(rStorage.insertNewSubscriber(s, tag)){
                     return true;
                 }else{

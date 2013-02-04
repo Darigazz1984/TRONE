@@ -12,6 +12,7 @@ import pt.ul.fc.di.navigators.trone.data.Channel;
 import pt.ul.fc.di.navigators.trone.utils.ConfigHandler;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoP;
 import pt.ul.fc.di.navigators.trone.utils.Define.QoSchannel;
+import pt.ul.fc.di.navigators.trone.utils.Log;
 
 
 /**
@@ -76,9 +77,10 @@ public class ConfigChannelManager {
     
     public Channel generateChannel(String t, int id){
         if(type.equals(QoP.BFT))
-            System.out.println("Creating channel with TAG: "+t+" and QoP: BFT  "+clientTimeToLive+" "+eventTimeToLive+"");
+            Log.logInfo(this, "Creating channel with TAG: "+t+" and QoP: BFT  Client time to live ="+clientTimeToLive+" Event Time To Live="+eventTimeToLive+" Max Publishers ="+this.maxPublishers+" Max Subscribers="+this.maxSubscribers+" Max Events="+this.maxEvent+" Discharge Order="+this.eventDischargOrder, Log.getLineNumber());
+            //System.out.println("Creating channel with TAG: "+t+" and QoP: BFT  Client time to live ="+clientTimeToLive+" Event Time To Live="+eventTimeToLive+" Max Publishers ="+this.maxPublishers+" Max Subscribers="+this.maxSubscribers+" Mex Events="+this.maxEvent+" Discharge Order ="+this.eventDischargOrder);
         else
-            System.out.println("Creating channel with TAG: "+t+" and QoP: CFT  "+clientTimeToLive+" "+eventTimeToLive+"");
+            Log.logInfo(this, "Creating channel with TAG: "+t+" and QoP: CFT  Client time to live ="+clientTimeToLive+" Event Time To Live="+eventTimeToLive+" Max Publishers ="+this.maxPublishers+" Max Subscribers="+this.maxSubscribers+" Max Events="+this.maxEvent+" Discharge Order="+this.eventDischargOrder, Log.getLineNumber());
         return (new Channel(t.toLowerCase(), id, type, order, clientTimeToLive, eventTimeToLive, maxEvent, maxPublishers, maxSubscribers, eventDischargOrder));
     }
     

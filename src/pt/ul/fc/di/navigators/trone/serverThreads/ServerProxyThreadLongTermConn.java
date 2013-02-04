@@ -40,7 +40,8 @@ public class ServerProxyThreadLongTermConn extends Thread {
     public ServerProxyThreadLongTermConn(Storage sto, ServerSocket s, ConfigServerManager scm, int replicaId, boolean sl, boolean l) throws UnknownHostException, NoSuchAlgorithmException {
         thStorage = sto;
         thServerSocket = s;
-        thMessageBroker = new MessageBrokerServer(scm);
+        //thMessageBroker = new MessageBrokerServer(scm);
+        thMessageBroker = new MessageBrokerServer();
         thReplicaId = replicaId;
         logger = new Log(100);
         

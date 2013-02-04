@@ -75,20 +75,19 @@ public class ServerProxy {
             File folder = new File(path);
             File f[] = folder.listFiles();
             for(File fileEntry: f){
+                Log.logInfo(this, "Starting creation of channel from file: "+fileEntry.getPath(), Log.getLineNumber());
                 String tag = ((fileEntry.getName()).split("[.]"))[0];
                 ConfigChannelManager ccm = new ConfigChannelManager(path+fileEntry.getName());
-                //METER AQUI UM IF PARA VER SE VAI SER INSERIDO NO CFT OU NO BFT, JA TENS O METODO CRIADO NO CCM
-                //POR AGORA VAMOS METER AMBOS SIM?
                 if(ccm.isBFT()){
                     this.bftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-                    Log.logInfo(this, "channel with TAG: " + tag + " CREATED and inserted in the BFT Storage", Log.getLineNumber());
+                    Log.logInfo(this, "channel with TAG: " + tag + " inserted in the BFT Storage", Log.getLineNumber());
                 }else{
                     this.cftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-                    Log.logInfo(this, "channel with TAG: " + tag + " CREATED and inserted in the CFT Storage", Log.getLineNumber());
+                    Log.logInfo(this, "channel with TAG: " + tag + " inserted in the CFT Storage", Log.getLineNumber());
                 }
                 //ESTE EM PRINCIPIO SERA PARA TIRAR 
-                sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-                Log.logInfo(this, "channel with TAG: " + tag + " CREATED", Log.getLineNumber());
+                //sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                //Log.logInfo(this, "channel with TAG: " + tag + " CREATED", Log.getLineNumber());
             }
         }else
             Log.logError(this.getClass().getCanonicalName(), "ERROR in channel config path", Log.getLineNumber());
@@ -169,7 +168,7 @@ public class ServerProxy {
         
         if(si != null && sharedServerConfig.useBFT()){
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
-            BftServer bftS = new BftServer( sharedStorage, sharedServerConfig, serverIndex, this);
+            BftServer bftS = new BftServer( this.bftStorage, sharedServerConfig.getConfigPath(), serverIndex, this);
             
         }
         

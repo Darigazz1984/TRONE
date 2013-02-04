@@ -33,25 +33,36 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
     private ServiceReplica serviceReplica;
     private Log logger;
     private MessageBrokerServer thMessageBroker;
-    private ConfigServerManager configServer;
+    //private ConfigServerManager configServer;
+    private String configPath; 
     private ReplicaContext rctx;
     private ServerProxy serverProxy;
     
-    public BftServer( Storage sto, ConfigServerManager scm, int replicaId, ServerProxy sp){
+    /**
+     * 
+     * @param sto Storage used by this thread
+     * @param scm path to the configuration of BFT-SMaRt
+     * @param replicaId the id of this replica
+     * @param sp The controller of this server
+     */
+    public BftServer( Storage sto, /*ConfigServerManager*/ String scm, int replicaId, ServerProxy sp){
         this.storage = sto;
         this.replicaId = replicaId;
-        this.configServer = scm;
-        this.thMessageBroker = new MessageBrokerServer(scm);
+        this.configPath = scm;
+        //this.configServer = scm;
+        //this.thMessageBroker = new MessageBrokerServer(scm);
+        this.thMessageBroker = new MessageBrokerServer();
         this.logger = new Log(100);
         this.serverProxy = sp;
-        Log.logInfo(this, "LAUNCHING SERVICEREPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configServer.getConfigPath() , Log.getLineNumber());
-        this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
+        Log.logInfo(this, "LAUNCHING SERVICE REPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configPath , Log.getLineNumber());
+        //this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
+        this.serviceReplica = new ServiceReplica(replicaId, configPath, this, this);
     }
     
     
     @Override
     public void run(){
-        Log.logInfo(this, "LAUNCHING SERVICEREPLICA THREAD "+configServer.getConfigPath(), Log.getLineNumber());
+        Log.logInfo(this, "RUNNING SERVICE REPLICA THREAD "+configPath, Log.getLineNumber());
         logger.initSpecificCounter("NREQS", 0);
         logger.initSpecificCounter("NREQSEVENTS", 0);
         logger.initSpecificCounter("NRETEVENTS", 0);
@@ -340,11 +351,8 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         try {
             out = new ByteArrayOutputStream();
             os = new ObjectOutputStream(out);
-            System.out.println("HERE1");
             os.writeObject(storage);
-            System.out.println("HERE2");
             result = out.toByteArray();
-            System.out.println("HERE3");
             out.close();
             os.close();
         } catch (IOException ex) {

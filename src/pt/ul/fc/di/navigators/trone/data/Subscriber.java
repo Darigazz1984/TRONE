@@ -32,12 +32,20 @@ public class Subscriber implements Serializable {
                 
     }
 
-    public Subscriber(String id, int maxEvents) {
+    /*public Subscriber(String id, int maxEvents) {
         super();
         myId = id;
         myEvents = new ArrayList<Event>();
         myLocalTimestamp = System.currentTimeMillis();
         maxNumberOfEvents = maxEvents;
+    }*/
+    
+    public Subscriber(String id){
+        super();
+        myId = id;
+        myEvents = new ArrayList<Event>();
+        myLocalTimestamp = System.currentTimeMillis();
+        maxNumberOfEvents = 0;
     }
 
     public String getId() {
