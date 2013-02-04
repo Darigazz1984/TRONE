@@ -145,15 +145,17 @@ public class Channel implements Serializable{
     synchronized public boolean addSubscriber(Subscriber sub) {
         
         if (subscriberHashMap.containsKey(sub.getId())) {
+            Log.logWarning(this, "CHANNEL: "+this.myTag+" -> SUBSCRIBER WITH ID: "+sub.getId()+" ALREADY REGISTERED", Log.getLineNumber());
             return false;
         }
+        
         if(subscriberHashMap.size() < maxSubscribers){
             sub.setMaxEvents(this.maxEvent);
-            Log.logInfo(this, "ADDING NEW SUBSCRIBER: " + sub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
+            Log.logInfo(this, "CHANNEL: "+this.myTag+" -> ADDING NEW SUBSCRIBER: " + sub.getId() + " TO CHANNEL: " + myTag + " AT TIME: " + CurrentTime.getTimeInSeconds(), Log.getLineNumber());
             subscriberHashMap.put(sub.getId(), sub);
             return true;
         }
-        Log.logInfo(this, "Max subscribers reached",Log.getLineNumber());
+        Log.logInfo(this, "CHANNEL: "+this.myTag+" -> Max subscribers reached",Log.getLineNumber());
         return false;
     }
 

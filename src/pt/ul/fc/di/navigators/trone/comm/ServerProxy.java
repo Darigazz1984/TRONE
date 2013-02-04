@@ -35,7 +35,7 @@ public class ServerProxy {
 
     static int serverIndex;
     static Storage sharedStorage; // Em principio este sera para separar
-    static Storage cftStorage, bftStorage;//STORAGE SEPARADOS
+    static Storage cftStorage, bftStorage;//STORAGE SEPARADOS -> VERIFICAR SE DA PARA TER TOTAL E NORMAL SEPARADO
     static ServerSocket sharedServerSocketForShortTerm;
     static ServerSocket sharedServerSocketForLongTerm;
     static ConfigServerManager sharedServerConfig;

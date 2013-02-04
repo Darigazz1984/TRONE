@@ -201,7 +201,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             return response;
     }
  
-     @Override
+    @Override
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
             
         Request response = new Request();

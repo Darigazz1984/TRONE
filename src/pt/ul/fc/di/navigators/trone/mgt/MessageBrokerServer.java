@@ -34,13 +34,19 @@ public class MessageBrokerServer {
         String tag = r.getChannelTag();
         if (rStorage.hasChannel(tag)) {
             synchronized (this) {
-                if (rStorage.getNumberOfPublishersForChannel(tag) < thServerConfigManager.getMaxNumberOfPublishersPerChannel()) {
+                /*if (rStorage.getNumberOfPublishersForChannel(tag) < thServerConfigManager.getMaxNumberOfPublishersPerChannel()) {
                     Publisher p = new Publisher(r.getClientId());
                     return rStorage.insertNewPublisher(p, r.getChannelTag());
                 } else {
                     Log.logWarning(this, "Number of PUBLISHERS for channel " + tag + " exceeded", Log.getLineNumber());
+                }*/
+                Publisher p = new Publisher(r.getClientId());
+                if( rStorage.insertNewPublisher(p, tag)){
+                    return true;
+                }else{
+                    return false;
                 }
-            }
+            } // FIM DO SYNC
         } else {
             Log.logWarning(this, "Channel TAG " + tag + " NOT found", Log.getLineNumber());
         }
@@ -83,11 +89,17 @@ public class MessageBrokerServer {
         String tag = r.getChannelTag();
         if (rStorage.hasChannel(tag)) {
             synchronized (this) {
-                if (rStorage.getNumberOfSubscribersForChannel(tag) < thServerConfigManager.getMaxNumberOfSubscribersPerChannel()) {
+                /*if (rStorage.getNumberOfSubscribersForChannel(tag) < thServerConfigManager.getMaxNumberOfSubscribersPerChannel()) {
                     Subscriber s = new Subscriber(r.getClientId(), thServerConfigManager.getMaxNumberOfEventsPerQueue());
                     return rStorage.insertNewSubscriber(s, r.getChannelTag());
                 } else {
                     Log.logWarning(this, "Number of Subscribers for channel " + tag + " exceeded.", Log.getLineNumber());
+                }*/
+                Subscriber s = new Subscriber(r.getClientId(), thServerConfigManager.getMaxNumberOfEventsPerQueue());
+                if(rStorage.insertNewSubscriber(s, tag)){
+                    return true;
+                }else{
+                    return false;
                 }
             }
         } else {
