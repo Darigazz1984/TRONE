@@ -19,6 +19,11 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.ul.fc.di.navigators.trone.clientSideCom.BftOrderedConnection;
+import pt.ul.fc.di.navigators.trone.clientSideCom.BftUnorderedConnection;
+import pt.ul.fc.di.navigators.trone.clientSideCom.CftOrderedConnection;
+import pt.ul.fc.di.navigators.trone.clientSideCom.CftUnorderedConnection;
+import pt.ul.fc.di.navigators.trone.clientSideCom.ClientSideConnection;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigClientManager;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigNetManager;
@@ -31,6 +36,7 @@ public class ClientProxy {
     
    
     private ServiceProxy longTermServiceProxy;
+    private ClientSideConnection theConnection;
     private int clientID;
     static ConfigNetManager netConfig;
     static ConfigClientManager clientConfig;
@@ -41,8 +47,8 @@ public class ClientProxy {
     private boolean useSBFT;
     private boolean useCFT;
     private boolean order;
-    private int cacheCleanUpPeriodInNumberOfRequests;
-    private int sbftRequestsCounter;
+    //private int cacheCleanUpPeriodInNumberOfRequests;
+    //private int sbftRequestsCounter;
     private Log logger;
     private int numberOfFaults;
     private boolean useLongTerm;
@@ -85,7 +91,7 @@ public class ClientProxy {
                 Log.logDebug(this, "USING SBFT", Log.getLineNumber());
                 setupSBFTConnection();
             }else{
-                Log.logError(this, "MODO DE OPERAÇÃO NÂO DEFINIDO. DEVE OPTAR POR BFT OU CFT.", Log.getLineNumber());
+                Log.logError(this, "OPERATION MODE NOT DEFINED. PLEASE CHOOSE CFT OR BFT MODE.", Log.getLineNumber());
                 System.exit(-1);
             }
 
@@ -93,8 +99,8 @@ public class ClientProxy {
 
         globalServerInfo = null;
 
-        cacheCleanUpPeriodInNumberOfRequests = clientConfig.getCacheCleanUpPeriodInNumberOfRequests();
-        sbftRequestsCounter = 0;
+       // cacheCleanUpPeriodInNumberOfRequests = clientConfig.getCacheCleanUpPeriodInNumberOfRequests();
+//        sbftRequestsCounter = 0;
 
         
         numberOfEventsToCachePerRequest = clientConfig.getNumberOfEventsToCachePerRequest();
@@ -104,7 +110,20 @@ public class ClientProxy {
         }
 
         Log.logDebugFlush(this, "CLIENT PROXY UP AND RUNNING ...", Log.getLineNumber());
-
+        
+        // TODO: ISTO É PARA DESCOMENTAR QUANDO TODOS OS CLIENTES ESTIVEREM OK
+        /*
+        if(useSBFT){
+            if(order)
+                this.theConnection = new BftOrderedConnection(clientConfig.getConfigPath(), this.clientID);
+            else
+                this.theConnection = new BftUnorderedConnection(clientConfig.getConfigPath(), this.clientID);
+        }else
+            if(order)
+                this.theConnection = new CftOrderedConnection(clientConfig.getConfigPath(), this.clientID);
+            else
+                this.theConnection = new CftUnorderedConnection(clientConfig.getConfigPath(), this.clientID);
+        */
     }
 
     private void setupConnection() throws UnknownHostException, IOException {
@@ -220,6 +239,7 @@ public class ClientProxy {
         
         netConfig.resetServerListIterator(); // importante para repor o Iterador da lista de servidores
         
+        //return this.convertByteToRequest(this.theConnection.invoke(this.convertRequestToByte(req)));
         
         if (useSBFT) { // SBFT
            if(order){
@@ -262,7 +282,6 @@ public class ClientProxy {
                     Log.logDebug(this, "NULL RESPONSE RECEIVED", Log.getLineNumber());
                 }
             }
-             
         }
 
         if (localReq == null) {
@@ -274,9 +293,14 @@ public class ClientProxy {
         return localReq;
     }
     
+    
     //ESTA CONDIÇÃO GARANTE QUE FAZEMOS REGISTER/SUBSCRIBE/UNREGISTER/UNSUBSCRIBE EM TODAS AS REPLICAS
+    /**
+     * This method verifies if it should send to all replicas. It is not supposed to send anything
+     * @param m
+     * @return 
+     */
     private boolean sendToAllReplicas(METHOD m){
-       
         return (!(m == METHOD.REGISTER) && !(m == METHOD.UNREGISTER) && !(m == METHOD.SUBSCRIBE) && !(m == METHOD.UNSUBSCRIBE) && !(m == METHOD.UNREGISTER_FROM_ALL_CHANNELS) && !(m == METHOD.UNSUBSCRIBE_FROM_ALL_CHANNELS));
     }
     

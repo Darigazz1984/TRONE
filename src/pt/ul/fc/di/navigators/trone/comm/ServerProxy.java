@@ -20,6 +20,7 @@ import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pt.ul.fc.di.navigators.trone.data.Channel;
 import pt.ul.fc.di.navigators.trone.data.Command;
 import pt.ul.fc.di.navigators.trone.data.Storage;
 import pt.ul.fc.di.navigators.trone.mgt.ConfigChannelManager;
@@ -35,7 +36,7 @@ public class ServerProxy {
 
     static int serverIndex;
     static Storage sharedStorage; // Em principio este sera para separar
-    static Storage cftStorage, bftStorage;//STORAGE SEPARADOS -> VERIFICAR SE DA PARA TER TOTAL E NORMAL SEPARADO
+    static Storage cftStorage, bftStorage, cftNoOrderStorage, bftNoOrderStorage;//STORAGE SEPARADOS -> VERIFICAR SE DA PARA TER TOTAL E NORMAL SEPARADO
     static ServerSocket sharedServerSocketForShortTerm;
     static ServerSocket sharedServerSocketForLongTerm;
     static ConfigServerManager sharedServerConfig;
@@ -57,6 +58,8 @@ public class ServerProxy {
         sharedStorage = new Storage(replicaId); //OLHAR BEM PARA ISTO PARA DIVIDIR O STORAGE, CRIAR STORAGE BFT E CTF EM SEPARADO
         cftStorage = new Storage(replicaId); //Por agora estao
         bftStorage = new Storage(replicaId); //Por agora estao
+        cftNoOrderStorage = new Storage(replicaId);
+        bftNoOrderStorage = new Storage(replicaId);
         sharedServerConfig = new ConfigServerManager("netConfig.props", "serverConfig.props");
         createChannelsFromConfig();
         serverIndex = replicaId;
@@ -78,12 +81,25 @@ public class ServerProxy {
                 Log.logInfo(this, "Starting creation of channel from file: "+fileEntry.getPath(), Log.getLineNumber());
                 String tag = ((fileEntry.getName()).split("[.]"))[0];
                 ConfigChannelManager ccm = new ConfigChannelManager(path+fileEntry.getName());
-                if(ccm.isBFT()){
-                    this.bftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-                    Log.logInfo(this, "channel with TAG: " + tag + " inserted in the BFT Storage", Log.getLineNumber());
+                Channel c = ccm.generateChannel(tag, serverIndex);
+                
+                if(c.getQoP().equals(Define.QoP.BFT)){
+                    if(c.getQoS().equals(Define.QoSchannel.TOTAL_ORDER)){
+                        this.bftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                        Log.logInfo(this, "channel with TAG: " + tag + " inserted in the BFT Storage", Log.getLineNumber());
+                    }else{
+                        this.bftNoOrderStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                        Log.logInfo(this, "channel with TAG: " + tag + " inserted in the BFT Storage without order", Log.getLineNumber());
+                    }
                 }else{
-                    this.cftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
-                    Log.logInfo(this, "channel with TAG: " + tag + " inserted in the CFT Storage", Log.getLineNumber());
+                    if(c.getQoS().equals(Define.QoSchannel.TOTAL_ORDER)){
+                        this.cftStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                        Log.logInfo(this, "channel with TAG: " + tag + " inserted in the CFT Storage", Log.getLineNumber());
+                    }else{
+                        this.cftNoOrderStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
+                        Log.logInfo(this, "channel with TAG: " + tag + " inserted in the CFT Storage without order", Log.getLineNumber());
+                    }
+                        
                 }
                 //ESTE EM PRINCIPIO SERA PARA TIRAR 
                 //sharedStorage.insertChannel(ccm.generateChannel(tag, serverIndex));
@@ -135,6 +151,12 @@ public class ServerProxy {
         ServerInfo si = sharedServerConfig.getLocalServerInfo(serverIndex);
 
         if (si != null && sharedServerConfig.useCFT()) {
+            /**
+             * AQUI É PARA INICIAR O SERVER CFT --> TUDO EM BAIXO EM PRINCIPIO VAI DEIXAR DE SER NECESSARIO
+             */
+            //Start cft servers
+            //CftServer cfts = new CftServer(cftStorage, sharedServerConfig.getConfigPath(), serverIndex, this);
+            //CFTNOORDERSERVER --->CRIAR
             
             sharedServerSocketForShortTerm = new ServerSocket(si.getPortForShortTerm());
             // start SHORT term connection threads
@@ -168,8 +190,8 @@ public class ServerProxy {
         
         if(si != null && sharedServerConfig.useBFT()){
             Log.logOut(this, "Starting BFT-SMaRt Server with id: "+serverIndex, Log.getLineNumber());
-            BftServer bftS = new BftServer( this.bftStorage, sharedServerConfig.getConfigPath(), serverIndex, this);
-            
+            BftServer bftS = new BftServer(bftStorage, sharedServerConfig.getConfigPath(), serverIndex, this);
+            //BFTNOORDERSERVER --->CRIAR
         }
         
         if(si != null && sharedServerConfig.controlled()){
@@ -239,7 +261,8 @@ class ServerStorageGarbageCollectorThread extends Thread {
             Log.logInfo(this, "REMOVING: " + number + " old EVENTS have been REMOVED", Log.getLineNumber());
         }
     }
-}
+} // END OF GARBAGE COLLECTOR
+
     /**
      * Esta class vai servir para controlar esta réplica
      */
@@ -335,4 +358,4 @@ class ServerStorageGarbageCollectorThread extends Thread {
         }
         
     
-}
+}//END OF CLASS

@@ -79,7 +79,7 @@ public class ServerInfo {
         }
     }
     
-    public ObjectOutputStream getOutputStreamForLongTerm() {
+    public ObjectOutputStream getOutputStreamForLongTerm() { 
         return mySocketOut;
     }
     

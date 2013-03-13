@@ -18,7 +18,6 @@ import pt.ul.fc.di.navigators.trone.comm.ServerProxy;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.data.Storage;
-//import pt.ul.fc.di.navigators.trone.mgt.ConfigServerManager;
 import pt.ul.fc.di.navigators.trone.mgt.MessageBrokerServer;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;
@@ -27,7 +26,7 @@ import pt.ul.fc.di.navigators.trone.utils.Log;
  *
  * @author igor
  */
-public class BftServer extends DefaultSingleRecoverable implements Runnable{
+public class CftServer extends DefaultSingleRecoverable implements Runnable {
     private Storage storage;
     private int replicaId;
     private ServiceReplica serviceReplica;
@@ -36,41 +35,28 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
     //private ConfigServerManager configServer;
     private String configPath; 
     private ReplicaContext rctx;
-    private ServerProxy serverProxy;
+    private ServerProxy serverProxy; // talvez não seja preciso aqui... logo se ve xD
     
-    /**
-     * 
-     * @param sto Storage used by this thread
-     * @param scm path to the configuration of BFT-SMaRt
-     * @param replicaId the id of this replica
-     * @param sp The controller of this server
-     */
-    public BftServer( Storage sto, /*ConfigServerManager*/ String scm, int replicaId, ServerProxy sp){
+    
+    public CftServer(Storage sto, String scm, int replicaId, ServerProxy sp){
         this.storage = sto;
         this.replicaId = replicaId;
+        this.serverProxy = sp;
         this.configPath = scm;
-        //this.configServer = scm;
-        //this.thMessageBroker = new MessageBrokerServer(scm);
         this.thMessageBroker = new MessageBrokerServer();
         this.logger = new Log(100);
-        this.serverProxy = sp;
-        Log.logInfo(this, "LAUNCHING SERVICE REPLICA WITH ID: " +  this.replicaId + " CONFIGURATION PATH: "+configPath , Log.getLineNumber());
-        //this.serviceReplica = new ServiceReplica(replicaId, scm.getConfigPath(), this, this);
         this.serviceReplica = new ServiceReplica(replicaId, configPath, this, this);
     }
     
-    
     @Override
-    public void run(){
+    public void run() {
         Log.logInfo(this, "RUNNING SERVICE REPLICA THREAD "+configPath, Log.getLineNumber());
         logger.initSpecificCounter("NREQS", 0);
         logger.initSpecificCounter("NREQSEVENTS", 0);
         logger.initSpecificCounter("NRETEVENTS", 0);
         logger.initSpecificCounter("NNULLINVOKES", 0);
         logger.initSpecificCounter("WORNGCONFIGS", 0);
-        
     }
-    
     
     private Request convertByteToRequest(byte[] bytes){
        
@@ -91,8 +77,6 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         return aux;
     }
     
-    
-    @SuppressWarnings("UnusedAssignment")
     private byte[] convertRequestToByte(Request req){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectOutputStream os = null;
@@ -110,13 +94,12 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         return result;
     }
     
-    @SuppressWarnings("UnusedAssignment")
     private Request resolveRequest(Request req) throws IOException, ClassNotFoundException, InterruptedException{
             Request response = new Request();
             response.setChannelTag(req.getChannelTag());
-            Long sTime, time;
+            //Long sTime, time;
             ArrayList<Event> events = null;
-            Thread.sleep(10);
+            //Thread.sleep(10);
             switch (req.getMethod()) {
                   case REGISTER:
                       if (thMessageBroker.register(req, storage)) {
@@ -201,6 +184,8 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             response.setId(req.getId());
             response.setClientId(req.getClientId());
             response.setMethod(req.getMethod());
+            
+            
             if(serverProxy.getLie()){
                response.setClientId("LIE");
             }
@@ -211,10 +196,10 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             
             return response;
     }
- 
+    
+    
     @Override
     public byte[] appExecuteOrdered(byte[] command, MessageContext msgCtx) {
-            
         Request response = new Request();
         Request req = null;
         
@@ -230,7 +215,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             response.setMethod(Define.METHOD.NOT_DEFINED);
             return convertRequestToByte(response);
         }else{
-            if(storage.getQoP(req.getChannelTag()).equals(Define.QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(Define.QoSchannel.TOTAL_ORDER)){
+            if(storage.getQoP(req.getChannelTag()).equals(Define.QoP.CFT) && storage.getQoS(req.getChannelTag()).equals(Define.QoSchannel.TOTAL_ORDER)){
                 logger.incrementSpecificCounter("NREQS", 1);
                 logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
                 Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
@@ -259,12 +244,11 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         response.setClientId(req.getClientId());
         response.setMethod(req.getMethod());
         return convertRequestToByte(response);
-    }
-     
-     
+    }      
+    
     @Override
     public byte[] executeUnordered(byte[] command, MessageContext msgCtx) {
-        
+        //THIS SHOULD NOT BE EXECUTED... IT IS ONLY EXECUTED IF THERE IS AN ERROR ON THE CLIENT SIDE
         Request response = new Request();
         Request req = null;
         
@@ -283,7 +267,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             response.setMethod(Define.METHOD.NOT_DEFINED);
             return convertRequestToByte(response);
         }else{
-           // if(storage.getQoP(req.getChannelTag()).equals(QoP.BFT) && storage.getQoS(req.getChannelTag()).equals(QoSchannel.NO_ORDER)){
+            if(storage.getQoP(req.getChannelTag()).equals(Define.QoP.CFT) && storage.getQoS(req.getChannelTag()).equals(Define.QoSchannel.NO_ORDER)){
                 logger.incrementSpecificCounter("NREQS", 1);
                 logger.incrementSpecificCounter("NREQSEVENTS", req.getNumberOfEventsToFetch());
                 Log.logDebug(this, "RECEIVED REQ: " + logger.getSpecificCounterValue("NREQS") + " ID: " + req.getUniqueId() + " METHOD: " + req.getMethod() + " OBJ ID: " + req, Log.getLineNumber());
@@ -297,13 +281,13 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
                     Log.logError(this.getClass().getCanonicalName(), "Error returning request", Log.getLineNumber());
                 }
                 
-            /*}else{
-                Logger.getLogger(BftServer.class.getName()).log(Level.SEVERE, null, "ERRO NAS CONFIGURAÇÕES DO CLIENTE");
+            }else{
+                Log.logError(this.getClass().getCanonicalName(), "Client config error", Log.getLineNumber());
                 logger.incrementSpecificCounter("WORNGCONFIGS", 1);
                 //response.setClientId(String.valueOf(replicaId));
                 response.setOperationStatus(false);
-                response.setMethod(METHOD.WRONG_CONFIGURATIONS);
-            }*/
+                response.setMethod(Define.METHOD.WRONG_CONFIGURATIONS);
+            }
                
         }
         
@@ -315,13 +299,8 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         response.setMethod(req.getMethod());
         return convertRequestToByte(response);
     }
-
-    @Override
-    public void setReplicaContext(ReplicaContext replicaContext) {
-        Log.logOut(this.getClass().getCanonicalName(), "Seting replica context", Log.getLineNumber());
-        this.rctx = replicaContext;
-    }
-
+    
+    
     @Override
     public void installSnapshot(byte[] state) {
         System.out.println("INSTALLING SNAPSHOT");
@@ -342,6 +321,7 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
         storage.listPublishersByChannel();
     }
 
+    
     @Override
     public byte[] getSnapshot() {
         Log.logOut(this.getClass().getCanonicalName(), "Geting Snapshot", Log.getLineNumber());
@@ -360,5 +340,11 @@ public class BftServer extends DefaultSingleRecoverable implements Runnable{
             
         } 
         return result;
+    }
+
+    @Override
+    public void setReplicaContext(ReplicaContext replicaContext) {
+        Log.logOut(this.getClass().getCanonicalName(), "Seting replica context", Log.getLineNumber());
+        this.rctx = replicaContext;
     }
 }
