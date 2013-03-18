@@ -26,6 +26,9 @@ public class Define implements Serializable {
         UNSUBSCRIBE_FROM_ALL_CHANNELS,
         UNREGISTER_FROM_ALL_CHANNELS,
         WRONG_CONFIGURATIONS,
+        GET_STATE,
+        APPLICATION_STATE,
+        GET_CURRENT_EID, //get the current execution id, for the unordered communication
         NOT_DEFINED;
     }
     

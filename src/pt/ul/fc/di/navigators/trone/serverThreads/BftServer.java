@@ -18,7 +18,6 @@ import pt.ul.fc.di.navigators.trone.comm.ServerProxy;
 import pt.ul.fc.di.navigators.trone.data.Event;
 import pt.ul.fc.di.navigators.trone.data.Request;
 import pt.ul.fc.di.navigators.trone.data.Storage;
-//import pt.ul.fc.di.navigators.trone.mgt.ConfigServerManager;
 import pt.ul.fc.di.navigators.trone.mgt.MessageBrokerServer;
 import pt.ul.fc.di.navigators.trone.utils.Define;
 import pt.ul.fc.di.navigators.trone.utils.Log;

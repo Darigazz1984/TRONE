@@ -4,10 +4,28 @@
  */
 package pt.ul.fc.di.navigators.trone.serverThreads;
 
+import pt.ul.fc.di.navigators.trone.data.Request;
+import pt.ul.fc.di.navigators.trone.netty.unorderedLayer.SingleRecoverable;
+
 /**
  *
  * @author igor
  */
-public class BftNoOrderServer {
+public class BftNoOrderServer implements SingleRecoverable {
+
+    @Override
+    public Request executeUnordered(Request r) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public byte[] getState() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void setState(byte[] s) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
 }

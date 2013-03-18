@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  *
@@ -17,11 +18,10 @@ public class Event implements Serializable {
    
     private long eventId;
     private String myClientId;
-    private String myContent;
-    private long myIdInTheChannel; // FIXME: to be used
+    private String myContent; // legacy purposes
+    private byte[] payload; // Event payload
+    private long myIdInTheChannel; // FIXME: to be used, maybe not
     private long myLocalTimeStamp;
-
-    //private static final long serialVersionUID = 7996973399624796147L;
     
     public Event() {
         super();
@@ -30,6 +30,7 @@ public class Event implements Serializable {
         myContent = null;
         myIdInTheChannel = 0;
         myLocalTimeStamp = 0;
+        payload = new byte[0];
     }
     
     public void setClientId(String cId) {
@@ -67,6 +68,10 @@ public class Event implements Serializable {
     public long getId() {
         return eventId;
     }
+    
+    public byte[] getPayload(){
+        return this.payload;
+    }
 
     public String getUniqueId() {
         String s = myClientId;
@@ -81,6 +86,12 @@ public class Event implements Serializable {
     public void setContent(String value) {
         myContent = value;
     }
+    
+    public void setPayload(byte[] p){
+        int s = p.length;
+        this.payload = new byte[s];
+        System.arraycopy(p, 0, this.payload, 0, s);
+    }
 
     public String getContent() {
         return myContent;
@@ -92,6 +103,9 @@ public class Event implements Serializable {
         this.myContent = (String) objectInput.readObject();
         this.myIdInTheChannel = objectInput.readLong();
         this.myLocalTimeStamp = objectInput.readLong();
+        this.payload = new byte[objectInput.readInt()];
+        objectInput.read(this.payload);
+        
     }
 
     private void writeObject(ObjectOutput objectOutput) throws IOException {
@@ -100,6 +114,8 @@ public class Event implements Serializable {
         objectOutput.writeObject(myContent);
         objectOutput.writeLong(myIdInTheChannel);
         objectOutput.writeLong(myLocalTimeStamp);
+        objectOutput.writeInt(payload.length);
+        objectOutput.write(payload);
     }
 
 }
